@@ -1100,7 +1100,11 @@ namespace wpfApp.ViewModels
             }
             public bool IsAccess { get; set; }
 
-            public PLDParams.BootMode BootMode { get; set; } = PLDParams.BootMode.App;
+            public PLDParams.BootMode BootMode { get; set; } = PLDParams.BootMode.None;
+
+            public PLDParams.UpgradeStatus UpgradeStatus { get; set; }
+
+            public UInt16 CurrIdx { get; set; }
         }
 
 

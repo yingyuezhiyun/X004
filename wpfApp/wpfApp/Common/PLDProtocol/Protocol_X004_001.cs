@@ -542,7 +542,8 @@ namespace wpfApp.Common.PLDProtocol
             LAST_FAILED,
             CUR_DONE,
             CUR_CHECK_ERR,
-            CUR_FALIED
+            CUR_FALIED,
+            None,
         }
 
         public enum UpgradeResult

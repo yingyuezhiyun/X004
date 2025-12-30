@@ -477,7 +477,7 @@ namespace wpfApp.ViewModels
                     {
 
                         streamWriter.WriteLine("时间,LD1电流(A),LD1电压(V),LD2电流(A),LD2电压(V)," +
-                            "PD温度(℃),PD功率(W)," +
+                            "PD温度(℃),光功率(W)," +
                             "TEC1温度(℃),TEC1电流(A),TEC1功率(W)," +
                             "TEC2温度(℃),TEC2电流(A),TEC2功率(W)," +
                             "TEC3温度(℃),TEC3电流(A),TEC3功率(W)," +
@@ -656,47 +656,9 @@ namespace wpfApp.ViewModels
 
         async void UpgradeStatus(PLDParams.UpgradeStatus status, UInt16 CurrIdx)
         {
-            switch (status)
-            {
-                case PLDParams.UpgradeStatus.IDLE:
 
-                case PLDParams.UpgradeStatus.CUR_DONE:
-                    if (CurrIdx == setParam.UpgradeParams.CurrIdx)
-                    {
-                        setParam.UpgradeParams.CurrIdx++;
-                        Update.IsAccess = true;
-                    }
-                    break;
-                case PLDParams.UpgradeStatus.LAST_DONE:
-                    if (!Update.IsUpdate)
-                    {
-                        Application.Current.Dispatcher.Invoke(() => aggregator.SendMessage("程序烧写完成!", "Main", Type: MessageModel.MessageType.Success, TimeSpan: 4.0));
-                    }
-                    Update.IsAccess = true;
-                    break;
-                case PLDParams.UpgradeStatus.LAST_CHECK_ERR:
-                case PLDParams.UpgradeStatus.LAST_FAILED:
-                    Update.IsAccess = false;
-                    Update.IsUpdate = false;
-                    //Application.Current.Dispatcher.Invoke(() => aggregator.SendMessage("程序升级失败,CRC校验失败!", "Main", Type: MessageModel.MessageType.Error, TimeSpan: 4.0));
-                    //await Application.Current.Dispatcher.Invoke(() =>
-                    //                   dialogHostService.Question("升级失败", "程序升级失败,CRC校验失败!!", msgType: MsgType.Yes)
-                    //              );
-                  
-                    break;
-                case PLDParams.UpgradeStatus.RUNNING: Update.IsAccess = false; break;
-                case PLDParams.UpgradeStatus.CUR_CHECK_ERR:
-                case PLDParams.UpgradeStatus.CUR_FALIED:
-                    //Application.Current.Dispatcher.Invoke(() => aggregator.SendMessage($"程序升级失败,第{setParam.UpgradeParams.CurrIdx + 1}包校验错误!", "Main", Type: MessageModel.MessageType.Error, TimeSpan: 4.0));
-                    Update.IsAccess = false;
-                    Update.IsUpdate = false;
-                    //await Application.Current.Dispatcher.Invoke(() =>
-                    //                   dialogHostService.Question("升级失败", $"程序升级失败,第{setParam.UpgradeParams.CurrIdx}包校验错误!", msgType: MsgType.Yes)
-                    //              );
-                    break;
-                default:
-                    break;
-            }
+            Update.UpgradeStatus = status;
+            Update.CurrIdx = CurrIdx;
         }
         async void Upgrade()
         {
@@ -733,6 +695,7 @@ namespace wpfApp.ViewModels
                         var dialogResult = await dialogHostService.Question("程序升级", "\r\n程序升级需要停止运行，是否继续?\r\n", msgType: MsgType.YesNo);
                         if (dialogResult.Result != Prism.Dialogs.ButtonResult.Yes)
                         {
+                            bitTimer.Start();
                             return;
                         }
                         
@@ -769,13 +732,13 @@ namespace wpfApp.ViewModels
                         }
                         if (Update.BootMode != BootMode.Boot)
                         {
-                            UpdateLoading(false);
-                            bitTimer.Start();
+                            UpdateLoading(false);                          
                             await Application.Current.Dispatcher.Invoke(() =>
                                    dialogHostService.Question("升级失败", "\r\n进入BOOT模式失败！", msgType: MsgType.Yes)
                               );
                             Application.Current.Dispatcher.Invoke(() => aggregator.SendMessage("进入BOOT模式失败!", "Main", Type: MessageModel.MessageType.Error, TimeSpan: 4.0));
                             //connectTimer.Start();
+                            bitTimer.Start();
                             return;
                         }
                         
@@ -803,6 +766,7 @@ namespace wpfApp.ViewModels
                     int pos = 0;
                     setParam.UpgradeParams.TotalPaketNum = TotalPacketNum;
                     setParam.UpgradeParams.CurrIdx = 1;
+                    Update.CurrIdx = 0;
                     while (dataArr.Length - pos > 0)
                     {
                         Update.ButtonContent = $"升级中({setParam.UpgradeParams.CurrIdx}/{TotalPacketNum})...";
@@ -825,127 +789,48 @@ namespace wpfApp.ViewModels
                         }
                        
                         DevSetParam(PLDParamsToSet.Upgrade);
-                        Update.IsAccess = false;
-                        loop = 50;
-                        while (Update.IsUpdate && !Update.IsAccess && loop > 0)
+                        Update.UpgradeStatus = PLDParams.UpgradeStatus.None;
+                        //Update.IsAccess = false;
+                        loop = 100;
+                        while ((Update.UpgradeStatus == PLDParams.UpgradeStatus.None || Update.UpgradeStatus == PLDParams.UpgradeStatus.RUNNING) &&
+                                 loop > 0)
                         {
                             DevQueryParam(PLDParamsToQuery.Upgrade);
                             loop--;
-                            await Task.Delay(60);
+                            await Task.Delay(30);
                         }
-                        if (!Update.IsAccess)
+                        if (Update.UpgradeStatus != PLDParams.UpgradeStatus.CUR_DONE && Update.UpgradeStatus != PLDParams.UpgradeStatus.LAST_DONE)
                         {
-                            UpdateLoading(false);
-                            bitTimer.Start();
-                            if (loop == 0)
-                            {
-                                //Application.Current.Dispatcher.Invoke(() => aggregator.SendMessage($"程序升级失败,第{setParam.UpgradeParams.CurrIdx + 1}包升级超时!", "Main", Type: MessageModel.MessageType.Error, TimeSpan: 4.0));
-                                await Application.Current.Dispatcher.Invoke(() =>
-                                       dialogHostService.Question("升级失败", $"程序升级失败,第{setParam.UpgradeParams.CurrIdx + 1}包升级超时!", msgType: MsgType.Yes)
-                                  );
-                            }
-                            else
-                            {
-                                await Application.Current.Dispatcher.Invoke(() =>
-                                      dialogHostService.Question("升级失败", $"程序升级失败,第{setParam.UpgradeParams.CurrIdx + 1}包校验错误!", msgType: MsgType.Yes)
-                                 );
-                            }
-                            //  
-                            Update.IsUpdate = false;
-                            Update.ButtonContent = "升级";
-                            
-                            return;
+                            goto Failed;
                         }
-                        //setParam.UpgradeParams.CurrIdx++;                                  
-                        
+                        setParam.UpgradeParams.CurrIdx = (UInt16)(Update.CurrIdx + 1);          
+                        //setParam.UpgradeParams.CurrIdx++;        
                         pos += curPacketLen;
                     }
-#if false
-                    fs.Seek(0, SeekOrigin.Begin);
-                    byte[] data = new byte[fs.Length];
-                    fs.Read(data, 0, data.Length);
-                    Update.IsUpdate = true;
-                    int UnitPacketLen = 32;//最小内存为32字节
-                    int maxPacketLen = UnitPacketLen * 7;
-                    UInt16 TotalPacketNum = (UInt16)Math.Ceiling(data.Length / (double)maxPacketLen);
-                    int pos = 0;
-                    setParam.UpgradeParams.TotalPaketNum = TotalPacketNum;
-                    setParam.UpgradeParams.CurrIdx = 0;
-                    while (data.Length - pos > 0)
-                    {
-                        
-                        setParam.UpgradeParams.Data.Clear();
-                        int curPacketLen = data.Length - pos > maxPacketLen ? maxPacketLen : data.Length - pos;
-                        setParam.UpgradeParams.Data.AddRange(data.Skip(pos).Take(curPacketLen));
-                        if (curPacketLen % UnitPacketLen != 0)
-                        {
-                            int addLen = UnitPacketLen - (curPacketLen % UnitPacketLen);
-                            for (int i = 0; i < addLen; i++)
-                            {
-                                setParam.UpgradeParams.Data.Add(0);
-                            }
-                        }
-                        Update.ButtonContent = $"升级中({setParam.UpgradeParams.CurrIdx+1}/{TotalPacketNum})...";
-                        int loop = 100;
-                        while (!Update.IsAccess && loop > 0)
-                        {
-                            DevQueryParam(PLDParamsToQuery.Upgrade);
-                            loop--;
-                            await Task.Delay(50);
-                        }
-                        if (!Update.IsAccess)
-                        {
-                            Application.Current.Dispatcher.Invoke(() => aggregator.SendMessage("程序升级失败!", "Main"));
-                            Update.IsUpdate = false;
-                            Update.ButtonContent = "升级";
-                            return;
-                        }
-                        setParam.UpgradeParams.CurrIdx++;
-                        DevSetParam(PLDParamsToSet.Upgrade);
-                        Update.IsAccess = false;
-                        pos += curPacketLen;
-                    }
-#endif
                 }
                 
-                Update.ButtonContent = "升级";
-                
                 await Task.Delay(200);
-                loop = 50;
+                loop = 80;
                 Update.IsAccess = false;
-                while (Update.IsUpdate && !Update.IsAccess && loop > 0)
+                Update.UpgradeStatus = PLDParams.UpgradeStatus.None;
+                while ((Update.UpgradeStatus == PLDParams.UpgradeStatus.None || Update.UpgradeStatus == PLDParams.UpgradeStatus.RUNNING) &&
+                                 loop > 0)
                 {
                     DevQueryParam(PLDParamsToQuery.Upgrade);
                     loop--;
-                    await Task.Delay(60);
+                    await Task.Delay(30);
                 }
-                //if (Update.IsUpdate == false)
-                //{
-                //    UpdateLoading(false);
-                //    bitTimer.Start();
-                //    return;
-                //}
-                if (Update.IsAccess == false)
+                if (Update.UpgradeStatus != PLDParams.UpgradeStatus.CUR_DONE && (Update.UpgradeStatus != PLDParams.UpgradeStatus.LAST_DONE))
                 {
-                    bitTimer.Start();
-                    Update.IsUpdate = false;
-                    UpdateLoading(false);
-                    if (loop == 0)
-                    {
-                        //Application.Current.Dispatcher.Invoke(() => aggregator.SendMessage($"程序升级失败,第{setParam.UpgradeParams.CurrIdx + 1}包升级超时!", "Main", Type: MessageModel.MessageType.Error, TimeSpan: 4.0));
-                        await Application.Current.Dispatcher.Invoke(() =>
-                               dialogHostService.Question("升级失败", $"程序升级失败,最后一包升级超时!", msgType: MsgType.Yes)
-                          );
-                    }
-                    else
-                    {
-                        await Application.Current.Dispatcher.Invoke(() =>
-                              dialogHostService.Question("升级失败", $"程序升级失败,CRC校验错误!", msgType: MsgType.Yes)
-                         );
-                    }                    
-                    return;
+                    goto Failed;
                 }
+
+                Application.Current.Dispatcher.Invoke(() => aggregator.SendMessage("程序烧写完成!", "Main", Type: MessageModel.MessageType.Success, TimeSpan: 4.0));
+
                 Update.IsUpdate = false;
+                Update.ButtonContent = "升级";
+
+
                 UpdateLoading(true,"烧写完成，应用重启检验中...");
                 await Task.Delay(100);
                 setParam.BootMode = BootMode.App;
@@ -963,7 +848,8 @@ namespace wpfApp.ViewModels
                     bitTimer.Start();
                     await Application.Current.Dispatcher.Invoke(() =>
                                    dialogHostService.Question("程序升级结果", "\r\n程序升级失败，请重试！", msgType: MsgType.Yes)
-                              );                    
+                              );
+                    bitTimer.Start();
                     return;
                 }      
                 UpdateLoading(false);
@@ -971,6 +857,49 @@ namespace wpfApp.ViewModels
                 await Application.Current.Dispatcher.Invoke(() =>
                                       dialogHostService.Question("程序升级结果", "\r\n程序升级成功!", msgType: MsgType.Yes)
                                  );
+                bitTimer.Start();
+                return;
+
+            Failed:
+                Update.IsUpdate = false;
+                Update.ButtonContent = "升级";
+                bitTimer.Start();
+                UpdateLoading(false);
+                if (loop == 0)
+                {
+                    //Application.Current.Dispatcher.Invoke(() => aggregator.SendMessage($"程序升级失败,第{setParam.UpgradeParams.CurrIdx + 1}包升级超时!", "Main", Type: MessageModel.MessageType.Error, TimeSpan: 4.0));
+                    await Application.Current.Dispatcher.Invoke(() =>
+                           dialogHostService.Question("升级失败", $"程序升级失败,第{setParam.UpgradeParams.CurrIdx + 1}包升级超时!", msgType: MsgType.Yes)
+                      );
+                }
+                else
+                    switch (Update.UpgradeStatus)
+                    {
+                        case PLDParams.UpgradeStatus.IDLE:
+                            break;
+                        case PLDParams.UpgradeStatus.RUNNING:
+                            break;
+                        case PLDParams.UpgradeStatus.LAST_DONE:
+                            break;
+                        case PLDParams.UpgradeStatus.LAST_CHECK_ERR:
+                        case PLDParams.UpgradeStatus.LAST_FAILED:
+                            await Application.Current.Dispatcher.Invoke(() =>
+                                               dialogHostService.Question("升级失败", "程序升级失败,CRC校验失败!!", msgType: MsgType.Yes)
+                                          );
+                            break;
+                        case PLDParams.UpgradeStatus.CUR_DONE:
+                            break;
+                        case PLDParams.UpgradeStatus.CUR_CHECK_ERR:
+                        case PLDParams.UpgradeStatus.CUR_FALIED:
+                            await Application.Current.Dispatcher.Invoke(() =>
+                                               dialogHostService.Question("升级失败", $"程序升级失败,第{setParam.UpgradeParams.CurrIdx}包校验错误!", msgType: MsgType.Yes)
+                                          );
+                            break;
+                        case PLDParams.UpgradeStatus.None:
+                            break;
+                        default:
+                            break;
+                    }
 
             }
             catch (Exception ex)

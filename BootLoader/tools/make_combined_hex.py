@@ -294,7 +294,7 @@ def parse_mem_cfg_from_map_with_layout(memmap: dict, cfg_addr: int, layout: dict
 DEFAULT_BL_ADDR   = 0x08000000
 DEFAULT_APP1_ADDR = 0x08020000
 DEFAULT_CFG_ADDR  = 0x080E0000
-DEFAULT_CFG_SIZE  = 256
+DEFAULT_CFG_SIZE  = 0
 
 # 默认 cfg 布局（对应 Core/Inc/global_cfg.h 中的 mem_cfg_t）
 # offsets are in bytes from cfg base, little-endian u32 fields
@@ -521,25 +521,33 @@ def main():
     # head + mem_cfg 并按 32 字节对齐后写入 args.cfg_addr。
     min_needed = len(mem_cfg_blob)
     requested = args.cfg_size
-    final_size = max(min_needed, requested)
-    # 对 mem_cfg 本体使用 final_size/32 对齐，然后再构造 flash record
-    aligned_mem_cfg_size = ((final_size + 31) // 32) * 32
-    print(f"CFG: preparing mem_cfg (body) at 0x{args.cfg_addr:08X}, requested cfg-size={requested} bytes, mem_cfg={min_needed} bytes -> body aligned size={aligned_mem_cfg_size} bytes (pad with 0x00)")
-    if len(mem_cfg_blob) < aligned_mem_cfg_size:
-        mem_cfg_blob = mem_cfg_blob + bytes([0x00]) * (aligned_mem_cfg_size - len(mem_cfg_blob))
+    # If requested==0 (default), do not enforce larger minimum; only pad to 32-byte multiple
+    final_size = min_needed if requested == 0 else max(min_needed, requested)
+    # 我们不再对 mem_cfg 本体提前扩展到 32 字节的倍数。
+    # 行为：mem_cfg 本体长度为实际所需 (或显式请求的最小值)，head->datasize 使用实际 mem_cfg 长度，
+    # 然后把 head + mem_cfg 这个整体向上填充到 32 字节的倍数再写入 flash（固件读取时按 datasize 读取）。
+    if requested == 0:
+        final_size = min_needed
+        print(f"CFG: preparing mem_cfg (body) at 0x{args.cfg_addr:08X}, mem_cfg={min_needed} bytes -> will pad outer record to 32-byte multiple")
     else:
-        mem_cfg_blob = mem_cfg_blob[:aligned_mem_cfg_size]
+        final_size = max(min_needed, requested)
+        print(f"CFG: preparing mem_cfg (body) at 0x{args.cfg_addr:08X}, requested cfg-size={requested} bytes, mem_cfg={min_needed} bytes -> body size={final_size} bytes")
 
-    # Flash record header used by firmware
+    # if requested > 0 and requires mem_cfg to be larger, pad mem_cfg_body to final_size, otherwise keep raw
+    if final_size > min_needed:
+        mem_cfg_body = mem_cfg_blob + bytes([0x00]) * (final_size - min_needed)
+    else:
+        mem_cfg_body = mem_cfg_blob
+
     FLASH_PRAGMA_HEAD = 0xAAAA
-    head = struct.pack("<HH", FLASH_PRAGMA_HEAD, min_needed)
-    flash_blob = head + mem_cfg_blob
-    # pad flash_blob to 32-byte multiple (firmware writes in 32-byte flashwords)
+    head = struct.pack("<HH", FLASH_PRAGMA_HEAD, len(mem_cfg_body))
+    flash_blob = head + mem_cfg_body
+    # pad the whole flash_blob up to 32-byte multiple
     pad_len = ((len(flash_blob) + 31) // 32) * 32 - len(flash_blob)
     if pad_len:
         flash_blob = flash_blob + bytes([0x00]) * pad_len
 
-    print(f"CFG: writing flash record at 0x{args.cfg_addr:08X}, total {len(flash_blob)} bytes (incl header)")
+    print(f"CFG: writing flash record at 0x{args.cfg_addr:08X}, total {len(flash_blob)} bytes (incl header, padded to 32)")
     regions.append((args.cfg_addr, flash_blob))
 
     # write hex: 传入计算得到的 start_linear
