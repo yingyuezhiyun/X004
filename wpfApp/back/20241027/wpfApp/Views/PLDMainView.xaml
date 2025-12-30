@@ -1,0 +1,1813 @@
+﻿<UserControl
+    x:Class="wpfApp.Views.PLDMainView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:wpfApp.Common.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:ext="clr-namespace:wpfApp.Extensions"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:local="clr-namespace:wpfApp.Views"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:prism="http://prismlibrary.com/"
+    xmlns:validrule="clr-namespace:wpfApp.Common.ValidationRules"
+    d:DesignHeight="720"
+    d:DesignWidth="1150"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <converters:PrefixConverter x:Key="PrefixConverter" />
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="410" />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+
+
+            <materialDesign:Card
+                Grid.Row="0"
+                Margin="5"
+                FontSize="14"
+                UniformCornerRadius="20">
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition />
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0">
+                        <DockPanel Margin="0,10,0,0" LastChildFill="False">
+                            <materialDesign:PackIcon
+                                Width="20"
+                                Height="20"
+                                Margin="10,0,10,0"
+                                VerticalAlignment="Center"
+                                Foreground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                Kind="SerialPort" />
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Foreground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                Text="连接设置" />
+                        </DockPanel>
+                        <StackPanel
+                            Margin="0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Background="Transparent"
+                            Orientation="Horizontal">
+                            <TextBlock
+                                Margin="25,0,25,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                FontWeight="Bold"
+                                Text="端口号" />
+                            <ComboBox
+                                MinWidth="72"
+                                Margin="25,0,25,0"
+                                VerticalAlignment="Center"
+                                ItemsSource="{Binding PortName}"
+                                SelectedItem="{Binding DevPortName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <ComboBox.Style>
+                                    <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="ComboBox">
+                                        <Setter Property="IsEnabled" Value="True" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding DeviceIsOpen}" Value="True">
+                                                <Setter Property="IsEnabled" Value="False" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ComboBox.Style>
+                            </ComboBox>
+                        </StackPanel>
+
+                        <UniformGrid Margin="0,10,0,0" Columns="2">
+                            <Button
+                                Height="25"
+                                Margin="5,0,5,0"
+                                Command="{Binding ExecuteCommand}"
+                                CommandParameter="扫描端口"
+                                Content="扫描端口"
+                                Cursor="Hand">
+                                <Button.Style>
+                                    <Style BasedOn="{StaticResource MaterialDesignRaisedButton}" TargetType="Button">
+                                        <Setter Property="IsEnabled" Value="True" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding DeviceIsOpen}" Value="True">
+                                                <Setter Property="IsEnabled" Value="False" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <Button
+                                Height="25"
+                                Margin="5,0,5,0"
+                                Command="{Binding ExecuteCommand}"
+                                CommandParameter="连接设备">
+                                <Button.Style>
+                                    <Style BasedOn="{StaticResource MaterialDesignRaisedButton}" TargetType="Button">
+                                        <Setter Property="Content" Value="连接设备" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding DeviceIsOpen, UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                                <Setter Property="Content" Value="断开连接" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                        </UniformGrid>
+                        <Border Margin="5,10,5,5" Style="{StaticResource HorizontalDividerBorder}" />
+
+
+                    </StackPanel>
+
+                    <Grid Grid.Row="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <StackPanel>
+                            <DockPanel Margin="0,10,0,0" LastChildFill="False">
+                                <materialDesign:PackIcon
+                                    Width="20"
+                                    Height="20"
+                                    Margin="10,0,10,0"
+                                    VerticalAlignment="Center"
+                                    Foreground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                    Kind="CogSync" />
+
+                                <TextBlock
+                                    Margin="0,0,10,0"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    Foreground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                    Text="工作状态" />
+                            </DockPanel>
+
+                        </StackPanel>
+
+                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                            <ItemsControl
+                                Margin="10,0,10,0"
+                                IsEnabled="{Binding DeviceIsOpen}"
+                                ItemsSource="{Binding MeasureParams.StatusList}">
+                                <!--<ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel MinWidth="280" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>-->
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Margin="25,20,0,0" Orientation="Horizontal">
+                                            <TextBlock
+                                                MinWidth="50"
+                                                Margin="0,0,20,0"
+                                                HorizontalAlignment="Right"
+                                                FontSize="16"
+                                                Text="{Binding Name}"
+                                                TextAlignment="Right" />
+                                            <TextBlock
+                                                HorizontalAlignment="Left"
+                                                FontSize="16"
+                                                Text="{Binding Value}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Grid>
+                    <StackPanel Grid.Row="2">
+                        <Border Margin="5,15,5,5" Style="{StaticResource HorizontalDividerBorder}" />
+                        <UniformGrid
+                            Margin="0,10,0,20"
+                            Columns="2"
+                            IsEnabled="{Binding DeviceIsOpen}">
+                            <Button
+                                Height="25"
+                                Margin="5,0,5,0"
+                                materialDesign:ButtonProgressAssist.IsIndeterminate="True"
+                                materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding IsUpdatePara}"
+                                materialDesign:ButtonProgressAssist.Value="-1"
+                                Command="{Binding ExecuteCommand}"
+                                CommandParameter="参数更新"
+                                Cursor="Hand">
+                                <Button.Style>
+                                    <Style BasedOn="{StaticResource MaterialDesignRaisedButton}" TargetType="Button">
+                                        <Setter Property="Content" Value="参数更新" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsUpdatePara}" Value="True">
+                                                <Setter Property="Content" Value="参数更新中..." />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <Button
+                                Height="25"
+                                Margin="5,0,5,0"
+                                Command="{Binding ExecuteCommand}"
+                                CommandParameter="参数固化"
+                                Content="参数固化" />
+                        </UniformGrid>
+                    </StackPanel>
+
+
+
+                </Grid>
+            </materialDesign:Card>
+
+
+            <materialDesign:Card
+                Grid.Column="1"
+                Margin="5"
+                FontSize="16"
+                UniformCornerRadius="20">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <!--<StackPanel>-->
+                    <ItemsControl
+                        Margin="10,0,10,0"
+                        IsEnabled="{Binding DeviceIsOpen}"
+                        ItemsSource="{Binding MeasureParams.MeasureParamsShowList}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Vertical">
+                                    <DockPanel Margin="0,10,0,0" LastChildFill="False">
+                                        <materialDesign:PackIcon
+                                            Width="20"
+                                            Height="20"
+                                            Margin="10,0,10,0"
+                                            VerticalAlignment="Center"
+                                            Foreground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                            Kind="{Binding Icon}" />
+                                        <TextBlock
+                                            Margin="0,0,10,0"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            FontSize="16"
+                                            Foreground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                            Text="{Binding Tile}" />
+                                    </DockPanel>
+
+                                    <ItemsControl ItemsSource="{Binding Params}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel Margin="15,0,0,0" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Margin="5,5,20,5" Orientation="Horizontal">
+                                                    <TextBlock MinWidth="50" Text="{Binding Name}" />
+                                                    <TextBlock MinWidth="45" Text="{Binding Value}" />
+                                                    <TextBlock
+                                                        MinWidth="15"
+                                                        Margin="5,0,0,0"
+                                                        Text="{Binding Unit}" />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    <Border Margin="5,10,5,5" Style="{StaticResource HorizontalDividerBorder}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!--<StackPanel Orientation="Vertical">
+                        <DockPanel Margin="0,10,0,0" LastChildFill="False">
+                            <materialDesign:PackIcon
+                                Width="20"
+                                Height="20"
+                                Margin="10,0,10,0"
+                                VerticalAlignment="Center"
+                                Foreground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                Kind="CogSync" />
+                            <TextBlock
+                                Margin="0,0,10,0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Foreground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                Text="LD1测量参数" />
+                        </DockPanel>
+                        <WrapPanel Margin="15,0,0,0">
+                            <StackPanel Margin="5,5,20,5" Orientation="Horizontal">
+                                <TextBlock MinWidth="50" Text="温度:" />
+                                <TextBlock
+                                    MinWidth="45"
+                                    Margin="0,0,0,0"
+                                    Text="25.0" />
+                                <TextBlock Margin="5,0,0,0" Text="℃" />
+                            </StackPanel>
+                        </WrapPanel>
+                        <Border Margin="5,10,5,5" Style="{StaticResource HorizontalDividerBorder}" />
+                    </StackPanel>-->
+
+                    <!--</StackPanel>-->
+                </ScrollViewer>
+            </materialDesign:Card>
+
+
+            <materialDesign:Card
+                Grid.Column="2"
+                Margin="5"
+                FontSize="16"
+                UniformCornerRadius="20">
+
+                <TabControl
+                    Margin="10"
+                    materialDesign:NavigationRailAssist.SelectionCornerRadius="10"
+                    materialDesign:NavigationRailAssist.ShowSelectionBackground="True"
+                    Background="Transparent"
+                    FontSize="14"
+                    Style="{StaticResource MaterialDesignNavigationRailTabControl}"
+                    TabStripPlacement="Right">
+                    <TabItem Width="40">
+                        <TabItem.Header>
+                            <TextBlock
+                                Margin="0"
+                                HorizontalAlignment="Center"
+                                RenderTransformOrigin=".5,.5"
+                                Text="设备控制">
+                                <TextBlock.LayoutTransform>
+                                    <RotateTransform Angle="90" />
+                                </TextBlock.LayoutTransform>
+                            </TextBlock>
+                        </TabItem.Header>
+                        <Grid Margin="0,10,10,0" HorizontalAlignment="Center">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                                <RowDefinition />
+                                <RowDefinition Height="auto" />
+                            </Grid.RowDefinitions>
+                            <DockPanel LastChildFill="False">
+                                <materialDesign:PackIcon
+                                    Width="20"
+                                    Height="20"
+                                    Margin="10,0,10,0"
+                                    VerticalAlignment="Center"
+                                    Foreground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                    Kind="CogSync" />
+
+                                <TextBlock
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    Foreground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                    Text="设备控制" />
+                            </DockPanel>
+
+                            <ScrollViewer
+                                Grid.RowSpan="2"
+                                Margin="0,30,0,0"
+                                VerticalScrollBarVisibility="Auto">
+                                <StackPanel Margin="0" IsEnabled="{Binding DeviceIsOpen}">
+
+
+
+                                    <StackPanel
+                                        Margin="5,10,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Orientation="Horizontal">
+                                        <TextBlock
+                                            MinWidth="100"
+                                            VerticalAlignment="Center"
+                                            FontWeight="Bold"
+                                            Text="调制模式" />
+                                        <TextBlock
+                                            MinWidth="50"
+                                            Margin="10,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Text="{Binding SettingParamsToShow.Mode}" />
+                                        <ComboBox
+                                            Width="70"
+                                            Margin="10,0,0,0"
+                                            HorizontalAlignment="Center"
+                                            ItemsSource="{Binding ModeList}"
+                                            SelectedItem="{Binding SettingParams.Mode}" />
+                                        <Button
+                                            Height="25"
+                                            Margin="10,0,0,0"
+                                            Command="{Binding ExecuteCommand}"
+                                            CommandParameter="设置模式"
+                                            Content="设置"
+                                            Cursor="Hand" />
+
+                                    </StackPanel>
+
+                                    <StackPanel
+                                        Margin="5,10,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Orientation="Horizontal">
+                                        <StackPanel.Style>
+                                            <Style TargetType="StackPanel">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SettingParams.Mode}" Value="外调制">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </StackPanel.Style>
+                                        <TextBlock
+                                            MinWidth="100"
+                                            VerticalAlignment="Center"
+                                            FontWeight="Bold"
+                                            Text="脉冲类型" />
+                                        <TextBlock
+                                            MinWidth="50"
+                                            Margin="10,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Text="{Binding SettingParamsToShow.PulseType}" />
+                                        <ComboBox
+                                            Width="70"
+                                            Margin="10,0,0,0"
+                                            HorizontalAlignment="Center"
+                                            ItemsSource="{Binding PulseTypeList}"
+                                            SelectedItem="{Binding SettingParams.PulseType}" />
+                                        <Button
+                                            Height="25"
+                                            Margin="10,0,0,0"
+                                            Command="{Binding ExecuteCommand}"
+                                            CommandParameter="设置脉冲类型"
+                                            Content="设置"
+                                            Cursor="Hand" />
+
+                                    </StackPanel>
+
+                                    <StackPanel
+                                        Margin="5,10,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Orientation="Horizontal">
+                                        <TextBlock
+                                            MinWidth="100"
+                                            VerticalAlignment="Center"
+                                            FontWeight="Bold"
+                                            Text="LD1电流" />
+                                        <TextBlock
+                                            MinWidth="50"
+                                            Margin="10,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Text="{Binding SettingParamsToShow.LDParams[0].Curr}" />
+                                        <TextBox
+                                            Width="70"
+                                            Margin="10,0,0,0"
+                                            materialDesign:TextFieldAssist.SuffixText="A"
+                                            Text="{Binding SettingParams.LDParams[0].Curr}" />
+                                        <Button
+                                            Height="25"
+                                            Margin="10,0,0,0"
+                                            Command="{Binding ExecuteCommand}"
+                                            CommandParameter="设置LD1电流"
+                                            Content="设置"
+                                            Cursor="Hand" />
+
+                                    </StackPanel>
+
+
+
+                                    <StackPanel
+                                        Margin="5,10,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Orientation="Horizontal">
+                                        <TextBlock
+                                            MinWidth="100"
+                                            VerticalAlignment="Center"
+                                            FontWeight="Bold"
+                                            Text="LD2电流" />
+                                        <TextBlock
+                                            MinWidth="50"
+                                            Margin="10,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Text="{Binding SettingParamsToShow.LDParams[1].Curr}" />
+                                        <TextBox
+                                            Width="70"
+                                            Margin="10,0,0,0"
+                                            materialDesign:TextFieldAssist.SuffixText="A"
+                                            Text="{Binding SettingParams.LDParams[1].Curr}" />
+                                        <Button
+                                            Height="25"
+                                            Margin="10,0,0,0"
+                                            Command="{Binding ExecuteCommand}"
+                                            CommandParameter="设置LD2电流"
+                                            Content="设置"
+                                            Cursor="Hand" />
+
+                                    </StackPanel>
+
+                                    <StackPanel
+                                        Margin="5,10,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Orientation="Horizontal">
+                                        <TextBlock
+                                            MinWidth="100"
+                                            VerticalAlignment="Center"
+                                            FontWeight="Bold"
+                                            Text="LD1温度" />
+                                        <TextBlock
+                                            MinWidth="50"
+                                            Margin="10,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Text="{Binding SettingParamsToShow.LDParams[0].Temp}" />
+                                        <TextBox
+                                            Width="70"
+                                            Margin="10,0,0,0"
+                                            materialDesign:TextFieldAssist.SuffixText="℃"
+                                            Text="{Binding SettingParams.LDParams[0].Temp}" />
+                                        <Button
+                                            Height="25"
+                                            Margin="10,0,0,0"
+                                            Command="{Binding ExecuteCommand}"
+                                            CommandParameter="设置LD1温度"
+                                            Content="设置"
+                                            Cursor="Hand" />
+
+                                    </StackPanel>
+
+                                    <StackPanel
+                                        MinWidth="70"
+                                        Margin="5,10,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Orientation="Horizontal">
+                                        <TextBlock
+                                            MinWidth="100"
+                                            VerticalAlignment="Center"
+                                            FontWeight="Bold"
+                                            Text="LD2温度" />
+                                        <TextBlock
+                                            MinWidth="50"
+                                            Margin="10,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Text="{Binding SettingParamsToShow.LDParams[1].Temp}" />
+                                        <TextBox
+                                            Width="70"
+                                            Margin="10,0,0,0"
+                                            materialDesign:TextFieldAssist.SuffixText="℃"
+                                            Text="{Binding SettingParams.LDParams[1].Temp}" />
+                                        <Button
+                                            Height="25"
+                                            Margin="10,0,0,0"
+                                            Command="{Binding ExecuteCommand}"
+                                            CommandParameter="设置LD2温度"
+                                            Content="设置"
+                                            Cursor="Hand" />
+
+                                    </StackPanel>
+
+                                    <StackPanel
+                                        Margin="5,10,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Orientation="Horizontal">
+                                        <TextBlock
+                                            MinWidth="100"
+                                            VerticalAlignment="Center"
+                                            FontWeight="Bold"
+                                            Text="晶体1温度" />
+                                        <TextBlock
+                                            MinWidth="50"
+                                            Margin="10,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Text="{Binding SettingParamsToShow.TECParams[2].Temp}" />
+                                        <TextBox
+                                            Width="70"
+                                            Margin="10,0,0,0"
+                                            materialDesign:TextFieldAssist.SuffixText="℃"
+                                            Text="{Binding SettingParams.TECParams[2].Temp}" />
+                                        <Button
+                                            Height="25"
+                                            Margin="10,0,0,0"
+                                            Command="{Binding ExecuteCommand}"
+                                            CommandParameter="设置晶体1温度"
+                                            Content="设置"
+                                            Cursor="Hand" />
+
+                                    </StackPanel>
+
+                                    <StackPanel
+                                        Margin="5,10,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Orientation="Horizontal">
+                                        <TextBlock
+                                            MinWidth="100"
+                                            VerticalAlignment="Center"
+                                            FontWeight="Bold"
+                                            Text="晶体2温度" />
+                                        <TextBlock
+                                            MinWidth="50"
+                                            Margin="10,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Text="{Binding SettingParamsToShow.TECParams[3].Temp}" />
+                                        <TextBox
+                                            Width="70"
+                                            Margin="10,0,0,0"
+                                            materialDesign:TextFieldAssist.SuffixText="℃"
+                                            Text="{Binding SettingParams.TECParams[3].Temp}" />
+                                        <Button
+                                            Height="25"
+                                            Margin="10,0,0,0"
+                                            Command="{Binding ExecuteCommand}"
+                                            CommandParameter="设置晶体2温度"
+                                            Content="设置"
+                                            Cursor="Hand" />
+
+                                    </StackPanel>
+
+                                    <StackPanel
+                                        Margin="5,10,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Orientation="Horizontal">
+                                        <TextBlock
+                                            MinWidth="100"
+                                            VerticalAlignment="Center"
+                                            FontWeight="Bold"
+                                            Text="调Q开关" />
+                                        <TextBlock
+                                            MinWidth="50"
+                                            Margin="10,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Text="{Binding SettingParamsToShow.TQParams.IsWork}" />
+                                        <ComboBox
+                                            Width="70"
+                                            Margin="10,0,0,0"
+                                            HorizontalAlignment="Center"
+                                            ItemsSource="{Binding SwicthList}"
+                                            SelectedItem="{Binding SettingParams.TQParams.IsWork}" />
+                                        <Button
+                                            Height="25"
+                                            Margin="10,0,0,0"
+                                            Command="{Binding ExecuteCommand}"
+                                            CommandParameter="设置调Q开关"
+                                            Content="设置"
+                                            Cursor="Hand" />
+
+                                    </StackPanel>
+
+
+
+                                    <StackPanel
+                                        Margin="5,10,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Orientation="Horizontal">
+                                        <TextBlock
+                                            MinWidth="100"
+                                            VerticalAlignment="Center"
+                                            FontWeight="Bold"
+                                            Text="调Q时延" />
+                                        <TextBlock
+                                            MinWidth="50"
+                                            Margin="10,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Text="{Binding SettingParamsToShow.TQParams.Delay}" />
+                                        <TextBox
+                                            Width="70"
+                                            Margin="10,0,0,0"
+                                            materialDesign:TextFieldAssist.SuffixText="us"
+                                            Text="{Binding SettingParams.TQParams.Delay}" />
+                                        <Button
+                                            Height="25"
+                                            Margin="10,0,0,0"
+                                            Command="{Binding ExecuteCommand}"
+                                            CommandParameter="设置调Q时延"
+                                            Content="设置"
+                                            Cursor="Hand" />
+
+                                    </StackPanel>
+
+
+
+
+
+                                </StackPanel>
+                            </ScrollViewer>
+
+                            <StackPanel Grid.Row="2">
+                                <Border Margin="5,25,5,5" Style="{StaticResource HorizontalDividerBorder}" />
+                                <UniformGrid
+                                    Margin="0,5,0,5"
+                                    Columns="2"
+                                    IsEnabled="{Binding DeviceIsOpen}"
+                                    Rows="3">
+                                    <Button
+                                        Height="25"
+                                        Margin="5"
+                                        materialDesign:ButtonProgressAssist.IsIndeterminate="True"
+                                        materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding SettingParamsToShow.TECParams[0].IsWork}"
+                                        materialDesign:ButtonProgressAssist.Value="-1"
+                                        Command="{Binding ExecuteCommand}"
+                                        CommandParameter="TEC1启动"
+                                        Cursor="Hand">
+                                        <Button.Style>
+                                            <Style BasedOn="{StaticResource MaterialDesignRaisedButton}" TargetType="Button">
+                                                <Setter Property="Content" Value="TEC1启动" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SettingParamsToShow.TECParams[0].IsWork}" Value="True">
+                                                        <Setter Property="Content" Value="TEC1运行中" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+                                    <Button
+                                        Height="25"
+                                        Margin="5"
+                                        materialDesign:ButtonProgressAssist.IsIndeterminate="True"
+                                        materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding SettingParamsToShow.TECParams[1].IsWork}"
+                                        materialDesign:ButtonProgressAssist.Value="-1"
+                                        Command="{Binding ExecuteCommand}"
+                                        CommandParameter="TEC2启动">
+                                        <Button.Style>
+                                            <Style BasedOn="{StaticResource MaterialDesignRaisedButton}" TargetType="Button">
+                                                <Setter Property="Content" Value="TEC2启动" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SettingParamsToShow.TECParams[1].IsWork}" Value="True">
+                                                        <Setter Property="Content" Value="TEC2运行中" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+
+                                    </Button>
+                                    <Button
+                                        Height="25"
+                                        Margin="5"
+                                        materialDesign:ButtonProgressAssist.IsIndeterminate="True"
+                                        materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding SettingParamsToShow.TECParams[2].IsWork}"
+                                        materialDesign:ButtonProgressAssist.Value="-1"
+                                        Command="{Binding ExecuteCommand}"
+                                        CommandParameter="TEC3启动"
+                                        Cursor="Hand">
+                                        <Button.Style>
+                                            <Style BasedOn="{StaticResource MaterialDesignRaisedButton}" TargetType="Button">
+                                                <Setter Property="Content" Value="TEC3启动" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SettingParamsToShow.TECParams[2].IsWork}" Value="True">
+                                                        <Setter Property="Content" Value="TEC3运行中" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+                                    <Button
+                                        Height="25"
+                                        Margin="5"
+                                        materialDesign:ButtonProgressAssist.IsIndeterminate="True"
+                                        materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding SettingParamsToShow.TECParams[3].IsWork}"
+                                        materialDesign:ButtonProgressAssist.Value="-1"
+                                        Command="{Binding ExecuteCommand}"
+                                        CommandParameter="TEC4启动">
+                                        <Button.Style>
+                                            <Style BasedOn="{StaticResource MaterialDesignRaisedButton}" TargetType="Button">
+                                                <Setter Property="Content" Value="TEC4启动" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SettingParamsToShow.TECParams[3].IsWork}" Value="True">
+                                                        <Setter Property="Content" Value="TEC4运行中" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+
+                                    </Button>
+                                    <Button
+                                        Height="25"
+                                        Margin="5"
+                                        materialDesign:ButtonProgressAssist.IsIndeterminate="True"
+                                        materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding SettingParamsToShow.LDParams[0].IsWork}"
+                                        materialDesign:ButtonProgressAssist.Value="-1"
+                                        Command="{Binding ExecuteCommand}"
+                                        CommandParameter="LD1启动"
+                                        Cursor="Hand">
+                                        <Button.Style>
+                                            <Style BasedOn="{StaticResource MaterialDesignRaisedButton}" TargetType="Button">
+                                                <Setter Property="Content" Value="LD1启动" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SettingParamsToShow.LDParams[0].IsWork}" Value="True">
+                                                        <Setter Property="Content" Value="LD1运行中" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+                                    <Button
+                                        Height="25"
+                                        Margin="5"
+                                        materialDesign:ButtonProgressAssist.IsIndeterminate="True"
+                                        materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding SettingParamsToShow.LDParams[1].IsWork}"
+                                        materialDesign:ButtonProgressAssist.Value="-1"
+                                        Command="{Binding ExecuteCommand}"
+                                        CommandParameter="LD2启动">
+                                        <Button.Style>
+                                            <Style BasedOn="{StaticResource MaterialDesignRaisedButton}" TargetType="Button">
+                                                <Setter Property="Content" Value="LD2启动" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SettingParamsToShow.LDParams[1].IsWork}" Value="True">
+                                                        <Setter Property="Content" Value="LD2运行中" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+
+                                    </Button>
+                                </UniformGrid>
+
+                            </StackPanel>
+                        </Grid>
+
+                    </TabItem>
+                    <TabItem Width="40" Height="auto">
+                        <TabItem.Header>
+                            <TextBlock
+                                Margin="0,10,0,10"
+                                HorizontalAlignment="Center"
+                                RenderTransformOrigin=".5,.5"
+                                Text="脉冲参数">
+                                <TextBlock.LayoutTransform>
+                                    <RotateTransform Angle="90" />
+                                </TextBlock.LayoutTransform>
+                            </TextBlock>
+                        </TabItem.Header>
+                        <ScrollViewer Margin="0,10,10,0" VerticalScrollBarVisibility="Auto">
+                            <StackPanel IsEnabled="{Binding DeviceIsOpen}">
+                                <DockPanel LastChildFill="False">
+                                    <materialDesign:PackIcon
+                                        Width="20"
+                                        Height="20"
+                                        Margin="10,0,10,0"
+                                        VerticalAlignment="Center"
+                                        Foreground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                        Kind="CogSync" />
+
+                                    <TextBlock
+                                        Margin="0,0,10,0"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        FontSize="16"
+                                        Foreground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                        Text="脉冲参数" />
+                                </DockPanel>
+                                <StackPanel
+                                    Margin="5,10,0,0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Orientation="Horizontal">
+                                    <TextBlock
+                                        MinWidth="100"
+                                        VerticalAlignment="Center"
+                                        FontWeight="Bold"
+                                        Text="脉冲宽度" />
+                                    <TextBlock
+                                        MinWidth="50"
+                                        Margin="10,0,0,0"
+                                        VerticalAlignment="Center"
+                                        Text="{Binding SettingParamsToShow.PulseParams.Width}" />
+                                    <TextBox
+                                        Width="70"
+                                        Margin="10,0,0,0"
+                                        materialDesign:TextFieldAssist.SuffixText="us"
+                                        Text="{Binding SettingParams.PulseParams.Width}" />
+                                    <Button
+                                        Height="25"
+                                        Margin="10,0,0,0"
+                                        Command="{Binding ExecuteCommand}"
+                                        CommandParameter="设置脉冲宽度"
+                                        Content="设置"
+                                        Cursor="Hand" />
+                                </StackPanel>
+
+                                <StackPanel
+                                    Margin="5,10,0,0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Orientation="Horizontal">
+                                    <TextBlock
+                                        MinWidth="100"
+                                        VerticalAlignment="Center"
+                                        FontWeight="Bold"
+                                        Text="脉冲频率(定频)" />
+                                    <TextBlock
+                                        MinWidth="50"
+                                        Margin="10,0,0,0"
+                                        VerticalAlignment="Center"
+                                        Text="{Binding SettingParamsToShow.PulseParams.Freq}" />
+                                    <TextBox
+                                        Width="70"
+                                        Margin="10,0,0,0"
+                                        materialDesign:TextFieldAssist.SuffixText="Hz"
+                                        Text="{Binding SettingParams.PulseParams.Freq}" />
+                                    <Button
+                                        Height="25"
+                                        Margin="10,0,0,0"
+                                        Command="{Binding ExecuteCommand}"
+                                        CommandParameter="设置脉冲定频"
+                                        Content="设置"
+                                        Cursor="Hand" />
+                                </StackPanel>
+                                <Border Margin="5,25,5,5" Style="{StaticResource HorizontalDividerBorder}" />
+                                <DockPanel LastChildFill="False">
+                                    <materialDesign:PackIcon
+                                        Width="20"
+                                        Height="20"
+                                        Margin="10,0,10,0"
+                                        VerticalAlignment="Center"
+                                        Foreground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                        Kind="CogSync" />
+
+                                    <TextBlock
+                                        Margin="0,0,10,0"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        FontSize="16"
+                                        Foreground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                        Text="脉冲串参数" />
+                                </DockPanel>
+                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+
+                                    <StackPanel
+                                        Margin="5,10,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Orientation="Horizontal">
+                                        <TextBlock
+                                            MinWidth="100"
+                                            VerticalAlignment="Center"
+                                            FontWeight="Bold"
+                                            Text="脉冲串个数" />
+                                        <TextBlock
+                                            MinWidth="50"
+                                            Margin="10,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Text="{Binding SettingParamsToShow.PulseParams.Num}" />
+                                        <TextBox
+                                            Width="70"
+                                            Margin="10,0,0,0"
+                                            materialDesign:TextFieldAssist.SuffixText="个"
+                                            Text="{Binding SettingParams.PulseParams.Num}" />
+                                    </StackPanel>
+
+                                    <ItemsControl ItemsSource="{Binding PulseIntervalModelList}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel
+                                                    Margin="5,10,0,0"
+                                                    HorizontalAlignment="Left"
+                                                    VerticalAlignment="Center"
+                                                    Orientation="Horizontal">
+                                                    <TextBlock
+                                                        MinWidth="100"
+                                                        VerticalAlignment="Center"
+                                                        FontWeight="Bold"
+                                                        Text="{Binding Tile}" />
+                                                    <TextBlock
+                                                        MinWidth="50"
+                                                        Margin="10,0,0,0"
+                                                        VerticalAlignment="Center"
+                                                        Text="{Binding Interval2Show.Value}" />
+                                                    <TextBox
+                                                        Width="70"
+                                                        Margin="10,0,0,0"
+                                                        materialDesign:TextFieldAssist.SuffixText="us"
+                                                        Text="{Binding Interval.Value}" />
+
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
+                                    <Button
+                                        Height="25"
+                                        Margin="0,20,0,0"
+                                        Command="{Binding ExecuteCommand}"
+                                        CommandParameter="设置脉冲串参数"
+                                        Content="设置"
+                                        Cursor="Hand" />
+                                </StackPanel>
+
+
+                                <Border Margin="5,10,5,5" Style="{StaticResource HorizontalDividerBorder}" />
+
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+
+                    <TabItem Width="40" Height="auto">
+                        <TabItem.Header>
+                            <TextBlock
+                                Margin="0,10,0,10"
+                                HorizontalAlignment="Center"
+                                RenderTransformOrigin=".5,.5"
+                                Text="液冷控制">
+                                <TextBlock.LayoutTransform>
+                                    <RotateTransform Angle="90" />
+                                </TextBlock.LayoutTransform>
+                            </TextBlock>
+                        </TabItem.Header>
+                        <ScrollViewer
+                            Margin="0,10,10,0"
+                            HorizontalAlignment="Center"
+                            VerticalScrollBarVisibility="Auto">
+                            <StackPanel IsEnabled="{Binding DeviceIsOpen}">
+
+
+                                <DockPanel LastChildFill="False">
+                                    <materialDesign:PackIcon
+                                        Width="20"
+                                        Height="20"
+                                        Margin="10,0,10,0"
+                                        VerticalAlignment="Center"
+                                        Foreground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                        Kind="CogSync" />
+
+                                    <TextBlock
+                                        Margin="0,0,10,0"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        FontSize="16"
+                                        Foreground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                        Text="液冷参数" />
+                                </DockPanel>
+                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <StackPanel
+                                        Margin="5,10,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Orientation="Horizontal">
+                                        <TextBlock
+                                            MinWidth="100"
+                                            VerticalAlignment="Center"
+                                            FontWeight="Bold"
+                                            Text="液冷供电" />
+                                        <TextBlock
+                                            MinWidth="50"
+                                            Margin="10,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Text="{Binding SettingParamsToShow.LCMParams.IsPowerOn}" />
+                                        <ComboBox
+                                            Width="70"
+                                            Margin="10,0,0,0"
+                                            HorizontalAlignment="Center"
+                                            ItemsSource="{Binding SwicthList}"
+                                            SelectedItem="{Binding SettingParams.LCMParams.IsPowerOn}" />
+                                    </StackPanel>
+                                    <StackPanel
+                                        Margin="5,10,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Orientation="Horizontal">
+                                        <TextBlock
+                                            MinWidth="100"
+                                            VerticalAlignment="Center"
+                                            FontWeight="Bold"
+                                            Text="电机开关" />
+                                        <TextBlock
+                                            MinWidth="50"
+                                            Margin="10,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Text="{Binding SettingParamsToShow.LCMParams.IsIsMotorWork}" />
+                                        <ComboBox
+                                            Width="70"
+                                            Margin="10,0,0,0"
+                                            HorizontalAlignment="Center"
+                                            ItemsSource="{Binding SwicthList}"
+                                            SelectedItem="{Binding SettingParams.LCMParams.IsIsMotorWork}" />
+                                    </StackPanel>
+                                    <StackPanel
+                                        Margin="5,10,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Orientation="Horizontal">
+                                        <TextBlock
+                                            MinWidth="100"
+                                            VerticalAlignment="Center"
+                                            FontWeight="Bold"
+                                            Text="风扇转速" />
+                                        <TextBlock
+                                            MinWidth="50"
+                                            Margin="10,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Text="{Binding SettingParamsToShow.LCMParams.FanSpeed}" />
+                                        <TextBox
+                                            Width="70"
+                                            Margin="10,0,0,0"
+                                            materialDesign:TextFieldAssist.SuffixText="%"
+                                            Text="{Binding SettingParams.LCMParams.FanSpeed}" />
+                                    </StackPanel>
+                                    <StackPanel
+                                        Margin="5,10,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Orientation="Horizontal">
+                                        <TextBlock
+                                            MinWidth="100"
+                                            VerticalAlignment="Center"
+                                            FontWeight="Bold"
+                                            Text="电机转速" />
+                                        <TextBlock
+                                            MinWidth="50"
+                                            Margin="10,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Text="{Binding SettingParamsToShow.LCMParams.MotorSpeed}" />
+                                        <TextBox
+                                            Width="70"
+                                            Margin="10,0,0,0"
+                                            materialDesign:TextFieldAssist.SuffixText="rpm"
+                                            Text="{Binding SettingParams.LCMParams.MotorSpeed}" />
+                                    </StackPanel>
+                                    <StackPanel
+                                        Margin="5,10,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Orientation="Horizontal">
+                                        <TextBlock
+                                            MinWidth="100"
+                                            VerticalAlignment="Center"
+                                            FontWeight="Bold"
+                                            Text="最高功率" />
+                                        <TextBlock
+                                            MinWidth="50"
+                                            Margin="10,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Text="{Binding SettingParamsToShow.LCMParams.PwrLimit}" />
+                                        <TextBox
+                                            Width="70"
+                                            Margin="10,0,0,0"
+                                            materialDesign:TextFieldAssist.SuffixText="W"
+                                            Text="{Binding SettingParams.LCMParams.PwrLimit}" />
+                                    </StackPanel>
+                                    <Button
+                                        Height="25"
+                                        Margin="0,20,0,0"
+                                        Command="{Binding ExecuteCommand}"
+                                        CommandParameter="设置液冷参数"
+                                        Content="设置"
+                                        Cursor="Hand" />
+                                </StackPanel>
+
+
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+
+                    <TabItem Width="40" Height="auto">
+                        <TabItem.Header>
+                            <TextBlock
+                                Margin="0,10,0,10"
+                                HorizontalAlignment="Center"
+                                RenderTransformOrigin=".5,.5"
+                                Text="LD标定">
+                                <TextBlock.LayoutTransform>
+                                    <RotateTransform Angle="90" />
+                                </TextBlock.LayoutTransform>
+                            </TextBlock>
+                        </TabItem.Header>
+                        <ScrollViewer Margin="0,10,10,0" VerticalScrollBarVisibility="Auto">
+                            <StackPanel IsEnabled="{Binding DeviceIsOpen}">
+                                <DockPanel LastChildFill="False">
+                                    <materialDesign:PackIcon
+                                        Width="20"
+                                        Height="20"
+                                        Margin="10,0,10,0"
+                                        VerticalAlignment="Center"
+                                        Foreground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                        Kind="CogSync" />
+
+                                    <TextBlock
+                                        Margin="0,0,10,0"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        FontSize="16"
+                                        Foreground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                        Text="过流保护" />
+                                </DockPanel>
+                                <StackPanel
+                                    Margin="5,10,0,0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Orientation="Horizontal">
+                                    <TextBlock
+                                        MinWidth="100"
+                                        VerticalAlignment="Center"
+                                        FontWeight="Bold"
+                                        Text="LD1过流保护" />
+                                    <TextBlock
+                                        MinWidth="50"
+                                        Margin="10,0,0,0"
+                                        VerticalAlignment="Center"
+                                        Text="{Binding SettingParamsToShow.LDParams[0].HOC}" />
+                                    <TextBox
+                                        Width="70"
+                                        Margin="10,0,0,0"
+                                        materialDesign:TextFieldAssist.SuffixText="A"
+                                        Text="{Binding SettingParams.LDParams[0].HOC}" />
+                                    <Button
+                                        Height="25"
+                                        Margin="10,0,0,0"
+                                        Command="{Binding ExecuteCommand}"
+                                        CommandParameter="设置LD1过流保护"
+                                        Content="设置"
+                                        Cursor="Hand" />
+
+                                </StackPanel>
+                                <StackPanel
+                                    Margin="5,10,0,0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Orientation="Horizontal">
+                                    <TextBlock
+                                        MinWidth="100"
+                                        VerticalAlignment="Center"
+                                        FontWeight="Bold"
+                                        Text="LD2过流保护" />
+                                    <TextBlock
+                                        MinWidth="50"
+                                        Margin="10,0,0,0"
+                                        VerticalAlignment="Center"
+                                        Text="{Binding SettingParamsToShow.LDParams[1].HOC}" />
+                                    <TextBox
+                                        Width="70"
+                                        Margin="10,0,0,0"
+                                        materialDesign:TextFieldAssist.SuffixText="A"
+                                        Text="{Binding SettingParams.LDParams[1].HOC}" />
+                                    <Button
+                                        Height="25"
+                                        Margin="10,0,0,0"
+                                        Command="{Binding ExecuteCommand}"
+                                        CommandParameter="设置LD2过流保护"
+                                        Content="设置"
+                                        Cursor="Hand" />
+
+                                </StackPanel>
+                                <Border Margin="5,15,5,5" Style="{StaticResource HorizontalDividerBorder}" />
+
+                                <ItemsControl ItemsSource="{Binding KBModelList}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel>
+                                                <DockPanel LastChildFill="False">
+                                                    <materialDesign:PackIcon
+                                                        Width="20"
+                                                        Height="20"
+                                                        Margin="10,0,10,0"
+                                                        VerticalAlignment="Center"
+                                                        Foreground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                                        Kind="{Binding Icon}" />
+
+                                                    <TextBlock
+                                                        Margin="0,0,10,0"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        FontSize="16"
+                                                        Foreground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                                        Text="{Binding Tile}" />
+                                                </DockPanel>
+                                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    <StackPanel
+                                                        Margin="5,10,0,0"
+                                                        HorizontalAlignment="Left"
+                                                        VerticalAlignment="Center"
+                                                        Orientation="Horizontal">
+                                                        <TextBlock
+                                                            MinWidth="100"
+                                                            VerticalAlignment="Center"
+                                                            FontWeight="Bold"
+                                                            Text="K" />
+                                                        <TextBlock
+                                                            MinWidth="50"
+                                                            Margin="10,0,0,0"
+                                                            VerticalAlignment="Center"
+                                                            Text="{Binding KB2Show.K}" />
+                                                        <TextBox
+                                                            Width="70"
+                                                            Margin="10,0,0,0"
+                                                            Text="{Binding KB.K}" />
+                                                    </StackPanel>
+                                                    <StackPanel
+                                                        Margin="5,10,0,0"
+                                                        HorizontalAlignment="Left"
+                                                        VerticalAlignment="Center"
+                                                        Orientation="Horizontal">
+                                                        <TextBlock
+                                                            MinWidth="100"
+                                                            VerticalAlignment="Center"
+                                                            FontWeight="Bold"
+                                                            Text="B" />
+                                                        <TextBlock
+                                                            MinWidth="50"
+                                                            Margin="10,0,0,0"
+                                                            VerticalAlignment="Center"
+                                                            Text="{Binding KB2Show.B}" />
+                                                        <TextBox
+                                                            Width="70"
+                                                            Margin="10,0,0,0"
+                                                            Text="{Binding KB.B}" />
+                                                    </StackPanel>
+
+                                                    <Button
+                                                        Height="25"
+                                                        Margin="0,20,0,0"
+                                                        Command="{Binding DataContext.ExecuteCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"
+                                                        CommandParameter="{Binding CommandParameter}"
+                                                        Content="设置"
+                                                        Cursor="Hand" />
+                                                </StackPanel>
+                                                <Border Margin="5,15,5,5" Style="{StaticResource HorizontalDividerBorder}" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+
+                    <TabItem Width="40" Height="auto">
+                        <TabItem.Header>
+                            <TextBlock
+                                Margin="0,10,0,10"
+                                HorizontalAlignment="Center"
+                                RenderTransformOrigin=".5,.5"
+                                Text="TEC标定">
+                                <TextBlock.LayoutTransform>
+                                    <RotateTransform Angle="90" />
+                                </TextBlock.LayoutTransform>
+                            </TextBlock>
+                        </TabItem.Header>
+                        <ScrollViewer Margin="0,10,10,0" VerticalScrollBarVisibility="Auto">
+
+                            <StackPanel
+                                Margin="35,0,0,0"
+                                HorizontalAlignment="Right"
+                                IsEnabled="{Binding DeviceIsOpen}">
+
+                                <ItemsControl ItemsSource="{Binding PIDModelList}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel>
+                                                <DockPanel LastChildFill="False">
+                                                    <materialDesign:PackIcon
+                                                        Width="20"
+                                                        Height="20"
+                                                        Margin="10,0,10,0"
+                                                        VerticalAlignment="Center"
+                                                        Foreground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                                        Kind="{Binding Icon}" />
+
+                                                    <TextBlock
+                                                        Margin="0,0,10,0"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        FontSize="16"
+                                                        Foreground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                                        Text="{Binding Tile}" />
+                                                </DockPanel>
+                                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    <StackPanel
+                                                        Margin="5,10,0,0"
+                                                        HorizontalAlignment="Left"
+                                                        VerticalAlignment="Center"
+                                                        Orientation="Horizontal">
+                                                        <TextBlock
+                                                            MinWidth="100"
+                                                            VerticalAlignment="Center"
+                                                            FontWeight="Bold"
+                                                            Text="P" />
+                                                        <TextBlock
+                                                            MinWidth="50"
+                                                            Margin="10,0,0,0"
+                                                            VerticalAlignment="Center"
+                                                            Text="{Binding PID2Show.P}" />
+                                                        <TextBox
+                                                            Width="70"
+                                                            Margin="10,0,0,0"
+                                                            Text="{Binding PID.P}" />
+                                                    </StackPanel>
+                                                    <StackPanel
+                                                        Margin="5,10,0,0"
+                                                        HorizontalAlignment="Left"
+                                                        VerticalAlignment="Center"
+                                                        Orientation="Horizontal">
+                                                        <TextBlock
+                                                            MinWidth="100"
+                                                            VerticalAlignment="Center"
+                                                            FontWeight="Bold"
+                                                            Text="I" />
+                                                        <TextBlock
+                                                            MinWidth="50"
+                                                            Margin="10,0,0,0"
+                                                            VerticalAlignment="Center"
+                                                            Text="{Binding PID2Show.I}" />
+                                                        <TextBox
+                                                            Width="70"
+                                                            Margin="10,0,0,0"
+                                                            Text="{Binding PID.I}" />
+                                                    </StackPanel>
+                                                    <StackPanel
+                                                        Margin="5,10,0,0"
+                                                        HorizontalAlignment="Left"
+                                                        VerticalAlignment="Center"
+                                                        Orientation="Horizontal">
+                                                        <TextBlock
+                                                            MinWidth="100"
+                                                            VerticalAlignment="Center"
+                                                            FontWeight="Bold"
+                                                            Text="D" />
+                                                        <TextBlock
+                                                            MinWidth="50"
+                                                            Margin="10,0,0,0"
+                                                            VerticalAlignment="Center"
+                                                            Text="{Binding PID2Show.D}" />
+                                                        <TextBox
+                                                            Width="70"
+                                                            Margin="10,0,0,0"
+                                                            Text="{Binding PID.D}" />
+                                                    </StackPanel>
+
+                                                    <Button
+                                                        Height="25"
+                                                        Margin="0,15,0,0"
+                                                        Command="{Binding DataContext.ExecuteCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"
+                                                        CommandParameter="{Binding CommandParameter}"
+                                                        Content="设置"
+                                                        Cursor="Hand" />
+                                                </StackPanel>
+                                                <Border Margin="5,15,5,5" Style="{StaticResource HorizontalDividerBorder}" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                            </StackPanel>
+
+                        </ScrollViewer>
+                    </TabItem>
+                    <TabItem Width="40" Height="auto">
+                        <TabItem.Header>
+                            <TextBlock
+                                Margin="0,10,0,10"
+                                HorizontalAlignment="Center"
+                                RenderTransformOrigin=".5,.5"
+                                Text="PD标定">
+                                <TextBlock.LayoutTransform>
+                                    <RotateTransform Angle="90" />
+                                </TextBlock.LayoutTransform>
+                            </TextBlock>
+                        </TabItem.Header>
+                        <ScrollViewer
+                            Margin="0,10,10,0"
+                            HorizontalAlignment="Center"
+                            VerticalScrollBarVisibility="Auto">
+                            <StackPanel IsEnabled="{Binding DeviceIsOpen}">
+                                <DockPanel LastChildFill="False">
+                                    <materialDesign:PackIcon
+                                        Width="20"
+                                        Height="20"
+                                        Margin="10,0,10,0"
+                                        VerticalAlignment="Center"
+                                        Foreground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                        Kind="CogSync" />
+
+                                    <TextBlock
+                                        Margin="0,0,10,0"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        FontSize="16"
+                                        Foreground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                        Text="PD标定" />
+                                </DockPanel>
+                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <StackPanel
+                                        Margin="5,10,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Orientation="Horizontal">
+                                        <TextBlock
+                                            MinWidth="100"
+                                            VerticalAlignment="Center"
+                                            FontWeight="Bold"
+                                            Text="K" />
+                                        <TextBlock
+                                            MinWidth="50"
+                                            Margin="10,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Text="{Binding SettingParamsToShow.CalibPD.K}" />
+                                        <TextBox
+                                            Width="70"
+                                            Margin="10,0,0,0"
+                                            Text="{Binding SettingParams.CalibPD.K}" />
+                                    </StackPanel>
+                                    <StackPanel
+                                        Margin="5,10,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Orientation="Horizontal">
+                                        <TextBlock
+                                            MinWidth="100"
+                                            VerticalAlignment="Center"
+                                            FontWeight="Bold"
+                                            Text="B" />
+                                        <TextBlock
+                                            MinWidth="50"
+                                            Margin="10,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Text="{Binding SettingParams.CalibPD.B}" />
+                                        <TextBox
+                                            Width="70"
+                                            Margin="10,0,0,0"
+                                            Text="{Binding SettingParams.CalibPD.B}" />
+                                    </StackPanel>
+                                    <Button
+                                        Height="25"
+                                        Margin="0,15,0,0"
+                                        Command="{Binding ExecuteCommand}"
+                                        CommandParameter="设置PDKB"
+                                        Content="设置"
+                                        Cursor="Hand" />
+                                </StackPanel>
+                                <Border Margin="5,15,5,5" Style="{StaticResource HorizontalDividerBorder}" />
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+
+
+                    <TabItem Width="40" Height="auto">
+                        <TabItem.Header>
+                            <TextBlock
+                                Margin="0,10,0,10"
+                                HorizontalAlignment="Center"
+                                RenderTransformOrigin=".5,.5"
+                                Text="其他">
+                                <TextBlock.LayoutTransform>
+                                    <RotateTransform Angle="90" />
+                                </TextBlock.LayoutTransform>
+                            </TextBlock>
+                        </TabItem.Header>
+                        <!--<ScrollViewer
+                            Margin="0,10,10,0"
+                            HorizontalAlignment="Center"
+                            VerticalScrollBarVisibility="Auto">-->
+                        <StackPanel IsEnabled="{Binding DeviceIsOpen}">
+                            <DockPanel LastChildFill="False">
+                                <materialDesign:PackIcon
+                                    Width="20"
+                                    Height="20"
+                                    Margin="10,0,10,0"
+                                    VerticalAlignment="Center"
+                                    Foreground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                    Kind="CogSync" />
+
+                                <TextBlock
+                                    Margin="0,0,10,0"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    Foreground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                    Text="数据存储" />
+                            </DockPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox
+                                    Grid.Column="0"
+                                    MinWidth="160"
+                                    Margin="5,0,0,0"
+                                    VerticalAlignment="Center"
+                                    materialDesign:HintAssist.Hint="文件根目录"
+                                    DockPanel.Dock="Left"
+                                    Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                    Text="{Binding FileSavePath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <StackPanel
+                                    Grid.Column="1"
+                                    DockPanel.Dock="Right"
+                                    Orientation="Horizontal">
+                                    <Button
+                                        VerticalAlignment="Bottom"
+                                        Command="{Binding ExecuteCommand}"
+                                        CommandParameter="设置目录"
+                                        Style="{StaticResource MaterialDesignToolButton}"
+                                        ToolTip="设置文件根目录">
+                                        <materialDesign:PackIcon Kind="FolderEditOutline" />
+                                    </Button>
+                                    <Button
+                                        Margin="0,0,0,0"
+                                        VerticalAlignment="Bottom"
+                                        Command="{Binding ExecuteCommand}"
+                                        CommandParameter="打开目录"
+                                        Style="{StaticResource MaterialDesignToolButton}"
+                                        ToolTip="打开文件根目录">
+                                        <materialDesign:PackIcon Kind="Share" />
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
+                            <Border Margin="5,15,5,5" Style="{StaticResource HorizontalDividerBorder}" />
+
+                            <DockPanel LastChildFill="False">
+                                <materialDesign:PackIcon
+                                    Width="20"
+                                    Height="20"
+                                    Margin="10,0,10,0"
+                                    VerticalAlignment="Center"
+                                    Foreground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                    Kind="CogSync" />
+
+                                <TextBlock
+                                    Margin="0,0,10,0"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    Foreground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                    Text="固件信息" />
+                            </DockPanel>
+
+                            <StackPanel
+                                Margin="5,10,0,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Orientation="Horizontal">
+                                <TextBlock
+                                    MinWidth="100"
+                                    VerticalAlignment="Center"
+                                    FontWeight="Bold"
+                                    Text="当前固件版本:" />
+                                <TextBlock
+                                    MinWidth="50"
+                                    Margin="10,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Text="{Binding Update.Version}" />
+                            </StackPanel>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox
+                                    Grid.Column="0"
+                                    MinWidth="160"
+                                    Margin="5,0,0,0"
+                                    VerticalAlignment="Center"
+                                    materialDesign:HintAssist.Hint="选择升级文件"
+                                    DockPanel.Dock="Left"
+                                    Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                    Text="{Binding Update.FilePath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <StackPanel
+                                    Grid.Column="1"
+                                    DockPanel.Dock="Right"
+                                    Orientation="Horizontal">
+                                    <Button
+                                        VerticalAlignment="Bottom"
+                                        Command="{Binding ExecuteCommand}"
+                                        CommandParameter="选择升级文件"
+                                        Style="{StaticResource MaterialDesignToolButton}"
+                                        ToolTip="选择升级文件">
+                                        <materialDesign:PackIcon Kind="FolderEditOutline" />
+                                    </Button>
+                                    <Button
+                                        Margin="0,0,0,0"
+                                        VerticalAlignment="Bottom"
+                                        Command="{Binding ExecuteCommand}"
+                                        CommandParameter="打开升级文件目录"
+                                        Style="{StaticResource MaterialDesignToolButton}"
+                                        ToolTip="打开升级文件所在目录">
+                                        <materialDesign:PackIcon Kind="Share" />
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
+
+
+                            <Button
+                                Height="25"
+                                Margin="5,5,5,5"
+                                materialDesign:ButtonProgressAssist.IsIndeterminate="True"
+                                materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding Update.IsUpdate}"
+                                materialDesign:ButtonProgressAssist.Value="-1"
+                                Command="{Binding ExecuteCommand}"
+                                CommandParameter="升级"
+                                Content="{Binding Update.ButtonContent}"
+                                Cursor="Hand" />
+
+                            <Border Margin="5,15,5,5" Style="{StaticResource HorizontalDividerBorder}" />
+
+                            <Button
+                                Height="25"
+                                Margin="5,5,5,5"
+                                Command="{Binding ExecuteCommand}"
+                                CommandParameter="清空错误"
+                                Content="清空错误"
+                                Cursor="Hand" />
+
+                        </StackPanel>
+
+
+                        <!--</ScrollViewer>-->
+                    </TabItem>
+                </TabControl>
+
+
+            </materialDesign:Card>
+
+        </Grid>
+
+        <materialDesign:Card
+            x:Name="GridMain"
+            Grid.Row="1"
+            Margin="5"
+            UniformCornerRadius="20">
+            <DockPanel Margin="15,5,15,0" LastChildFill="False">
+                <StackPanel
+                    Margin="0,10,0,10"
+                    DockPanel.Dock="Left"
+                    Orientation="Horizontal">
+                    <TextBlock
+                        Margin="0,0,10,0"
+                        HorizontalAlignment="Right"
+                        FontSize="18"
+                        Text="连接状态:"
+                        TextAlignment="Right" />
+                    <TextBlock
+                        HorizontalAlignment="Left"
+                        FontSize="18"
+                        Text="{Binding MeasureParams.StatusInfo.ConnectStatus.Value}" />
+                </StackPanel>
+
+                <StackPanel
+                    Margin="0,10,0,10"
+                    DockPanel.Dock="Right"
+                    Orientation="Horizontal">
+                    <TextBlock
+                        Margin="0,0,10,0"
+                        HorizontalAlignment="Right"
+                        FontSize="18"
+                        Text="自检信息:"
+                        TextAlignment="Right" />
+                    <TextBlock
+                        HorizontalAlignment="Left"
+                        FontSize="18"
+                        Text="{Binding MeasureParams.StatusInfo.BITStatus.Value}" />
+                </StackPanel>
+            </DockPanel>
+            <!--<Grid Margin="15,5,15,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            Margin="10,5,10,5"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            FontSize="18"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Primary}"
+                            Text="模式信息"
+                            TextWrapping="Wrap" />
+                        <ItemsControl Grid.Column="1" ItemsSource="{Binding DevParaShow.SysStatus}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel MinWidth="280" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="0,10,0,10" Orientation="Horizontal">
+                                        <TextBlock
+                                            MinWidth="200"
+                                            Margin="0,0,10,0"
+                                            HorizontalAlignment="Right"
+                                            FontSize="18"
+                                            Text="{Binding Name}"
+                                            TextAlignment="Right" />
+                                        <TextBlock
+                                            HorizontalAlignment="Left"
+                                            FontSize="18"
+                                            Text="{Binding Vaule}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Grid>-->
+
+        </materialDesign:Card>
+
+    </Grid>
+</UserControl>
