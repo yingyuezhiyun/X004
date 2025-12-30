@@ -85,3 +85,21 @@ MDK-ARM/**/Objects/
 DebugConfig/
 
 
+
+# Additional patterns to ignore MDK build outputs and backups
+**/*.d
+**/*.crf
+**/*.lnp
+**/*.htm
+**/*.sct
+**/*.Bak
+**/*.iex
+**/*.db
+**/back/
+**/build_logs/
+# Editor/IDE caches already covered but reinforce
+**/.vs/**
+**/.vscode/**
+**/bin/**
+**/obj/**
+
