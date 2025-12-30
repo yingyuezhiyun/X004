@@ -1,5 +1,0 @@
-D:\WorkAndStudy\CubeMX\X_004\Code\wpfApp\wpfApp\bin\publish\win-x64\wpfApp.pdb
-D:\WorkAndStudy\CubeMX\X_004\Code\wpfApp\wpfApp\bin\publish\win-x64\libHarfBuzzSharp.dll
-D:\WorkAndStudy\CubeMX\X_004\Code\wpfApp\wpfApp\bin\publish\win-x64\glfw3.dll
-D:\WorkAndStudy\CubeMX\X_004\Code\wpfApp\wpfApp\bin\publish\win-x64\libSkiaSharp.dll
-D:\WorkAndStudy\CubeMX\X_004\Code\wpfApp\wpfApp\bin\publish\win-x64\wpfApp.exe
