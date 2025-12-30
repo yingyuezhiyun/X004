@@ -5,9 +5,15 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/*",
+<<<<<<< HEAD
                 "C:\\Keil_v5\\ARM\\ARMCC\\include",
                 "C:\\Keil_v5\\ARM\\ARMCC\\include\\rw",
                 "C:\\Keil_v5\\ARM\\PACK\\ARM\\CMSIS-DSP\\1.15.0\\Include"
+=======
+                "D:\\software\\Keil_v5\\ARM\\ARMCC\\include",
+                "D:\\software\\Keil_v5\\ARM\\ARMCC\\include\\rw",
+                "D:\\software\\Keil_v5\\ARM\\Packs\\ARM\\CMSIS-DSP\\1.15.0\\Include"
+>>>>>>> origin/main
             ],
             "defines": [
                 "_DEBUG",

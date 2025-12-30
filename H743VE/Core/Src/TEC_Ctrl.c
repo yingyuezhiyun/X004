@@ -103,6 +103,33 @@ float pid_adjust(PID_Controller *pid)
     return output;
 }
 
+/*
+    增量式 PID：返回输出增量 Δu（上层负责累加到实际控制量，例如 OUT_V）。
+    公式（离散增量式近似）：
+        Δu = Kp*(e[k]-e[k-1]) + Ki*e[k] + Kd*(e[k]-2*e[k-1]+e[k-2])
+    说明：此处假定 Ki 已包含采样周期尺度；如需按采样周期缩放，请在调用前调整 Ki。
+*/
+float pid_adjust_incremental(PID_Controller *pid)
+{
+        float e = pid->div;
+        float de = e - pid->prev_error;
+        float dde = e - 2.0f * pid->prev_error + pid->prev_prev_error;
+
+        float delta = pid->Kp * de + pid->Ki * e + pid->Kd * dde;
+
+        if (fabs(delta) < pid->Resolution)
+        {
+                pid->prev_prev_error = pid->prev_error;
+                pid->prev_error = e;
+                return 0;
+        }
+
+        pid->prev_prev_error = pid->prev_error;
+        pid->prev_error = e;
+
+        return delta;
+}
+
 void RESET_PID(PID_Controller *pid)
 {
     pid->div = 0;
