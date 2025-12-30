@@ -1,0 +1,51 @@
+# Build outputs
+/Debug/
+/Release/
+
+# Keil/MDK
+/MDK-ARM/BootLoader/Debug/
+/MDK-ARM/BootLoader/Objects/
+
+# RTE and generated
+/RTE/
+RTE/_BootLoader/
+
+# Object and binary files
+*.o
+*.obj
+*.axf
+*.elf
+*.hex
+*.bin
+*.map
+*.lst
+*.log
+*.dep
+
+# Keil project files (track if you want project config)
+*.ewp
+*.eww
+*.uvprojx
+*.uvoptx
+
+# Visual Studio / VSCode
+/.vs/
+/.vscode/
+
+# Temp files
+*.swp
+*.swo
+*.user
+*.tmp
+
+# Build folders
+build/
+
+# Tool or temp outputs
+tools/_*
+
+# Ignore local launch or debug DBs
+DebugConfig/
+
+# Git LFS metadata (if using LFS tracked files)
+.gitattributes
