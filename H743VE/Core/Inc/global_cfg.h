@@ -136,6 +136,7 @@ typedef struct
     float Ki;         // 积分增益
     float Kd;         // 微分增益
     float prev_error; // 上一次误差
+    float prev_prev_error; // 上上次误差（用于增量式PID）
     float integral;   // 积分累积
     float div;        // 偏差值
     float Resolution; // 分辨率

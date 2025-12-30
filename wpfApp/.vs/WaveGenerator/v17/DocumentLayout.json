@@ -1,0 +1,201 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\xz\\WaveGenerator\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{2D03CD22-F2DE-4DBA-A409-451D975E7183}|Pipe_Stress_App\\wpfApp.csproj|d:\\xz\\wavegenerator\\pipe_stress_app\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{2D03CD22-F2DE-4DBA-A409-451D975E7183}|Pipe_Stress_App\\wpfApp.csproj|solutionrelative:pipe_stress_app\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2D03CD22-F2DE-4DBA-A409-451D975E7183}|Pipe_Stress_App\\WaveGenerator.csproj|d:\\xz\\wavegenerator\\pipe_stress_app\\viewmodels\\homepageviewmodel.chart.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2D03CD22-F2DE-4DBA-A409-451D975E7183}|Pipe_Stress_App\\WaveGenerator.csproj|solutionrelative:pipe_stress_app\\viewmodels\\homepageviewmodel.chart.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2D03CD22-F2DE-4DBA-A409-451D975E7183}|Pipe_Stress_App\\WaveGenerator.csproj|d:\\xz\\wavegenerator\\pipe_stress_app\\viewmodels\\homepageviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2D03CD22-F2DE-4DBA-A409-451D975E7183}|Pipe_Stress_App\\WaveGenerator.csproj|solutionrelative:pipe_stress_app\\viewmodels\\homepageviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2D03CD22-F2DE-4DBA-A409-451D975E7183}|Pipe_Stress_App\\WaveGenerator.csproj|d:\\xz\\wavegenerator\\pipe_stress_app\\viewmodels\\mainviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2D03CD22-F2DE-4DBA-A409-451D975E7183}|Pipe_Stress_App\\WaveGenerator.csproj|solutionrelative:pipe_stress_app\\viewmodels\\mainviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2D03CD22-F2DE-4DBA-A409-451D975E7183}|Pipe_Stress_App\\WaveGenerator.csproj|d:\\xz\\wavegenerator\\pipe_stress_app\\viewmodels\\msgviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2D03CD22-F2DE-4DBA-A409-451D975E7183}|Pipe_Stress_App\\WaveGenerator.csproj|solutionrelative:pipe_stress_app\\viewmodels\\msgviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2D03CD22-F2DE-4DBA-A409-451D975E7183}|Pipe_Stress_App\\WaveGenerator.csproj|d:\\xz\\wavegenerator\\pipe_stress_app\\viewmodels\\skinviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2D03CD22-F2DE-4DBA-A409-451D975E7183}|Pipe_Stress_App\\WaveGenerator.csproj|solutionrelative:pipe_stress_app\\viewmodels\\skinviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2D03CD22-F2DE-4DBA-A409-451D975E7183}|Pipe_Stress_App\\WaveGenerator.csproj|d:\\xz\\wavegenerator\\pipe_stress_app\\views\\skinview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{2D03CD22-F2DE-4DBA-A409-451D975E7183}|Pipe_Stress_App\\WaveGenerator.csproj|solutionrelative:pipe_stress_app\\views\\skinview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2D03CD22-F2DE-4DBA-A409-451D975E7183}|Pipe_Stress_App\\WaveGenerator.csproj|d:\\xz\\wavegenerator\\pipe_stress_app\\views\\progressview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{2D03CD22-F2DE-4DBA-A409-451D975E7183}|Pipe_Stress_App\\WaveGenerator.csproj|solutionrelative:pipe_stress_app\\views\\progressview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2D03CD22-F2DE-4DBA-A409-451D975E7183}|Pipe_Stress_App\\WaveGenerator.csproj|d:\\xz\\wavegenerator\\pipe_stress_app\\views\\msgview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{2D03CD22-F2DE-4DBA-A409-451D975E7183}|Pipe_Stress_App\\WaveGenerator.csproj|solutionrelative:pipe_stress_app\\views\\msgview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2D03CD22-F2DE-4DBA-A409-451D975E7183}|Pipe_Stress_App\\WaveGenerator.csproj|d:\\xz\\wavegenerator\\pipe_stress_app\\views\\mainview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{2D03CD22-F2DE-4DBA-A409-451D975E7183}|Pipe_Stress_App\\WaveGenerator.csproj|solutionrelative:pipe_stress_app\\views\\mainview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2D03CD22-F2DE-4DBA-A409-451D975E7183}|Pipe_Stress_App\\WaveGenerator.csproj|d:\\xz\\wavegenerator\\pipe_stress_app\\views\\homepageview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{2D03CD22-F2DE-4DBA-A409-451D975E7183}|Pipe_Stress_App\\WaveGenerator.csproj|solutionrelative:pipe_stress_app\\views\\homepageview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "App.xaml",
+              "DocumentMoniker": "D:\\xz\\WaveGenerator\\Pipe_Stress_App\\App.xaml",
+              "RelativeDocumentMoniker": "Pipe_Stress_App\\App.xaml",
+              "ToolTip": "D:\\xz\\WaveGenerator\\Pipe_Stress_App\\App.xaml",
+              "RelativeToolTip": "Pipe_Stress_App\\App.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-06-13T13:10:52.177Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "HomePageViewModel.Chart.cs",
+              "DocumentMoniker": "D:\\xz\\WaveGenerator\\Pipe_Stress_App\\ViewModels\\HomePageViewModel.Chart.cs",
+              "RelativeDocumentMoniker": "Pipe_Stress_App\\ViewModels\\HomePageViewModel.Chart.cs",
+              "ToolTip": "D:\\xz\\WaveGenerator\\Pipe_Stress_App\\ViewModels\\HomePageViewModel.Chart.cs",
+              "RelativeToolTip": "Pipe_Stress_App\\ViewModels\\HomePageViewModel.Chart.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-13T13:06:05.995Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "MsgViewModel.cs",
+              "DocumentMoniker": "D:\\xz\\WaveGenerator\\Pipe_Stress_App\\ViewModels\\MsgViewModel.cs",
+              "RelativeDocumentMoniker": "Pipe_Stress_App\\ViewModels\\MsgViewModel.cs",
+              "ToolTip": "D:\\xz\\WaveGenerator\\Pipe_Stress_App\\ViewModels\\MsgViewModel.cs",
+              "RelativeToolTip": "Pipe_Stress_App\\ViewModels\\MsgViewModel.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAADwvwAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-13T13:06:31.615Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "SkinViewModel.cs",
+              "DocumentMoniker": "D:\\xz\\WaveGenerator\\Pipe_Stress_App\\ViewModels\\SkinViewModel.cs",
+              "RelativeDocumentMoniker": "Pipe_Stress_App\\ViewModels\\SkinViewModel.cs",
+              "ToolTip": "D:\\xz\\WaveGenerator\\Pipe_Stress_App\\ViewModels\\SkinViewModel.cs",
+              "RelativeToolTip": "Pipe_Stress_App\\ViewModels\\SkinViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAADwvwAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-13T13:06:28.11Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "HomePageViewModel.cs",
+              "DocumentMoniker": "D:\\xz\\WaveGenerator\\Pipe_Stress_App\\ViewModels\\HomePageViewModel.cs",
+              "RelativeDocumentMoniker": "Pipe_Stress_App\\ViewModels\\HomePageViewModel.cs",
+              "ToolTip": "D:\\xz\\WaveGenerator\\Pipe_Stress_App\\ViewModels\\HomePageViewModel.cs",
+              "RelativeToolTip": "Pipe_Stress_App\\ViewModels\\HomePageViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAADwvwAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-13T13:06:41.165Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "MainViewModel.cs",
+              "DocumentMoniker": "D:\\xz\\WaveGenerator\\Pipe_Stress_App\\ViewModels\\MainViewModel.cs",
+              "RelativeDocumentMoniker": "Pipe_Stress_App\\ViewModels\\MainViewModel.cs",
+              "ToolTip": "D:\\xz\\WaveGenerator\\Pipe_Stress_App\\ViewModels\\MainViewModel.cs",
+              "RelativeToolTip": "Pipe_Stress_App\\ViewModels\\MainViewModel.cs",
+              "ViewState": "AgIAADQAAAAAAAAAAAA5wEAAAAAuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-13T13:06:34.769Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "SkinView.xaml",
+              "DocumentMoniker": "D:\\xz\\WaveGenerator\\Pipe_Stress_App\\Views\\SkinView.xaml",
+              "RelativeDocumentMoniker": "Pipe_Stress_App\\Views\\SkinView.xaml",
+              "ToolTip": "D:\\xz\\WaveGenerator\\Pipe_Stress_App\\Views\\SkinView.xaml",
+              "RelativeToolTip": "Pipe_Stress_App\\Views\\SkinView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-06-13T13:06:23.362Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "ProgressView.xaml",
+              "DocumentMoniker": "D:\\xz\\WaveGenerator\\Pipe_Stress_App\\Views\\ProgressView.xaml",
+              "RelativeDocumentMoniker": "Pipe_Stress_App\\Views\\ProgressView.xaml",
+              "ToolTip": "D:\\xz\\WaveGenerator\\Pipe_Stress_App\\Views\\ProgressView.xaml",
+              "RelativeToolTip": "Pipe_Stress_App\\Views\\ProgressView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-06-13T13:06:21.738Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "MsgView.xaml",
+              "DocumentMoniker": "D:\\xz\\WaveGenerator\\Pipe_Stress_App\\Views\\MsgView.xaml",
+              "RelativeDocumentMoniker": "Pipe_Stress_App\\Views\\MsgView.xaml",
+              "ToolTip": "D:\\xz\\WaveGenerator\\Pipe_Stress_App\\Views\\MsgView.xaml",
+              "RelativeToolTip": "Pipe_Stress_App\\Views\\MsgView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-06-13T13:06:19.9Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "MainView.xaml",
+              "DocumentMoniker": "D:\\xz\\WaveGenerator\\Pipe_Stress_App\\Views\\MainView.xaml",
+              "RelativeDocumentMoniker": "Pipe_Stress_App\\Views\\MainView.xaml",
+              "ToolTip": "D:\\xz\\WaveGenerator\\Pipe_Stress_App\\Views\\MainView.xaml",
+              "RelativeToolTip": "Pipe_Stress_App\\Views\\MainView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-06-13T13:06:16.024Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "HomePageView.xaml",
+              "DocumentMoniker": "D:\\xz\\WaveGenerator\\Pipe_Stress_App\\Views\\HomePageView.xaml",
+              "RelativeDocumentMoniker": "Pipe_Stress_App\\Views\\HomePageView.xaml",
+              "ToolTip": "D:\\xz\\WaveGenerator\\Pipe_Stress_App\\Views\\HomePageView.xaml",
+              "RelativeToolTip": "Pipe_Stress_App\\Views\\HomePageView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-06-13T13:06:08.897Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
