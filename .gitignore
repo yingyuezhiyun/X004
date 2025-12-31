@@ -38,6 +38,10 @@
 MDK-ARM/**/Debug/
 MDK-ARM/**/Objects/
 
+# Allow specific MDK project files (project entry files) that should be tracked
+!/BootLoader/MDK-ARM/BootLoader.uvprojx
+!/BootLoader/MDK-ARM/BootLoader.uvoptx
+
 # RTE and generated
 **/RTE/
 
