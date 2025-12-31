@@ -38,12 +38,12 @@
 **/MDK-ARM/**/Debug/
 **/MDK-ARM/**/Objects/
 **/MDK-ARM/BootLoader/
+**/MDK-ARM/BootLoader/**
 **/MDK-ARM/H743VE/
+**/MDK-ARM/H743VE/**
 **/MDK-ARM/DebugConfig/
 
-# 明确忽略仓库中的 MDK-ARM/BootLoader 目录（在允许 `/BootLoader/**` 之后保证生效）
-/BootLoader/MDK-ARM/BootLoader/
-/BootLoader/MDK-ARM/BootLoader/**
+
 
 # RTE and generated
 **/RTE/
