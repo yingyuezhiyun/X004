@@ -42,15 +42,23 @@ namespace wpfApp.ViewModels
 
         }
 
-        public void UpdateLoading(bool IsOpen)
-        {
-            aggregator.UpdateLoading(new Common.Events.UpdateModel()
-            {
-                IsOpen = IsOpen
-            });
-        }
+        //public void UpdateLoading(bool IsOpen)
+        //{
+        //    aggregator.UpdateLoading(new Common.Events.UpdateModel()
+        //    {
+        //        IsOpen = IsOpen
+        //    });
+        //}
 
-        public void UpdateLoading(bool IsOpen, string Msg)
+        //public void UpdateLoading(bool IsOpen, string Msg)
+        //{
+        //    aggregator.UpdateLoading(new Common.Events.UpdateModel()
+        //    {
+        //        IsOpen = IsOpen,
+        //        Msg = Msg
+        //    });
+        //}
+        public void UpdateLoading(bool IsOpen = true, string Msg = null)
         {
             aggregator.UpdateLoading(new Common.Events.UpdateModel()
             {
@@ -58,5 +66,7 @@ namespace wpfApp.ViewModels
                 Msg = Msg
             });
         }
+       
+
     }
 }

@@ -51,7 +51,7 @@
                 <materialDesign:Snackbar
                     x:Name="Snackbar"
                     Panel.ZIndex="1"
-                    Foreground="{Binding MaterialDesign.Brush.Primary.Light}"
+                    Foreground="{DynamicResource MaterialDesign.Brush.Primary}"
                     MessageQueue="{materialDesign:MessageQueue}" />
                 <materialDesign:ColorZone
                     x:Name="ColorZone"

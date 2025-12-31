@@ -53,7 +53,17 @@ namespace wpfApp.Views
             {
                 DialogHost.IsOpen = arg.IsOpen;
                 if (DialogHost.IsOpen)
-                    DialogHost.DialogContent = new ProgressView(arg.Msg);
+                {
+                    // 如果之前已经有 ProgressView，则直接更新其消息，避免每次 new 一个实例
+                    if (DialogHost.DialogContent is ProgressView pv)
+                    {
+                        pv.Message = arg.Msg;
+                    }
+                    else
+                    {
+                        DialogHost.DialogContent = new ProgressView(arg.Msg);
+                    }
+                }
             });
 
             btnMin.Click += (s, e) => { this.WindowState = WindowState.Minimized; };

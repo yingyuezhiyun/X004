@@ -36,5 +36,22 @@ namespace wpfApp.Views
                 TipText.Visibility = Visibility.Collapsed;  
             }
         }
+        public string Message
+        {
+            get => TipText?.Text;
+            set
+            {
+                if (TipText == null) return;
+                if (value != null)
+                {
+                    TipText.Visibility = Visibility.Visible;
+                    TipText.Text = value;
+                }
+                else
+                {
+                    TipText.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
     }
 }

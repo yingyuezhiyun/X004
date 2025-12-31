@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Interop;
 using wpfApp.Common.CtrlProtocol;
 using wpfApp.Common.Dialog;
 using wpfApp.Common.Events;
@@ -668,10 +669,11 @@ namespace wpfApp.ViewModels
                 int loop = 90;
                 using (FileStream fs = new FileStream(Update.FilePath, FileMode.Open, FileAccess.Read))
                 {
-                    UpdateLoading(true, "检查状态中...");
+                    UpdateLoading(Msg:"检查状态中...");
+                    await Task.Delay(200);
                     bitTimer.Stop();
                     Update.BootMode = BootMode.None;                  
-                    loop = 30;
+                    loop = 20;
                     while (Update.BootMode == BootMode.None && loop > 0)
                     {
                         DevQueryParam(PLDParams.PLDParamsToQuery.BootMode);
@@ -700,7 +702,7 @@ namespace wpfApp.ViewModels
                         }
                         
                         //connectTimer.Stop();
-                        UpdateLoading(true, "停止设备中...");
+                        UpdateLoading(Msg: "停止设备中...");
                         await Task.Delay(100);
                         for (int i = 0; i < 4; i++)
                         {
@@ -721,7 +723,7 @@ namespace wpfApp.ViewModels
                         DevSetParam(PLDParams.PLDParamsToSet.LD2_SW);
                         await Task.Delay(500);
                         //UpdateLoading(false);
-                        UpdateLoading(true, "进入BOOT模式中...");
+                        UpdateLoading(Msg: "进入BOOT模式中...");
                         setParam.BootMode = BootMode.Boot;
                         loop = 50;
                         while (Update.BootMode != BootMode.Boot && loop > 0)
@@ -770,7 +772,7 @@ namespace wpfApp.ViewModels
                     while (dataArr.Length - pos > 0)
                     {
                         Update.ButtonContent = $"升级中({setParam.UpgradeParams.CurrIdx}/{TotalPacketNum})...";
-                        UpdateLoading(true, $"升级中({setParam.UpgradeParams.CurrIdx}/{TotalPacketNum})...");
+                        UpdateLoading(Msg: $"升级中({setParam.UpgradeParams.CurrIdx}/{TotalPacketNum})...");
                         setParam.UpgradeParams.Data.Clear();
                         int curPacketLen = dataArr.Length - pos > maxPacketLen ? maxPacketLen : dataArr.Length - pos;
                         setParam.UpgradeParams.Data.AddRange(dataArr.Skip(pos).Take(curPacketLen));
@@ -831,7 +833,7 @@ namespace wpfApp.ViewModels
                 Update.ButtonContent = "升级";
 
 
-                UpdateLoading(true,"烧写完成，应用重启检验中...");
+                UpdateLoading(Msg: "烧写完成，应用重启检验中...");
                 await Task.Delay(100);
                 setParam.BootMode = BootMode.App;
                 Update.BootMode = BootMode.None;
