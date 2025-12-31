@@ -43,6 +43,8 @@
 **/MDK-ARM/H743VE/**
 **/MDK-ARM/DebugConfig/
 
+**/wpfApp/back/
+**/wpfApp/back/**
 
 
 # RTE and generated
