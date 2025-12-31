@@ -284,6 +284,10 @@ void Flash_Ini(uint32_t addr)
     }
     Cur_Cfg_Address = addr + Cur_Index * 32;
     Next_Cfg_Address = addr + Next_Index * 32;
+    if (Next_Cfg_Address >= (addr + sizeof(para_flash_area)))
+    {
+        Next_Cfg_Address = addr;
+    }
 }
 
 void read_cfg(void)
@@ -299,6 +303,12 @@ void write_cfg(void)
     head->header = FLASH_PRAGMA_HEAD;
     head->datasize = sizeof(mem_cfg);
     memcpy(buf + sizeof(Flash_info), &mem_cfg, sizeof(mem_cfg));
-    FLASH_Write(Next_Cfg_Address, (uint8_t *)buf, sizeof(buf));
+    if (FLASH_Write(Next_Cfg_Address, (uint8_t *)buf, sizeof(buf)) != 0)
+    {
+        // 写入失败，重新从头写入
+        Cur_Cfg_Address = CFG_ADDR;
+        Next_Cfg_Address = CFG_ADDR;
+        FLASH_Write(Next_Cfg_Address, (uint8_t *)buf, sizeof(buf));
+    }
     Next_Cfg_Address += ceil((double)sizeof(buf) / 32) * 32;
 }
