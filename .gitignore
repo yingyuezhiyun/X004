@@ -49,7 +49,6 @@ MDK-ARM/**/Objects/
 **/*.hex
 **/*.bin
 **/*.map
-**/*.lst
 **/*.log
 **/*.dep
 
