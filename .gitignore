@@ -58,6 +58,7 @@
 **/*.map
 **/*.log
 **/*.dep
+**/*.lst
 
 # .NET / WPF build outputs and related
 **/*.user
