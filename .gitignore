@@ -1,8 +1,38 @@
-# Mono-repo root .gitignore
+# 仅跟踪仓库根下的这三个目录：BootLoader, H743VE, wpfApp
+# 忽略其他所有内容，保留 .gitignore 和 .gitattributes 以便版本控制规则可见
+
+# 忽略根下的所有项
+/*
+
+# 但不要忽略本文件与 Git 目录
+!.gitignore
+!.git/
+!.gitattributes
+
+# 允许下面三个目录以及它们的所有子文件/子目录
+!/BootLoader/
+!/BootLoader/**
+!/H743VE/
+!/H743VE/**
+!/wpfApp/
+!/wpfApp/**
+
+# （可选）如果需要在未来允许其它特定文件或目录，
+# 在此处添加 `!/<path>` 和 `!/<path>/**` 规则。
+
+# 以下是保留的忽略规则（IDE、编辑器、构建输出、临时文件等）
+# 这些规则在上面的允许目录中同样生效，用以避免提交编译产物和本地配置
+
+# Visual Studio / VSCode
+**/.vs/
+**/.vscode/
+
 # Build folders
 **/Debug/
 **/Release/
 **/build/
+**/bin/
+**/obj/
 
 # Keil/MDK
 MDK-ARM/**/Debug/
@@ -23,20 +53,14 @@ MDK-ARM/**/Objects/
 **/*.log
 **/*.dep
 
-# .NET / WPF build outputs
-**/bin/
-**/obj/
+# .NET / WPF build outputs and related
 **/*.user
 **/*.suo
 **/*.cache
 **/*.nupkg
 
-# Visual Studio / VSCode
-/.vs/
-**/.vs/
-/.vscode/
-**/.vscode/
-/.vscode/
+# VS index/cache files
+**/*.vsidx
 
 # Temporary and editor files
 *.swp
@@ -44,23 +68,9 @@ MDK-ARM/**/Objects/
 *.tmp
 
 # Visual Studio files
-*.suo
-*.user
 *.userosscache
 *.sdf
 *.opendb
-
-# .NET / WPF build outputs
-**/bin/
-**/obj/
-
-# VS index/cache files
-**/*.vsidx
-
-# Exclude big generated directories
-.vs/
-/.vscode/
-
 
 # Installer / packaging outputs
 **/*.msi
@@ -71,9 +81,7 @@ MDK-ARM/**/Objects/
 # Git LFS metadata
 .gitattributes
 
-# Logs
-*.log
-
 # Local IDE / debug configs
 DebugConfig/
+
 
