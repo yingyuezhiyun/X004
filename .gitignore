@@ -35,11 +35,11 @@
 **/obj/
 
 # Keil/MDK
-MDK-ARM/**/Debug/
-MDK-ARM/**/Objects/
-MDK-ARM/BootLoader/
-MDK-ARM/H743VE/
-MDK-ARM/DebugConfig/
+**/MDK-ARM/**/Debug/
+**/MDK-ARM/**/Objects/
+**/MDK-ARM/BootLoader/
+**/MDK-ARM/H743VE/
+**/MDK-ARM/DebugConfig/
 
 # RTE and generated
 **/RTE/
