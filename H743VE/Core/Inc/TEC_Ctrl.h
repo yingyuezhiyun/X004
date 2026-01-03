@@ -13,4 +13,4 @@ enum
 
 extern void SET_TEC_SW(uint8_t ch, uint8_t sw);
 extern void TEC_Ctrl(uint8_t tec_ch, tec_setparam_t *stec, tec_measureparam_t *mtec);
-
+extern void TEC_RestStatus(uint8_t tec_ch);

@@ -367,6 +367,13 @@ void TEC_Work(uint8_t tec_ch, tec_setparam_t *stec, tec_measureparam_t *mtec)
     }
 }
 
+void TEC_RestStatus(uint8_t tec_ch)
+{
+    TEC_status[tec_ch].flag = FLAG_IDLE;
+    OT_status[tec_ch].flag = FLAG_IDLE;
+    UT_status[tec_ch].flag = FLAG_IDLE;
+}
+
 void TEC_Ctrl(uint8_t tec_ch, tec_setparam_t *stec, tec_measureparam_t *mtec)
 {
 

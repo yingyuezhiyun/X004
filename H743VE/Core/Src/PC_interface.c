@@ -3,6 +3,7 @@
 #include "usart.h"
 #include "string.h"
 #include "LD_Ctrl.h"
+#include "TEC_Ctrl.h"
 #include "pump.h"
 #include "tim.h"
 #include "PC_interface.h"
@@ -334,15 +335,18 @@ void pc_send_ack(uint8_t cmd, void *data, uint8_t dataLen)
         }                                        \
     }
 
-void set_tec_param(tec_setparam_t *tec, uint8_t *data)
+void set_tec_param(uint8_t ch, tec_setparam_t *tec, uint8_t *data)
 {
-   
     tec_packet_t *p = data;
     if (p->Temp >= TEC_SET_MIN_TEMP && p->Temp <= TEC_SET_MAX_TEMP)
     {
         tec->Temp = p->Temp;
     }
-    tec->MaxVol = p->V;   
+    tec->MaxVol = p->V;
+    if (tec->sw == WORK_ON )
+    {
+        TEC_RestStatus(ch);
+    }
 }
 
 void get_tec_param(uint8_t cmd, tec_setparam_t *tec)
@@ -655,10 +659,10 @@ void exec_commands(uint8_t cmd, uint8_t *data, size_t data_len)
    case P_S_TEC2_SW:                SET_SW_STA(set_param.tec[1].sw);                                            break;
    case P_S_TEC3_SW:                SET_SW_STA(set_param.tec[2].sw);                                            break;
    case P_S_TEC4_SW:                SET_SW_STA(set_param.tec[3].sw);                                            break;
-   case P_S_TEC1_PARA:              set_tec_param(&set_param.tec[0], data);                                     break;
-   case P_S_TEC2_PARA:              set_tec_param(&set_param.tec[1], data);                                     break;
-   case P_S_TEC3_PARA:              set_tec_param(&set_param.tec[2], data);                                     break;
-   case P_S_TEC4_PARA:              set_tec_param(&set_param.tec[3], data);                                     break;
+   case P_S_TEC1_PARA:              set_tec_param(0,&set_param.tec[0], data);                                     break;
+   case P_S_TEC2_PARA:              set_tec_param(1,&set_param.tec[1], data);                                     break;
+   case P_S_TEC3_PARA:              set_tec_param(2,&set_param.tec[2], data);                                     break;
+   case P_S_TEC4_PARA:              set_tec_param(3,&set_param.tec[3], data);                                     break;
    case P_S_PULSE_PARA:             set_pulse_param(data);                                                      break;
    case P_G_Cur:       break;
    case P_G_DFLT_V:                 /* PC_ACK(M_DFLT_V, set_param.DFLT_V); */                                   break;
