@@ -467,7 +467,7 @@ namespace wpfApp.ViewModels
                         bool IsSave = false;
                         for (int i = 0; i < 2; i++)
                         {
-                            
+
                             if (SettingParamsToShow.LDParams[i].IsWork)
                             {
                                 IsSave = true;
@@ -484,6 +484,48 @@ namespace wpfApp.ViewModels
                         {
                             saveDataFile(p1);
                         }
+
+                        // publish chart update event with ordered data list matching PLDChartViewModel SigThemes
+                        try
+                        {
+                            var model = new PLDUpdateModel();
+                            model.Type = PLDUpdateType.MeasureData;
+                            var pl = new PLDMeasureData();
+                            pl.time = p1.time;
+                            pl.data_list = new List<double>() {
+                                p1.MeasureParams.LDParams[0].Curr, // LD1电流
+                                p1.MeasureParams.LDParams[1].Curr, // LD2电流
+                                p1.MeasureParams.LDParams[0].Vol,  // LD1电压
+                                p1.MeasureParams.LDParams[1].Vol,  // LD2电压
+                                p1.MeasureParams.OtherInfos.PwrTemp, // 电源温度
+                                p1.MeasureParams.PDParams.Power, // PD出光功率
+                                p1.MeasureParams.PDParams.Temp,  // PD温度
+                                p1.MeasureParams.TECParams[0].Temp, // TEC1温度
+                                p1.MeasureParams.TECParams[0].Power, // TEC1功率
+                                p1.MeasureParams.TECParams[0].Curr, // TEC1电流
+                                p1.MeasureParams.TECParams[1].Temp, // TEC2温度
+                                p1.MeasureParams.TECParams[1].Power, // TEC2功率
+                                p1.MeasureParams.TECParams[1].Curr, // TEC2电流
+                                p1.MeasureParams.TECParams[2].Temp, // TEC3温度
+                                p1.MeasureParams.TECParams[2].Power, // TEC3功率
+                                p1.MeasureParams.TECParams[2].Curr, // TEC3电流
+                                p1.MeasureParams.TECParams[3].Temp, // TEC4温度
+                                p1.MeasureParams.TECParams[3].Power, // TEC4功率
+                                p1.MeasureParams.TECParams[3].Curr, // TEC4电流
+                                p1.MeasureParams.OtherInfos.SysVol, // 系统电压
+                                p1.MeasureParams.OtherInfos.SysCurr // 系统电流
+                            };
+                            model.plData = pl;
+                            Application.Current.Dispatcher.BeginInvoke(() =>
+                            {
+                                aggregator.GetEvent<PLDUpdateEvent>().Publish(model);
+                            });
+                        }
+                        catch (Exception)
+                        {
+                            // ignore publish exceptions
+                        }
+
                     }
                     break;
                 case PLDParams.PLDParamsFromGet.Upgrade:

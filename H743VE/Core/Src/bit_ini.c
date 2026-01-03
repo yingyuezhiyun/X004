@@ -9,6 +9,7 @@
 #include "AT24CXX.h"
 #include "heat.h"
 #include "max31865.h"
+#include "heat.h"
 
 // measure.c 中未在头文件公开的接口，硬件自检直接读取 ADC 值
 extern float get_ld_curr(uint8_t ch);
@@ -306,6 +307,7 @@ uint8_t bit_init()
         {
             set_param.tec[i].sw = WORK_OFF;
         }
+        set_param.tec[i].PID.Resolution = 0.0004f; 
     }
     // todo
     SET_LD_MAX_Curr(LD_CH_1, set_param.ld[0].HOC / 10.0);
@@ -333,6 +335,7 @@ uint8_t bit_init()
     Enable_TRG_IN_DET;
 
     HAL_TIM_Base_Start(&htim3);
+    Heat_Ini();
 
     // todo
     running_flag.ld_flags[0].value = 0;

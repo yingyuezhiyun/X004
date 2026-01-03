@@ -36,9 +36,9 @@ typedef struct
 
 typedef struct
 {
-    int16_t p; // 单位 0.01
-    int16_t i; // 单位 0.01
-    int16_t d; // 单位 0.01
+    uint16_t p; // 单位 0.01
+    uint16_t i; // 单位 0.01
+    uint16_t d; // 单位 0.01
 } pid_packet_t;
 
 typedef struct
@@ -433,7 +433,8 @@ void get_all_measure_param(uint8_t cmd, measure_param_t *data)
 
     for (size_t i = 0; i < 4; i++)
     {
-        p.TEC[i].Temp = round(data->tec[i].Temp * 10);
+        //p.TEC[i].Temp = round(data->tec[i].Temp * 10);
+        p.TEC[i].Temp = round(data->tec[i].Temp_f * 10);
         p.TEC[i].Power = round(data->tec[i].Power * 10);
         p.TEC[i].Cur = round(data->tec[i].Cur * 10);
         p.Version[i] = Version2[i];

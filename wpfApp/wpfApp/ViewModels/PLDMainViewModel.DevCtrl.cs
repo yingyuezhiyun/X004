@@ -663,7 +663,7 @@ namespace wpfApp.ViewModels
         }
         async void Upgrade()
         {
-           
+
             try
             {
                 int loop = 90;

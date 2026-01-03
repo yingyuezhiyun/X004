@@ -89,11 +89,31 @@ float get_out_temp()
     return tmp;
 }
 
+// 任务循环大约每 1 ms
+// const float dt = 0.001f; //
+// 时间常数（秒），tau = 1 / (2π * fc)
+// 时延 t95 ≈ 2.996 * tau
+// const float tau = 0.0318f;
+// const float alpha = expf(-dt / tau);
+
 void get_measure_param()
 {
+  
+   
+    const float alpha = 0.96904f; 
     for (size_t i = 0; i < 4; i++)
     {
-        measure_param.tec[i].Temp = GET_TECx_Temp(i);
+        float temp_meas = GET_TECx_Temp(i);
+        // 初始化过滤器时直接设为测量值
+        if (measure_param.tec[i].Temp_f == 0.0f)
+        {
+            measure_param.tec[i].Temp_f = temp_meas;
+        }
+        else
+        {
+            measure_param.tec[i].Temp_f = alpha * measure_param.tec[i].Temp_f + (1.0f - alpha) * temp_meas;
+        }
+        measure_param.tec[i].Temp = temp_meas;
         measure_param.tec[i].Cur = get_tec_curr(i) - 0.65;
         measure_param.tec[i].Power = fabs(measure_param.tec[i].Cur * set_param.tec[i].OUT_V);
         measure_param.sys.Temp[i] = get_sys_temp(i);
@@ -117,6 +137,6 @@ void get_measure_param()
             max_sys_temp = measure_param.sys.Temp[i];
         }
     }
-    measure_param.PWR_Temp = max_sys_temp;
+    //measure_param.PWR_Temp = max_sys_temp;
     
 }

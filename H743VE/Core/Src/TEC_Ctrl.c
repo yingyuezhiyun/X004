@@ -109,31 +109,48 @@ float pid_adjust(PID_Controller *pid)
         Δu = Kp*(e[k]-e[k-1]) + Ki*e[k] + Kd*(e[k]-2*e[k-1]+e[k-2])
     说明：此处假定 Ki 已包含采样周期尺度；如需按采样周期缩放，请在调用前调整 Ki。
 */
-float pid_adjust_incremental(PID_Controller *pid)
+static float pid_adjust_incremental_ex(PID_Controller *pid, uint8_t disable_Ki, uint8_t preview)
 {
-        float e = pid->div;
-        float de = e - pid->prev_error;
-        float dde = e - 2.0f * pid->prev_error + pid->prev_prev_error;
+    float e = pid->div;
+    float de = e - pid->prev_error;
+    float dde = e - 2.0f * pid->prev_error + pid->prev_prev_error;
 
-        float delta = pid->Kp * de + pid->Ki * e + pid->Kd * dde;
+    float raw_delta = pid->Kp * de + (disable_Ki ? 0.0f : (pid->Ki * e / 100.0)) + pid->Kd * dde;
 
-        if (fabs(delta) < pid->Resolution)
+    // 内部缩放：把 raw_delta 转换为 OUT_V 单位（保持历史代码的 /100 行为）
+    float scaled_delta = raw_delta / 10.0f;
+
+    // 判断（Resolution 必须与 scaled_delta 单位一致）
+    if (fabsf(scaled_delta) < pid->Resolution)
+    {
+        if (!preview)
         {
-                pid->prev_prev_error = pid->prev_error;
-                pid->prev_error = e;
-                return 0;
+            pid->prev_prev_error = pid->prev_error;
+            pid->prev_error = e;
         }
+        return 0.0f;
+    }
 
+    if (!preview)
+    {
         pid->prev_prev_error = pid->prev_error;
         pid->prev_error = e;
+    }
 
-        return delta;
+    return scaled_delta;
+}
+
+// 向后兼容的包装：若其他代码以旧签名调用，则默认不屏蔽 Ki 且非 preview
+float pid_adjust_incremental(PID_Controller *pid)
+{
+    return pid_adjust_incremental_ex(pid, 0, 0);
 }
 
 void RESET_PID(PID_Controller *pid)
 {
     pid->div = 0;
     pid->prev_error = 0;
+    pid->prev_prev_error = 0; // 新增：清除二阶历史，避免首次/第二次计算异常
     pid->integral = 0;
 }
 
@@ -299,13 +316,24 @@ void TEC_Work(uint8_t tec_ch, tec_setparam_t *stec, tec_measureparam_t *mtec)
         {
             tec_pid_ticket[tec_ch] = GET_TickCount;
            // stec->PID.div = mtec->Temp - stec->Temp / 10.0;
-            stec->PID.div =  stec->Temp / 10.0 -mtec->Temp ;
-            float OUT_V_inc = pid_adjust(&stec->PID) / 100;
+            // 使用滤波后的温度作为 PID 输入，减少 D 项对噪声的敏感性
+            stec->PID.div = stec->Temp / 10.0 - mtec->Temp_f;
+
+            // 先做一次 preview（不推进历史）以判断 delta 方向并决定是否屏蔽 Ki
+            float preview_delta = pid_adjust_incremental_ex(&stec->PID, 0, 1);
+            uint8_t disable_Ki = 0;
+            if (TEC_Cur_Limit(tec_ch, mtec) && (fabsf(stec->OUT_V + preview_delta) > fabsf(stec->OUT_V)))
+            {
+                // 如果电流受限且增量会使输出绝对值变大，则屏蔽 Ki
+                disable_Ki = 1;
+            }
+
+            float OUT_V_inc = pid_adjust_incremental_ex(&stec->PID, disable_Ki, 0);
             if (OUT_V_inc > 2)
             {
                 OUT_V_inc = 2;
             }
-            else if (OUT_V_inc<-2)
+            else if (OUT_V_inc < -2)
             {
                 OUT_V_inc = -2;
             }

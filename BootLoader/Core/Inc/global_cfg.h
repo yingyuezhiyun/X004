@@ -73,8 +73,8 @@ extern mem_cfg_t mem_cfg;
 
 #define INFO_PRINT (1)
 
-// 开发阶段可启用：跳过 CFG 校验以便 Keil 直接下载并调试（发布时务必注释掉）
-//#define BOOT_DEBUG_SKIP_CFG_CHECK
+// 跳过 CFG 校验
+// #define BOOT_DEBUG_SKIP_CFG_CHECK
 
 
 enum

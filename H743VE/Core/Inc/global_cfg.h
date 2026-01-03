@@ -228,6 +228,7 @@ typedef struct
 typedef struct
 {
     float Temp;  // 温度 0.1℃
+    float Temp_f; // 经过一阶 IIR 滤波的温度值（单位同 Temp，浮点 ℃）
     float Cur;   // 单位 0.1A
     float Power; // 输出功率 0.1W
 } tec_measureparam_t;

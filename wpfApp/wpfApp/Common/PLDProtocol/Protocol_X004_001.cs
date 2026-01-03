@@ -1477,27 +1477,27 @@ namespace wpfApp.Common.PLDProtocol
                     break;
                 case PLDParams.PLDParamsToSet.TEC1_PID:                    
                     cmd = (byte)DEV_SET_CMD_TYPE.TEC1_PID;
-                    databytes.AddRange(ConvertFloatToByte<Int16>(p.SetParams.TECParams[0].PID.P, 100));
-                    databytes.AddRange(ConvertFloatToByte<Int16>(p.SetParams.TECParams[0].PID.I, 100));
-                    databytes.AddRange(ConvertFloatToByte<Int16>(p.SetParams.TECParams[0].PID.D, 100));
+                    databytes.AddRange(ConvertFloatToByte<UInt16>(p.SetParams.TECParams[0].PID.P, 100));
+                    databytes.AddRange(ConvertFloatToByte<UInt16>(p.SetParams.TECParams[0].PID.I, 100));
+                    databytes.AddRange(ConvertFloatToByte<UInt16>(p.SetParams.TECParams[0].PID.D, 100));
                     break;
                 case PLDParams.PLDParamsToSet.TEC2_PID:
                     cmd = (byte)DEV_SET_CMD_TYPE.TEC2_PID;
-                    databytes.AddRange(ConvertFloatToByte<Int16>(p.SetParams.TECParams[1].PID.P, 100));
-                    databytes.AddRange(ConvertFloatToByte<Int16>(p.SetParams.TECParams[1].PID.I, 100));
-                    databytes.AddRange(ConvertFloatToByte<Int16>(p.SetParams.TECParams[1].PID.D, 100));
+                    databytes.AddRange(ConvertFloatToByte<UInt16>(p.SetParams.TECParams[1].PID.P, 100));
+                    databytes.AddRange(ConvertFloatToByte<UInt16>(p.SetParams.TECParams[1].PID.I, 100));
+                    databytes.AddRange(ConvertFloatToByte<UInt16>(p.SetParams.TECParams[1].PID.D, 100));
                     break;
                 case PLDParams.PLDParamsToSet.TEC3_PID:
                     cmd = (byte)DEV_SET_CMD_TYPE.TEC3_PID;
-                    databytes.AddRange(ConvertFloatToByte<Int16>(p.SetParams.TECParams[2].PID.P, 100));
-                    databytes.AddRange(ConvertFloatToByte<Int16>(p.SetParams.TECParams[2].PID.I, 100));
-                    databytes.AddRange(ConvertFloatToByte<Int16>(p.SetParams.TECParams[2].PID.D, 100));
+                    databytes.AddRange(ConvertFloatToByte<UInt16>(p.SetParams.TECParams[2].PID.P, 100));
+                    databytes.AddRange(ConvertFloatToByte<UInt16>(p.SetParams.TECParams[2].PID.I, 100));
+                    databytes.AddRange(ConvertFloatToByte<UInt16>(p.SetParams.TECParams[2].PID.D, 100));
                     break;
                 case PLDParams.PLDParamsToSet.TEC4_PID:
                     cmd = (byte)DEV_SET_CMD_TYPE.TEC4_PID;
-                    databytes.AddRange(ConvertFloatToByte<Int16>(p.SetParams.TECParams[3].PID.P, 100));
-                    databytes.AddRange(ConvertFloatToByte<Int16>(p.SetParams.TECParams[3].PID.I, 100));
-                    databytes.AddRange(ConvertFloatToByte<Int16>(p.SetParams.TECParams[3].PID.D, 100));
+                    databytes.AddRange(ConvertFloatToByte<UInt16>(p.SetParams.TECParams[3].PID.P, 100));
+                    databytes.AddRange(ConvertFloatToByte<UInt16>(p.SetParams.TECParams[3].PID.I, 100));
+                    databytes.AddRange(ConvertFloatToByte<UInt16>(p.SetParams.TECParams[3].PID.D, 100));
                     break;
                 case PLDParams.PLDParamsToSet.LCM:
                     cmd = (byte)DEV_SET_CMD_TYPE.LCM;

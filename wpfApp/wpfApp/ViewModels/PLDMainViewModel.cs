@@ -1,5 +1,6 @@
 ﻿using DryIoc;
 using Prism.Commands;
+using Prism.Dialogs;
 using Prism.Ioc;
 using Prism.Mvvm;
 using Prism.Navigation.Regions;
@@ -15,6 +16,7 @@ using Windows.Devices.PointOfService;
 using wpfApp.Common.CtrlProtocol;
 using wpfApp.Common.Dialog;
 using wpfApp.Common.PLDProtocol;
+using wpfApp.Views;
 using static wpfApp.ViewModels.PLDMainViewModel.MeasureParam;
 
 
@@ -48,9 +50,21 @@ namespace wpfApp.ViewModels
             InitModels();
             
             ConnectTimerInit();
-            BitTimerInit();
+            BitTimerInit();            
         }
 
+        void ShowDataChart()
+        {
+            DialogParameters param = new DialogParameters();
+            //param.Add(key: "SigName", MeasureDataChartSelected);
+            //param.Add("CH", CH);
+            //param.Add("DevName", NameSpace);
+            //param.Add("DevMeasureDatas", devMeasureDatas);
+
+            dialogHostService.Show("PLDChart", param, null);
+                //dialogHostService.Show("DataChartView2", param, null);
+            
+        }
 
         #region Params
         void InitModels()

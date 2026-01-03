@@ -51,8 +51,12 @@ namespace wpfApp
 
             containerRegistry.RegisterForNavigation<DataChartView2, DataChartViewModel>();
 
+            containerRegistry.RegisterForNavigation<PLDChartView, PLDChartViewModel>("PLDChart");
+
+
             containerRegistry.RegisterForNavigation<PLDMainView, PLDMainViewModel>();
 
+            
 
 
         }
