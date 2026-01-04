@@ -26,7 +26,7 @@ extern void SET_LD_Vol(uint8_t ch, float Vol);
 extern void SET_LD_MAX_Curr(uint8_t ch, float curr);
 
 
-extern uint8_t status_deley_check(status_check_t *status_check, uint16_t time_out);
+extern uint8_t status_deley_check(status_check_t *status_check, uint32_t time_out);
 
 extern void Clear_LD_TRG_IN_Params();
 

@@ -305,7 +305,7 @@ void SET_LD_Vol(uint8_t ch, float Vol)
     }
 }
 
-uint8_t status_deley_check(status_check_t *status_check, uint16_t time_out)
+uint8_t status_deley_check(status_check_t *status_check, uint32_t time_out)
 {
     uint8_t reslt = FLAG_RUNNING;
 

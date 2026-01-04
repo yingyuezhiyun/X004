@@ -159,7 +159,7 @@
           <Type>0</Type>
           <LineNumber>53</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134416248</Address>
+          <Address>134416264</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -175,7 +175,7 @@
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>set_param,0x10</ItemText>
+          <ItemText>set_param,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
@@ -211,6 +211,21 @@
           <count>7</count>
           <WinNumber>1</WinNumber>
           <ItemText>Heat_PID</ItemText>
+        </Ww>
+        <Ww>
+          <count>8</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>TEC_status,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>9</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>OT_status</ItemText>
+        </Ww>
+        <Ww>
+          <count>10</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>UT_status</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>
