@@ -1,0 +1,167 @@
+﻿<Window
+    x:Class="wpfApp.Views.MainView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:ext="clr-namespace:wpfApp.Extensions"
+    xmlns:local="clr-namespace:wpfApp"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:prism="http://prismlibrary.com/"
+    xmlns:theme="clr-namespace:wpfApp.Views"
+    Title="MainWindow"
+    Width="1150"
+    Height="720"
+    MaxWidth="{StaticResource {x:Static SystemParameters.MaximizedPrimaryScreenWidthKey}}"
+    MaxHeight="{StaticResource {x:Static SystemParameters.MaximizedPrimaryScreenHeightKey}}"
+    AllowsTransparency="True"
+    Background="{DynamicResource MaterialDesignPaper}"
+    FontFamily="Arial,Microsoft YaHei"
+    ResizeMode="CanResizeWithGrip"
+    TextElement.FontSize="13"
+    TextElement.FontWeight="Regular"
+    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+    TextOptions.TextFormattingMode="Ideal"
+    TextOptions.TextRenderingMode="Auto"
+    WindowStartupLocation="CenterScreen"
+    WindowStyle="None"
+    mc:Ignorable="d">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.PopupBox.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+
+
+    <materialDesign:DialogHost DialogTheme="Inherit" Identifier="RootDialog">
+        <materialDesign:DialogHost
+            x:Name="DialogHost"
+            DialogTheme="Inherit"
+            Identifier="Root">
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <materialDesign:Snackbar
+                    x:Name="Snackbar"
+                    Panel.ZIndex="1"
+                    Foreground="{DynamicResource MaterialDesign.Brush.Primary}"
+                    MessageQueue="{materialDesign:MessageQueue}" />
+                <materialDesign:ColorZone
+                    x:Name="ColorZone"
+                    Padding="2"
+                    DockPanel.Dock="Top"
+                    Mode="PrimaryMid">
+
+
+                    <DockPanel>
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+
+                            <Button
+                                Command="{Binding ExecuteCommand}"
+                                CommandParameter="查找设备"
+                                Style="{StaticResource MaterialDesignFlatMidBgButton}"
+                                ToolTip="自动查找设备"
+                                Visibility="Collapsed">
+                                <materialDesign:PackIcon Kind="ArchiveRefreshOutline" />
+                            </Button>
+                            <Button
+                                Command="{Binding ExecuteCommand}"
+                                CommandParameter="主题"
+                                Style="{StaticResource MaterialDesignFlatMidBgButton}"
+                                ToolTip="主题颜色"
+                                Visibility="Collapsed">
+                                <materialDesign:PackIcon Kind="PaletteSwatchOutline" />
+                            </Button>
+
+                            <!--<materialDesign:PopupBox
+                    PlacementMode="BottomAndAlignRightEdges"
+                    StaysOpen="False"
+                    Style="{StaticResource MaterialDesignPopupBox}">
+
+                                <materialDesign:PopupBox.ToggleContent>
+                                    <materialDesign:PackIcon Kind="Pencil" />
+                                </materialDesign:PopupBox.ToggleContent>
+
+                                <StackPanel>
+                                    <theme:SkinView Height="150" />
+                                    <Button Content="2" />
+                                </StackPanel>
+                            </materialDesign:PopupBox>-->
+
+
+                            <Button
+                                x:Name="btnMin"
+                                Command="{Binding ExecuteCommand}"
+                                CommandParameter="最小化窗口"
+                                Content="{materialDesign:PackIcon Kind=WindowMinimize}"
+                                Style="{StaticResource MaterialDesignFlatMidBgButton}" />
+                            <Button
+                                x:Name="btnMax"
+                                Command="{Binding ExecuteCommand}"
+                                CommandParameter="最大化窗口"
+                                Style="{StaticResource MaterialDesignFlatMidBgButton}">
+                                <materialDesign:PackIcon>
+                                    <materialDesign:PackIcon.Style>
+                                        <Style TargetType="materialDesign:PackIcon">
+                                            <Setter Property="Kind" Value="WindowMaximize" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding WindowState, RelativeSource={RelativeSource AncestorType=Window}}" Value="Maximized">
+                                                    <Setter Property="Kind" Value="WindowRestore" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </materialDesign:PackIcon.Style>
+                                </materialDesign:PackIcon>
+                            </Button>
+                            <Button
+                                x:Name="btnClose"
+                                Command="{Binding ExecuteCommand}"
+                                CommandParameter="关闭窗口"
+                                Style="{StaticResource MaterialDesignFlatMidBgButton}">
+                                <materialDesign:PackIcon Kind="WindowClose" />
+                            </Button>
+
+
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <!--<ToggleButton
+                    x:Name="MenuToggleButton"
+                    AutomationProperties.Name="HamburgerToggleButton"
+                    IsChecked="False"
+                    Style="{StaticResource MaterialDesignHamburgerToggleButton}" />-->
+
+
+                        </StackPanel>
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            AutomationProperties.Name="Material Design In XAML Toolkit"
+                            FontFamily="Microsoft YaHei"
+                            FontSize="22"
+                            Text="{Binding Title}" />
+                    </DockPanel>
+                </materialDesign:ColorZone>
+                <ContentControl Grid.Row="1" prism:RegionManager.RegionName="{x:Static ext:PrismManager.MainViewRegionName}" />
+            </Grid>
+
+            <!--<materialDesign:DrawerHost IsLeftDrawerOpen="{Binding ElementName=MenuToggleButton, Path=IsChecked}">
+                <materialDesign:DrawerHost.LeftDrawerContent>
+                    <DockPanel MinWidth="220" />
+                </materialDesign:DrawerHost.LeftDrawerContent>
+
+            </materialDesign:DrawerHost>-->
+
+
+
+        </materialDesign:DialogHost>
+    </materialDesign:DialogHost>
+
+
+</Window>

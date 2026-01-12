@@ -370,3 +370,4 @@ void LD_Ctrl(uint8_t ld_ch, ld_setparam_t *sld, ld_measureparam_t *mld)
     }
     SET_LD_SW(ld_ch, ld_sw);
 }
+
