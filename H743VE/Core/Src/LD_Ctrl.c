@@ -13,8 +13,8 @@
 #define LD_START_DELAY_MS (2000)
 #define LD_STOP_DELAY_MS (200)
 
-#define LD_TRG_IN_MIN_FREQ (49.5)
-#define LD_TRG_IN_MAX_FREQ (50.5)
+#define LD_TRG_IN_MIN_FREQ (45)
+#define LD_TRG_IN_MAX_FREQ (55)
 
 #define UNDER_CURR_TIMEOUT (20 * 1000)
 #define UNDER_CURR_THRESHOLD (0.95)
