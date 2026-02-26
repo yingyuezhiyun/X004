@@ -331,7 +331,7 @@ void USART1_IRQHandler(void)
   /* USER CODE BEGIN USART1_IRQn 1 */
   //  if ((RESET != __HAL_UART_GET_FLAG((&huart1), UART_FLAG_IDLE)))
   //  {
-  //    cli_para.usart_pktcplt = 1;
+  //    uart1_para.pktcplt = 1;
   //    __HAL_UART_CLEAR_IDLEFLAG((&huart1));
   //  }
   /* USER CODE END USART1_IRQn 1 */

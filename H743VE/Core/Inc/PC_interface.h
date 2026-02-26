@@ -3,7 +3,7 @@
 #include "stdint.h"
 #include "global_cfg.h"
 
-void pc_parse_and_execute_command2();
+void pc_parse_and_execute_command();
 
 
 #ifdef BEBUG_UART

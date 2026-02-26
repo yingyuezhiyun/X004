@@ -68,7 +68,8 @@ mem_cfg_t mem_cfg = {
     .cfg_address = CFG_ADDR,
 };
 
-cli_para_t cli_para;
+uart_para_t uart1_para;
+uart_para_t uart2_para;
 running_flag_t running_flag;
 
 

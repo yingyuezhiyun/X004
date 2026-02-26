@@ -282,7 +282,7 @@ void StartTask03(void *argument)
 #ifdef BEBUG_UART
     parse_command();
 #else
-    pc_parse_and_execute_command2();
+    pc_parse_and_execute_command();
 #endif // BEBUG_UART
 
     osDelay(1);

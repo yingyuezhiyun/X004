@@ -47,6 +47,8 @@ void MX_USART2_UART_Init(void);
 extern void uart_printf(UART_HandleTypeDef *huart, char *format, ...);
 extern void Enable_UART1_Receive();
 extern void Disable_UART1_Receive();
+extern void Enable_UART2_Receive();
+extern void Disable_UART2_Receive();
 extern void UART1_Check();
 void info_printf(char *format, ...);
 /* USER CODE END Prototypes */

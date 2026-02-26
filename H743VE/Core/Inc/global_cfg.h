@@ -110,12 +110,11 @@ extern mem_cfg_t mem_cfg;
 typedef struct
 {
 
-    volatile uint16_t usart_tail;
-    volatile uint8_t usart_pktcplt; // 接收完整一包数据
-    volatile uint8_t test;
+    volatile uint16_t tail;
+    volatile uint8_t pktcplt; // 接收完整一包数据
+    // volatile uint8_t test;
     char rxbuf[CLI_RX_BUFF];
-
-} cli_para_t;
+} uart_para_t;
 
 enum
 {
@@ -336,7 +335,8 @@ typedef struct
 } running_flag_t;
 
 #pragma unpack()
-extern cli_para_t cli_para;
+extern uart_para_t uart1_para;
+extern uart_para_t uart2_para;
 extern set_param_t set_param;
 extern measure_param_t measure_param;
 extern Work_Status_t Work_Status;

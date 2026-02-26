@@ -16,11 +16,10 @@
 #define PC_ID (0x14)
 #define MCU_ID (0x1c)
 
-char Version[] = "X004_001";
+// char Version[] = "X004_001";
+// uint64_t BuildTime = 202509112205;
 
-uint64_t BuildTime = 202509112205;
-
-char Version2[] = {0, 0, 0, 3};//V0.0.0.2
+static char Version2[] = {0, 0, 0, 3};//V0.0.0.2
 
 typedef struct
 {
@@ -50,55 +49,67 @@ typedef struct
 
 enum
 {
-    P_S_LD1_S_Cur = 0x30,  /* 设置电流通道1 10～150代表1.0A～15.0A */
-    P_S_LD2_S_Cur = 0x90,  /* 设置电流通道2 10～150代表1.0A～15.0A */
-    P_S_DFLT_V = 0x31,     /* 设置初始电压 20～45，代表20V～45V */
-    P_S_INTER_NOR_FREQ,    /* 设置内触发频率 1Hz～1000Hz */
-    P_S_PULSE_WIDTH,       /* 设置脉宽 200us～240us */
-    P_S_Q_DELAY,           /* 设置调Ｑ延时 1us～300us */
-    P_S_TRG_TYPE,          /* 设置触发模式 0x55内触发；0xAA外触发 */
-    P_S_LD1_SW,            /* 设置LD电流开关通道1 0x55:关LD电流；0xAA：开LD电流。上电默认关 */
-    P_S_LD2_SW = 0x96,     /* 设置LD电流开关通道2 0x55:关LD电流；0xAA：开LD电流。上电默认关 */
-    P_S_Q_SW = 0x37,       /* 设置Q脉冲开关 0x55:关Ｑ脉冲；0xAA：开Ｑ脉冲。上电默认开 */
-    P_S_TEC1_SW,           /* 设置TEC1开关 0x55：关TEC1；0xAA：开TEC1。上电默认开 */
-    P_S_TEC2_SW,           /* 设置TEC2开关 0x55：关TEC2；0xAA：开TEC2。上电默认开 */
-    P_S_TEC3_SW = 0x98,    /* 设置TEC3开关 0x55：关TEC3；0xAA：开TEC3。上电默认开 */
-    P_S_TEC4_SW,           /* 设置TEC4开关 0x55：关TEC4；0xAA：开TEC4。上电默认开 */
-    P_S_TEC1_PARA = 0x3A,  /* 设置第1路TEC：工作温度、限压、模式 设置TEC1参数，共3个参数，每个参数2个字节：1、工作温度（150～650，代表15.0℃～65.0℃）2、限压3、模式 */
-    P_S_TEC2_PARA,         /* 设置第2路TEC */
-    P_S_TEC3_PARA = 0x9A,  /* 设置第3路TEC */
-    P_S_TEC4_PARA,         /* 设置第4路TEC */
-    P_S_PULSE_PARA = 0x3C, /* 设置子脉冲参数，共12个参数，每个参数2个字节：1、子脉冲个数（取值范围1~12）2~11、脉冲间隔1（取值范围240~660）*/
+    P_S_LD1_S_Cur = 0x30,   /* 设置电流通道1 10～150代表1.0A～15.0A */
+    P_S_PULSE_WIDTH = 0x33, /* 设置脉宽 200us～240us */
+    P_S_Q_DELAY = 0x34,     /* 设置调Ｑ延时 1us～300us */
+    P_S_TRG_TYPE = 0x35,    /* 设置触发模式 0x55内触发；0xAA外触发 */
+    P_S_LD1_SW = 0x36,      /* 设置LD电流开关通道1 0x55:关LD电流；0xAA：开LD电流。上电默认关 */
+    P_S_Q_SW = 0x37,        /* 设置Q脉冲开关 0x55:关Ｑ脉冲；0xAA：开Ｑ脉冲。上电默认开 */
+    P_S_TEC1_SW = 0x38,     /* 设置TEC1开关 0x55：关TEC1；0xAA：开TEC1。上电默认开 */
+    P_S_TEC2_SW = 0x39,     /* 设置TEC2开关 0x55：关TEC2；0xAA：开TEC2。上电默认开 */
+    P_S_TEC1_PARA = 0x3A,   /* 设置第1路TEC：工作温度、限压、模式 设置TEC1参数，共2个参数，每个参数2个字节：1、工作温度（150～650，代表15.0℃～65.0℃）2、限压 */
+    P_S_TEC2_PARA = 0x3B,   /* 设置第2路TEC 工作温度、限压、模式 设置TEC1参数，共2个参数，每个参数2个字节：1、工作温度（150～650，代表15.0℃～65.0℃）2、限压 */
+    P_S_PULSE_PARA = 0x3C,  /* 设置子脉冲参数，共12个参数，每个参数2个字节：1、子脉冲个数（取值范围1~12）2~11、脉冲间隔1（取值范围240~660）*/
 
-    P_G_Cur,                /* 查询电流设定值 */
-    P_G_DFLT_V,             /* 查询初始电压设定值 */
-    P_G_INTER_NOR_FREQ,     /* 查询内触发频率设定值 */
     P_G_PULSE_WIDTH = 0x50, /* 查询脉宽设定值 */
-    P_G_Q_DELAY,            /* 查询调Ｑ延时设定值 */
-    P_G_TRG_TYPE,           /* 查询触发模式 */
-    P_G_LD1_S_Cur,          /* 查询LD电流设定值通道1 */
-    P_G_LD2_S_Cur = 0xB3,   /* 查询LD电流设定值通道2 */
-    P_G_Q_SW = 0x54,        /* todo 查询Q脉冲设定值 */
-    P_G_TEC1_SW,            /* 查询TEC1开关 */
-    P_G_TEC2_SW,            /* 查询TEC2开关 */
-    P_G_TEC3_SW = 0xB5,     /* 查询TEC3开关 */
-    P_G_TEC4_SW,            /* 查询TEC4开关 */
-    P_G_TEC1_PARA = 0x57,   /* 查询第1路TEC：温度、限压、模式设定值 */
-    P_G_TEC2_PARA,          /* 查询第2路TEC：温度、限压、模式设定值 */
-    P_G_TEC3_PARA = 0xB7,   /* 查询第3路TEC：温度、限压、模式设定值 */
-    P_G_TEC4_PARA,          /* 查询第4路TEC：温度、限压、模式设定值 */
-    P_G_PULSE_PARA = 0x59,  /* 查询子脉冲个数及脉冲间隔设定值 */
-    P_G_LD1_M_Cur,          /* 查询LD电流检测值通道1 */
-    P_G_LD2_M_Cur = 0xBA,   /* 查询LD电流检测值通道2 */
-    P_G_L1_M_V = 0x5B,      /* 查询负载电压检测值通道1 */
-    P_G_L2_M_V = 0xBB,      /* 查询负载电压检测值通道2 */
+    P_G_Q_DELAY = 0x51,     /* 查询调Ｑ延时设定值 */
+    P_G_TRG_TYPE = 0x52,    /* 查询触发模式 */
+    P_G_LD1_S_Cur = 0x53,   /* 查询LD电流设定值通道1 */
+    P_G_TEC1_SW = 0x55,     /* 查询TEC1开关 */
+    P_G_TEC2_SW = 0x56,     /* 查询TEC2开关 */
+
+    P_G_TEC1_PARA = 0x57,  /* 查询第1路TEC：温度、限压设定值 */
+    P_G_TEC2_PARA = 0x58,  /* 查询第2路TEC：温度、限压设定值 */
+    P_G_PULSE_PARA = 0x59, /* 查询子脉冲个数及脉冲间隔设定值 */
+
+    P_G_LD1_M_Cur = 0x5A,   /* 查询LD电流检测值通道1 */
+    P_G_LD1_M_V = 0x5B,     /* 查询负载电压检测值通道1 */
     P_G_PWR_TEMP = 0x5C,    /* 查询电源温度检测值 */
-    P_G_OUT_PD,             /* 查询外部输入电平1（PD）检测值 */
-    P_G_OUT_TEMP,           /* 查询外部输入电平2（温度）检测值 */
-    P_G_TEC1_M_TEMP,        /* 查询第1路检测温度检测值 */
+    P_G_OUT_PD = 0x5D,      /* 查询外部输入电平1（PD）检测值 */
+    P_G_OUT_TEMP = 0x5E,    /* 查询外部输入电平2（温度）检测值 */
+    P_G_TEC1_M_TEMP = 0x5F, /* 查询第1路检测温度检测值 */
     P_G_TEC1_M_PW = 0x70,   /* 查询第1路TEC输出功率检测值 */
-    P_G_TEC2_M_TEMP,        /* 查询第2路检测温度检测值 */
-    P_G_TEC2_M_PW,          /* 查询第2路TEC输出功率检测值 */
+    P_G_TEC2_M_TEMP = 0x71, /* 查询第2路检测温度检测值 */
+    P_G_TEC2_M_PW = 0x72,   /* 查询第2路TEC输出功率检测值 */
+
+    P_G_WRK_STA = 0x73, /* 查询工作状态 */
+    P_G_ALL_SET = 0x74, /* 查询所有设定参数 */
+    P_G_ALL_M = 0x75,   /* 查询所有检测参数 */
+    P_S_UPGRADE = 0x76, /* 在线程序升级 */
+
+    P_S_LD2_S_Cur = 0x90, /* 设置电流通道2 10～150代表1.0A～15.0A */
+
+    P_S_LD2_SW = 0x96, /* 设置LD电流开关通道2 0x55:关LD电流；0xAA：开LD电流。上电默认关 */
+
+    P_S_TEC3_SW = 0x98, /* 设置TEC3开关 0x55：关TEC3；0xAA：开TEC3。上电默认开 */
+    P_S_TEC4_SW,        /* 设置TEC4开关 0x55：关TEC4；0xAA：开TEC4。上电默认开 */
+
+    P_S_TEC3_PARA = 0x9A, /* 设置第3路TEC 工作温度、限压、模式 设置TEC1参数，共2个参数，每个参数2个字节：1、工作温度（150～650，代表15.0℃～65.0℃）2、限压 */
+    P_S_TEC4_PARA,        /* 设置第4路TEC 工作温度、限压、模式 设置TEC1参数，共2个参数，每个参数2个字节：1、工作温度（150～650，代表15.0℃～65.0℃）2、限压 */
+
+    P_G_LD2_S_Cur = 0xB3, /* 查询LD电流设定值通道2 */
+    P_G_Q_SW = 0x54,      /* todo 查询Q脉冲设定值 */
+
+    P_G_TEC3_SW = 0xB5, /* 查询TEC3开关 */
+    P_G_TEC4_SW,        /* 查询TEC4开关 */
+
+    P_G_TEC3_PARA = 0xB7, /* 查询第3路TEC：温度、限压、模式设定值 */
+    P_G_TEC4_PARA,        /* 查询第4路TEC：温度、限压、模式设定值 */
+
+    P_G_LD2_M_Cur = 0xBA, /* 查询LD电流检测值通道2 */
+
+    P_G_L2_M_V = 0xBB, /* 查询负载电压检测值通道2 */
+
     P_G_TEC3_M_TEMP = 0xBF, /* 查询第3路检测温度检测值 */
     P_G_TEC3_M_PW = 0xE0,   /* 查询第3路TEC输出功率检测值 */
     P_G_TEC4_M_TEMP,        /* 查询第4路检测温度检测值 */
@@ -107,11 +118,6 @@ enum
     P_G_TEC2_M_Cur,         /* 查询第2路TEC输出电流检测值 */
     P_G_TEC3_M_Cur,         /* 查询第3路TEC输出电流检测值 */
     P_G_TEC4_M_Cur,         /* 查询第4路TEC输出电流检测值 */
-
-    P_G_WRK_STA = 0x73, /* 查询工作状态 */
-    P_G_ALL_SET,        /* 查询所有设定参数 */
-    P_G_ALL_M,          /* 查询所有检测参数 */
-    P_S_UPGRADE,        /* 在线程序升级 */
 
     ////////////////////////////////////////////////
     P_G_UPGRADE = 0x77,   /* 查询升级程序状态 */
@@ -153,7 +159,7 @@ enum
 
     P_SAVE = 0x10,       /* 参数保存 */
     P_Clear_Err,         /* 清空错误 */
-    P_S_Version,         /* 设置版本信息 */ 
+    P_S_Version,         /* 设置版本信息 */
     P_S_BOOTMODE,        /* 设置BOOT模式 */
     P_G_BOOTMODE = 0x14, /* 查询BOOT模式 */
 };
@@ -241,7 +247,7 @@ typedef struct
 } min_cmd_t;
 #pragma unpack()
 
-uint8_t sum_crc(uint8_t *data, uint8_t len)
+static uint8_t sum_crc(uint8_t *data, uint8_t len)
 {
     uint8_t sum = 0;
     for (size_t i = 0; i < len; i++)
@@ -252,7 +258,7 @@ uint8_t sum_crc(uint8_t *data, uint8_t len)
   
 }
 
-int CheckUartReady()
+static uint8_t CheckUartReady()
 {
     HAL_DMA_StateTypeDef res = HAL_DMA_GetState(huart1.hdmatx);
     uint8_t loop = 0;
@@ -269,7 +275,7 @@ int CheckUartReady()
     return 1;
 }
 
-void uart1_send(uint8_t cmd, void *data, uint8_t dataLen)
+static void uart_send(uint8_t cmd, void *data, uint8_t dataLen)
 {
     static uint8_t UartTxBuff[MAX_SIZE];
     min_cmd_t *s = UartTxBuff;
@@ -290,11 +296,11 @@ void uart1_send(uint8_t cmd, void *data, uint8_t dataLen)
     HAL_UART_Transmit_DMA(&huart1, UartTxBuff, length);
 }
 
-void pc_send_ack(uint8_t cmd, void *data, uint8_t dataLen)
+static void pc_send_ack(uint8_t cmd, void *data, uint8_t dataLen)
 {
     if (CheckUartReady())
     {
-        uart1_send(cmd, data, dataLen);
+        uart_send(cmd, data, dataLen);
     }
 }
 
@@ -335,7 +341,7 @@ void pc_send_ack(uint8_t cmd, void *data, uint8_t dataLen)
         }                                        \
     }
 
-void set_tec_param(uint8_t ch, tec_setparam_t *tec, uint8_t *data)
+static void set_tec_param(uint8_t ch, tec_setparam_t *tec, uint8_t *data)
 {
     tec_packet_t *p = data;
     if (p->Temp >= TEC_SET_MIN_TEMP && p->Temp <= TEC_SET_MAX_TEMP)
@@ -349,7 +355,7 @@ void set_tec_param(uint8_t ch, tec_setparam_t *tec, uint8_t *data)
     }
 }
 
-void get_tec_param(uint8_t cmd, tec_setparam_t *tec)
+static void get_tec_param(uint8_t cmd, tec_setparam_t *tec)
 {
     tec_packet_t p;
     p.Temp = tec->Temp;
@@ -357,7 +363,7 @@ void get_tec_param(uint8_t cmd, tec_setparam_t *tec)
     PC_ACK(cmd, p);
 }
 
-void get_all_set_param(uint8_t cmd, set_param_t *data)
+static void get_all_set_param(uint8_t cmd, set_param_t *data)
 {
 #pragma pack(1)
     struct
@@ -391,7 +397,7 @@ void get_all_set_param(uint8_t cmd, set_param_t *data)
     PC_ACK(cmd, p);
 }
 
-void get_pulse_param(uint8_t cmd, set_param_t *data)
+static void get_pulse_param(uint8_t cmd, set_param_t *data)
 {
     Pulse_param_packet_t p;
     p.Num = data->Pulse_para.Num;
@@ -402,7 +408,7 @@ void get_pulse_param(uint8_t cmd, set_param_t *data)
     PC_ACK(cmd, p);
 }
 
-void get_all_measure_param(uint8_t cmd, measure_param_t *data)
+static void get_all_measure_param(uint8_t cmd, measure_param_t *data)
 {
 #pragma pack(1)
     struct
@@ -450,7 +456,7 @@ void get_all_measure_param(uint8_t cmd, measure_param_t *data)
    
 }
 
-void set_pulse_param(uint8_t *data)
+static void set_pulse_param(uint8_t *data)
 {
     Pulse_param_packet_t *p = data;
     uint16_t sum_pulse_width=0;
@@ -479,14 +485,14 @@ void set_pulse_param(uint8_t *data)
     CalcPulse_SPWMParam();
 }
 
-void set_kb_param(cali_coef_t *coef, uint8_t *data)
+static void set_kb_param(cali_coef_t *coef, uint8_t *data)
 {
     kb_packet_t *p = data;
     coef->k = p->k / 100.0;
     coef->b = p->b / 100.0;
 }
 
-void get_kb_param(uint8_t cmd, cali_coef_t *coef)
+static void get_kb_param(uint8_t cmd, cali_coef_t *coef)
 {
     kb_packet_t p;
     p.k = round(coef->k * 100) ;
@@ -494,7 +500,7 @@ void get_kb_param(uint8_t cmd, cali_coef_t *coef)
     PC_ACK(cmd, p);
 }
 
-void set_pid_param(PID_Controller *pid, uint8_t *data)
+static void set_pid_param(PID_Controller *pid, uint8_t *data)
 {
     pid_packet_t *p = data;
     pid->Kp = p->p / 100.0;
@@ -502,7 +508,7 @@ void set_pid_param(PID_Controller *pid, uint8_t *data)
     pid->Kd = p->d / 100.0;
 }
 
-void get_pid_param(uint8_t cmd, PID_Controller *pid)
+static void get_pid_param(uint8_t cmd, PID_Controller *pid)
 {
     pid_packet_t p;
     p.p = round(pid->Kp * 100);
@@ -511,7 +517,7 @@ void get_pid_param(uint8_t cmd, PID_Controller *pid)
     PC_ACK(cmd, p);
 }
 
-void set_LD_HOC_param(uint8_t ch, uint8_t *data)
+static void set_LD_HOC_param(uint8_t ch, uint8_t *data)
 {
     set_param.ld[ch].HOC = *(uint16_t *)data;
     if (set_param.ld[ch].HOC > LD_MAX_CUR * 10)
@@ -520,7 +526,7 @@ void set_LD_HOC_param(uint8_t ch, uint8_t *data)
     }
     SET_LD_MAX_Curr(ch, set_param.ld[ch].HOC / 10.0);
 }
-void set_LD_Vol_param(uint8_t ch, uint8_t *data)
+static void set_LD_Vol_param(uint8_t ch, uint8_t *data)
 {
     set_param.ld[ch].Vol = *(uint16_t *)data;
     if (set_param.ld[ch].Vol > LD_MAX_VOL * 10)
@@ -534,7 +540,7 @@ void set_LD_Vol_param(uint8_t ch, uint8_t *data)
     SET_LD_Vol(ch, set_param.ld[ch].Vol / 10.0);
 }
 
-void set_LCM_param(uint8_t *data)
+static void set_LCM_param(uint8_t *data)
 {
     S_LCM_t p = *(S_LCM_t *)data;
 
@@ -584,7 +590,7 @@ void set_LCM_param(uint8_t *data)
     pump_setting(&pump_set_param);
 }
 
-void ClearErrs()
+static void ClearErrs()
 {
     set_param.ld[0].ErrStatus.value = 0;
     set_param.ld[1].ErrStatus.value = 0;
@@ -596,20 +602,20 @@ void ClearErrs()
     upgrade_ini();
 }
 
-void save_param(uint8_t cmd)
+static void save_param(uint8_t cmd)
 {
     uint8_t p = 0;
     p = savePara();
     PC_ACK(cmd, p);
 }
 
-void set_Version(uint8_t *p)
+static void set_Version(uint8_t *p)
 {
    memcpy(Version2,p,4);
    saveBitInfo();
 }
 
-void set_pulse_type(uint8_t data)
+static void set_pulse_type(uint8_t data)
 {
     if (set_param.ld[0].sw == WORK_ON || set_param.ld[1].sw == WORK_ON)
     {
@@ -619,7 +625,7 @@ void set_pulse_type(uint8_t data)
         set_param.Pulse_Type = data;
 }
 
-void set_TRG_type(uint8_t data)
+static void set_TRG_type(uint8_t data)
 {
     if (set_param.ld[0].sw == WORK_ON || set_param.ld[1].sw == WORK_ON)
     {
@@ -631,13 +637,13 @@ void set_TRG_type(uint8_t data)
 
 
 
-void ack_boot_mode()
+static void ack_boot_mode()
 {
     uint8_t status = get_bootmode();
     PC_ACK(M_BOOT_MODE, status);
 }
 
-void exec_commands(uint8_t cmd, uint8_t *data, size_t data_len)
+static void exec_commands(uint8_t cmd, uint8_t *data, size_t data_len)
 {
      
    // *(float *)data
@@ -684,7 +690,7 @@ void exec_commands(uint8_t cmd, uint8_t *data, size_t data_len)
    case P_G_PULSE_PARA:             get_pulse_param(M_PULSE_PARA, &set_param);                                  break;
    case P_G_LD1_M_Cur:              PC_ACK_UINT16(M_LD1_M_Cur, measure_param.ld[0].Cur * 10);                   break;
    case P_G_LD2_M_Cur:              PC_ACK_UINT16(M_LD2_M_Cur, measure_param.ld[1].Cur * 10);                   break;
-   case P_G_L1_M_V:                 PC_ACK_UINT16(M_L1_M_V, measure_param.ld[0].Vol * 10);                      break;
+   case P_G_LD1_M_V:                 PC_ACK_UINT16(M_L1_M_V, measure_param.ld[0].Vol * 10);                      break;
    case P_G_L2_M_V:                 PC_ACK_UINT16(M_L2_M_V, measure_param.ld[1].Vol * 10);                      break;
    case P_G_PWR_TEMP:               PC_ACK_INT16(M_PWR_TEMP, measure_param.PWR_Temp * 10);                      break;
    case P_G_OUT_PD:                 PC_ACK_INT16(M_OUT_PD, measure_param.out.PD * 10);                          break;
@@ -753,23 +759,23 @@ void exec_commands(uint8_t cmd, uint8_t *data, size_t data_len)
    
 }
 
-void pc_parse_and_execute_command()
+void pc_parse_and_execute_command2()
 {
-
+    uart_para_t *uart_para = &uart2_para;
     //拷贝数据后 再进行处理？
-    if (uart1_para.pktcplt && uart1_para.tail >= sizeof(min_cmd_t))
+    if (uart_para->pktcplt && uart_para->tail >= sizeof(min_cmd_t))
     {
-        // Disable_UART1_Receive();
+        // Disable_UART2_Receive();
         uint16_t cmd_pos = 0;
-        for (size_t i = 0; i < uart1_para.tail; i++)
+        for (size_t i = 0; i < uart_para->tail; i++)
         {
-            min_cmd_t *data = (min_cmd_t *)(uart1_para.rxbuf + i);
+            min_cmd_t *data = (min_cmd_t *)(uart_para->rxbuf + i);
             if (data->head == CMD_HEAD &&                                                                         /* 帧头校验 */
                 data->sendID == PC_ID &&                                                                          /* 发送id校验 */
                 data->revID == MCU_ID &&                                                                          /* 接收id校验 */
-                uart1_para.tail - cmd_pos >= sizeof(min_cmd_t) + data->len &&                                 /* 长度满足要求 */
-                sum_crc(uart1_para.rxbuf + i + 6, data->len) == *(uint8_t *)(uart1_para.rxbuf + i + 6 + data->len) && /* 数据和校验 */
-                *(uint16_t *)(uart1_para.rxbuf + i + 7 + data->len) == CMD_TAIL                                     /* 帧尾校验 */
+                uart_para->tail - cmd_pos >= sizeof(min_cmd_t) + data->len &&                                 /* 长度满足要求 */
+                sum_crc(uart_para->rxbuf + i + 6, data->len) == *(uint8_t *)(uart_para->rxbuf + i + 6 + data->len) && /* 数据和校验 */
+                *(uint16_t *)(uart_para->rxbuf + i + 7 + data->len) == CMD_TAIL                                     /* 帧尾校验 */
             )
             {
                 exec_commands(data->cmd, (uint8_t *)data + 6, data->len);
@@ -778,301 +784,27 @@ void pc_parse_and_execute_command()
             }
         }
 
-        if (cmd_pos < uart1_para.tail)
+        if (cmd_pos < uart_para->tail)
         {
-            memcpy(uart1_para.rxbuf, uart1_para.rxbuf + cmd_pos, uart1_para.tail - cmd_pos);
-            uart1_para.tail -= (cmd_pos);
+            memcpy(uart_para->rxbuf, uart_para->rxbuf + cmd_pos, uart_para->tail - cmd_pos);
+            uart_para->tail -= (cmd_pos);
         }
         else
         {
-            uart1_para.tail = 0;
+            uart_para->tail = 0;
         }
-        if (uart1_para.tail == CLI_RX_BUFF)
+        if (uart_para->tail == CLI_RX_BUFF)
         {
-            uart1_para.tail = 0;
+            uart_para->tail = 0;
         }
-        uart1_para.pktcplt = 0;
-        // Enable_UART1_Receive();
+        uart_para->pktcplt = 0;
+        // Enable_UART2_Receive();
     }
 
-    // UART1_Check();
-}
-
-
-#ifdef BEBUG_UART
-
-
-#include "DAC8568.h"
-
-
-
-
-// 函数指针类型定义
-typedef void (*CommandFunction2)(void *param, size_t param_length);
-// 命令结构体
-typedef struct
-{
-    const char *command;
-    CommandFunction2 func;
-} Command_t;
-
-void command_Other(void *param, size_t param_length)
-{
-    HAL_Delay(1);
-    // printf("Executing %s with param: %.*s\n", __FUNCTION__, (int)param_length, (char *)param);
-    uart_printf(&huart1, "Executing %s with param: %.*s\n", __FUNCTION__, (int)param_length, (char *)param);
-}
-void SET_DAC1_1(void *param, size_t param_length)
-{
-    uint16_t value = atoi(param);
-    DAC8568_SET(DAC_SEL1, DAC_CHANNEL_A, value);
-    uart_printf(&huart1,"set DAC 1 channel %d value to %d\r\n", 1, value);
-}
-void SET_DAC1_2(void *param, size_t param_length)
-{
-    uint16_t value = atoi(param);
-    DAC8568_SET(DAC_SEL1, DAC_CHANNEL_B, value);
-    uart_printf(&huart1,"set DAC 1 channel %d value to %d\r\n", 1, value);
-}
-void SET_DAC1_3(void *param, size_t param_length)
-{
-    uint16_t value = atoi(param);
-    DAC8568_SET(DAC_SEL1, DAC_CHANNEL_C, value);
-     uart_printf(&huart1,"set DAC 1 channel %d value to %d\r\n", 1, value);
-}
-void SET_DAC1_4(void *param, size_t param_length)
-{
-    uint16_t value = atoi(param);
-    DAC8568_SET(DAC_SEL1, DAC_CHANNEL_D, value);
-     uart_printf(&huart1,"set DAC 1 channel %d value to %d\r\n", 1, value);
-}
-void SET_DAC1_5(void *param, size_t param_length)
-{
-    uint16_t value = atoi(param);
-    DAC8568_SET(DAC_SEL1, DAC_CHANNEL_E, value);
-     uart_printf(&huart1,"set DAC 1 channel %d value to %d\r\n", 1, value);
-}
-void SET_DAC1_6(void *param, size_t param_length)
-{
-    uint16_t value = atoi(param);
-    DAC8568_SET(DAC_SEL1, DAC_CHANNEL_F, value);
-     uart_printf(&huart1,"set DAC 1 channel %d value to %d\r\n", 1, value);
-}
-void SET_DAC1_7(void *param, size_t param_length)
-{
-    uint16_t value = atoi(param);
-    DAC8568_SET(DAC_SEL1, DAC_CHANNEL_H, value);
-     uart_printf(&huart1,"set DAC 1 channel %d value to %d\r\n", 1, value);
-}
-void SET_DAC1_8(void *param, size_t param_length)
-{
-    uint16_t value = atoi(param);
-    DAC8568_SET(DAC_SEL1, DAC_CHANNEL_G, value);
-    uart_printf(&huart1,"set DAC 1 channel %d value to %d\r\n", 1, value);
-}
-
-
-void SET_DAC2_1(void *param, size_t param_length)
-{
-    uint16_t value = atoi(param);
-    DAC8568_SET(DAC_SEL2, DAC_CHANNEL_A, value);
-    uart_printf(&huart1,"set DAC 2 channel %d value to %d\r\n", 1, value);
-}
-void SET_DAC2_2(void *param, size_t param_length)
-{
-    uint16_t value = atoi(param);
-    DAC8568_SET(DAC_SEL2, DAC_CHANNEL_B, value);
-     uart_printf(&huart1,"set DAC 2 channel %d value to %d\r\n", 1, value);
-}
-void SET_DAC2_3(void *param, size_t param_length)
-{
-    uint16_t value = atoi(param);
-    DAC8568_SET(DAC_SEL2, DAC_CHANNEL_C, value);
-     uart_printf(&huart1,"set DAC 2 channel %d value to %d\r\n", 1, value);
-}
-void SET_DAC2_4(void *param, size_t param_length)
-{
-    uint16_t value = atoi(param);
-    DAC8568_SET(DAC_SEL2, DAC_CHANNEL_D, value);
-     uart_printf(&huart1,"set DAC 2 channel %d value to %d\r\n", 1, value);
-}
-void SET_DAC2_5(void *param, size_t param_length)
-{
-    uint16_t value = atoi(param);
-    DAC8568_SET(DAC_SEL2, DAC_CHANNEL_E, value);
-     uart_printf(&huart1,"set DAC 2 channel %d value to %d\r\n", 1, value);
-}
-void SET_DAC2_6(void *param, size_t param_length)
-{
-    uint16_t value = atoi(param);
-    DAC8568_SET(DAC_SEL2, DAC_CHANNEL_F, value);
-     uart_printf(&huart1,"set DAC 2 channel %d value to %d\r\n", 1, value);
-}
-void SET_DAC2_7(void *param, size_t param_length)
-{
-    uint16_t value = atoi(param);
-    DAC8568_SET(DAC_SEL2, DAC_CHANNEL_H, value);
-     uart_printf(&huart1,"set DAC 2 channel %d value to %d\r\n", 1, value);
-}
-void SET_DAC2_8(void *param, size_t param_length)
-{
-    uint16_t value = atoi(param);
-    DAC8568_SET(DAC_SEL2, DAC_CHANNEL_G, value);
-     uart_printf(&huart1,"set DAC 2 channel %d value to %d\r\n", 1, value);
-}
-
-void SET_LD_Switch1(void *param, size_t param_length)
-{
-    uint8_t pin_state = atoi(param);   
-    // pin_state == 0 (GPIO_PIN_RESET) => ON, pin_state != 0 => OFF
-    if (pin_state == GPIO_PIN_RESET)
-    {
-        SET_LD_SW(LD_CH_1, WORK_ON);
-    }
-    else
-    {
-        SET_LD_SW(LD_CH_1, WORK_OFF);
-    }
-    uart_printf(&huart1,"set LD switch  %d to %d\r\n", 1,pin_state);
-}
-void SET_LD_Switch2(void *param, size_t param_length)
-{
-    uint8_t pin_state = atoi(param);
-    if (pin_state == GPIO_PIN_RESET)
-    {
-        SET_LD_SW(LD_CH_2, WORK_ON);
-    }
-    else
-    {
-        SET_LD_SW(LD_CH_2, WORK_OFF);
-    }
-    uart_printf(&huart1,"set LD switch  %d to %d\r\n", 2,pin_state);
-}
-
-Command_t commands[] = {
-
-    // {"MODE", SET_MODE},
-    // {"LD", SET_LD},
-    // {"SET_LD_TYPE", SET_LD_TYPE},
-    // {"SET_LD_C", SET_LD_C},
-    // {"SET_LD_HOC", SET_LD_HOC},
-    // {"SET_TEC_V", SET_TEC_MaxV},
-    // {"SET_Temp", SET_Temp},
-    // {"show", show_sta},
-    // {"adc", show_adc3},
-    // {"show_adc", show_adc2},
-    // {"LD_REST", SET_LD_REST2},
-    {"LD_SW1", SET_LD_Switch1},
-    {"LD_SW2", SET_LD_Switch2},
-    // {"LD_SW3", SET_LD_Switch3},
-    // {"LD_SW4", SET_LD_Switch4},
-    // {"LD_k", SET_LD_k},
-    // {"LD_b", SET_LD_Switch4},
-    // {"LED1", SET_LED1},
-    // {"LED2", SET_LED2},
-    // {"TEC", SET_TEC2},
-    // //{"TEC_k", SET_TEC_k},
-    // //{"TEC_b", SET_TEC_b},
-    // {"laser_k", SET_laser_k},
-    // {"laser_b", SET_laser_b},
-    {"set_dac1_1", SET_DAC1_1},
-    {"set_dac1_2", SET_DAC1_2},
-    {"set_dac1_3", SET_DAC1_3},
-    {"set_dac1_4", SET_DAC1_4},
-    {"set_dac1_5", SET_DAC1_5},
-    {"set_dac1_6", SET_DAC1_6},
-    {"set_dac1_7", SET_DAC1_7},
-    {"set_dac1_8", SET_DAC1_8},
-
-    {"set_dac2_1", SET_DAC2_1},
-    {"set_dac2_2", SET_DAC2_2},
-    {"set_dac2_3", SET_DAC2_3},
-    {"set_dac2_4", SET_DAC2_4},
-    {"set_dac2_5", SET_DAC2_5},
-    {"set_dac2_6", SET_DAC2_6},
-    {"set_dac2_7", SET_DAC2_7},
-    {"set_dac2_8", SET_DAC2_8},
-
-    {"Other", command_Other},
-    //{"CONSOLE", enter_console},
-    {NULL, NULL} // 结束标志
-};
-char cmds[30];
-// 解析和执行命令
-int parse_and_execute_command(char *input)
-{
-
-    char *command, *param;
-    command = strtok(input, "="); // 第一次调用，获取分隔符前的部分
-    param = strtok(NULL, "=");    // 第二次调用，获取分隔符后的部分
-    size_t param_length = (param == NULL) ? 0 : strlen(param);
-
-    // 查找对应的命令
-    for (int i = 0; commands[i].command != NULL; i++)
-    {
-        if (strcasecmp(commands[i].command, command) == 0)
-        {
-            commands[i].func(param, param_length); // 执行对应的函数
-           
-            return 1;
-        }
-    }
-    // printf("Command not found: %s\n", command);
-    return 0;
-}
-
-
-#define MAX_CMD_SIZE 30
-#define CMD_START_CHAR '@'
-#define CMD_END_CHAR '#'
-
-void parse_command()
-{
-
-    if (uart1_para.pktcplt)
-    {
-      
-        char cmds[MAX_CMD_SIZE] = {0};
-        uint16_t cmd_pos=0;
-        for (size_t i = 0; i < uart1_para.tail; i++)
-        {
-            if (uart1_para.rxbuf[i] == CMD_START_CHAR)
-            {
-                uint16_t cmd_index = i + 1;
-                for (size_t j = i + 1; j < uart1_para.tail; j++)
-                {
-                    if (uart1_para.rxbuf[j] == CMD_END_CHAR)
-                    {
-                        uint16_t cmd_len = (j - i - 1) < MAX_CMD_SIZE ? (j - i - 1) : MAX_CMD_SIZE;
-                        if (cmd_len > 0)
-                        {
-                            memcpy(cmds, uart1_para.rxbuf + cmd_index, cmd_len);
-                            parse_and_execute_command(cmds);
-                            memset(cmds, 0, MAX_CMD_SIZE);
-                        }
-                        cmd_pos = j + 1;
-                        break;
-                    }
-                }
-            }
-        }
-        if (cmd_pos < uart1_para.tail)
-        {
-            memcpy(uart1_para.rxbuf, uart1_para.rxbuf + cmd_pos, uart1_para.tail - cmd_pos);
-            uart1_para.tail -= (cmd_pos);
-        }
-        else
-        {
-            uart1_para.tail = 0;
-        }
-        uart1_para.pktcplt = 0;
-   
-    }
+    // UART2_Check();
 }
 
 
 
 
-
-#endif // BEBUG_UART
 
