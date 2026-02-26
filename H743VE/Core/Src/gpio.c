@@ -84,7 +84,7 @@ void MX_GPIO_Init(void)
   /*Configure GPIO pin : LD_TRG_IN_Pin */
   GPIO_InitStruct.Pin = LD_TRG_IN_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   HAL_GPIO_Init(LD_TRG_IN_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : DAC_CS2_Pin DAC_CS1_Pin LD_ON_OFF1_Pin LD_PW_EN2_Pin
@@ -113,7 +113,7 @@ void MX_GPIO_Init(void)
   /*Configure GPIO pins : LD_OC_IN2_Pin LD_OC_IN1_Pin */
   GPIO_InitStruct.Pin = LD_OC_IN2_Pin|LD_OC_IN1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
