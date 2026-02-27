@@ -756,20 +756,21 @@ void exec_commands(uint8_t cmd, uint8_t *data, size_t data_len)
 void pc_parse_and_execute_command()
 {
 
+    uart_para_t *uart_para = &uart1_para;
     //拷贝数据后 再进行处理？
-    if (uart1_para.pktcplt && uart1_para.tail >= sizeof(min_cmd_t))
+    if (uart_para->pktcplt && uart_para->tail >= sizeof(min_cmd_t))
     {
         // Disable_UART1_Receive();
         uint16_t cmd_pos = 0;
-        for (size_t i = 0; i < uart1_para.tail; i++)
+        for (size_t i = 0; i < uart_para->tail; i++)
         {
-            min_cmd_t *data = (min_cmd_t *)(uart1_para.rxbuf + i);
+            min_cmd_t *data = (min_cmd_t *)(uart_para->rxbuf + i);
             if (data->head == CMD_HEAD &&                                                                         /* 帧头校验 */
                 data->sendID == PC_ID &&                                                                          /* 发送id校验 */
                 data->revID == MCU_ID &&                                                                          /* 接收id校验 */
-                uart1_para.tail - cmd_pos >= sizeof(min_cmd_t) + data->len &&                                 /* 长度满足要求 */
-                sum_crc(uart1_para.rxbuf + i + 6, data->len) == *(uint8_t *)(uart1_para.rxbuf + i + 6 + data->len) && /* 数据和校验 */
-                *(uint16_t *)(uart1_para.rxbuf + i + 7 + data->len) == CMD_TAIL                                     /* 帧尾校验 */
+                uart_para->tail - cmd_pos >= sizeof(min_cmd_t) + data->len &&                                 /* 长度满足要求 */
+                sum_crc(uart_para->rxbuf + i + 6, data->len) == *(uint8_t *)(uart_para->rxbuf + i + 6 + data->len) && /* 数据和校验 */
+                *(uint16_t *)(uart_para->rxbuf + i + 7 + data->len) == CMD_TAIL                                     /* 帧尾校验 */
             )
             {
                 exec_commands(data->cmd, (uint8_t *)data + 6, data->len);
@@ -778,20 +779,20 @@ void pc_parse_and_execute_command()
             }
         }
 
-        if (cmd_pos < uart1_para.tail)
+        if (cmd_pos < uart_para->tail)
         {
-            memcpy(uart1_para.rxbuf, uart1_para.rxbuf + cmd_pos, uart1_para.tail - cmd_pos);
-            uart1_para.tail -= (cmd_pos);
+            memcpy(uart_para->rxbuf, uart_para->rxbuf + cmd_pos, uart_para->tail - cmd_pos);
+            uart_para->tail -= (cmd_pos);
         }
         else
         {
-            uart1_para.tail = 0;
+            uart_para->tail = 0;
         }
-        if (uart1_para.tail == CLI_RX_BUFF)
+        if (uart_para->tail == CLI_RX_BUFF)
         {
-            uart1_para.tail = 0;
+            uart_para->tail = 0;
         }
-        uart1_para.pktcplt = 0;
+        uart_para->pktcplt = 0;
         // Enable_UART1_Receive();
     }
 
