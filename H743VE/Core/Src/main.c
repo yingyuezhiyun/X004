@@ -68,8 +68,18 @@ mem_cfg_t mem_cfg = {
     .cfg_address = CFG_ADDR,
 };
 
-uart_para_t uart1_para;
-uart_para_t uart2_para;
+uart_para_t uart1_para = {
+    .huart = &huart1,
+    .tail = 0,
+    .pktcplt = 0,
+    .rxbuf = {0},
+};
+uart_para_t uart2_para = {
+    .huart = &huart2,
+    .tail = 0,
+    .pktcplt = 0,
+    .rxbuf = {0},
+};
 running_flag_t running_flag;
 
 
