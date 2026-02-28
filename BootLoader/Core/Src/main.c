@@ -33,6 +33,7 @@
 #include "stdarg.h"
 #include "JumpApp.h"
 #include "PC_interface.h"
+#include "protocol_comm.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -155,9 +156,10 @@ int main(void)
   while (1)
   {
 
-    pc_parse_and_execute_command2();
+    parse_and_execute_command(&uart1_para, exec_commands_list1);
+    parse_and_execute_command(&uart2_para, exec_commands_list2);
     Delay_ms(1);
-    crc_test_func();
+    // crc_test_func();
   
     /* USER CODE END WHILE */
 

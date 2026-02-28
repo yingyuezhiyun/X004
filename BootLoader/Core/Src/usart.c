@@ -426,7 +426,7 @@ void Disable_UART2_Receive()
   HAL_UART_AbortReceive(&huart2);
 }
 
-int CheckUartReady()
+int CheckUart1Ready()
 {
   HAL_DMA_StateTypeDef res = HAL_DMA_GetState(huart1.hdmatx);
   uint8_t loop = 0;
@@ -447,7 +447,7 @@ int CheckUartReady()
 
 void uart1_printf(char *format, ...)
 {
-  if (CheckUartReady() == 0)
+  if (CheckUart1Ready() == 0)
   {
     return;
   }
@@ -464,7 +464,7 @@ void uart1_printf(char *format, ...)
 void info_printf(char *format, ...)
 {
 #ifdef INFO_PRINT
-  if (CheckUartReady() == 0)
+  if (CheckUart1Ready() == 0)
   {
     return;
   }

@@ -663,6 +663,16 @@
               <FileType>1</FileType>
               <FilePath>../Core/Src/stm32h7xx_hal_msp.c</FilePath>
             </File>
+            <File>
+              <FileName>PC_interface2.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\PC_interface2.c</FilePath>
+            </File>
+            <File>
+              <FileName>protocol_comm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\protocol_comm.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

@@ -151,7 +151,7 @@ enum
     M_TEC3_M_PW = 0xB3,   /* 查询第3路TEC输出功率检测值 */
     M_TEC4_M_TEMP = 0xE4, /* 查询第4路检测温度检测值 */
     M_TEC4_M_PW = 0xE5,   /* 查询第4路TEC输出功率检测值 */
-    M_BOOT_MODE = 0xe6,   /* BOOT模式 反馈 */
+    M_BOOT_MODE = 0xE6,   /* BOOT模式 反馈 */
 };
 
 
