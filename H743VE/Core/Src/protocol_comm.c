@@ -6,6 +6,11 @@
 #include "global_cfg.h"
 #include "usart.h"
 
+char Version[] = "X004_001";
+
+uint64_t BuildTime = 202509112205;
+
+char Version2[] = {0, 0, 0, 3};//V0.0.0.2
 
 uint8_t sum_crc(uint8_t *data, uint8_t len)
 {
@@ -36,7 +41,7 @@ int CheckUartReady(UART_HandleTypeDef *huart)
 
 void uart_send(UART_HandleTypeDef *huart, uint8_t cmd, void *data, uint8_t dataLen)
 {
-    static uint8_t UartTxBuff[MAX_SIZE];
+    static uint8_t UartTxBuff[MAX_SIZE];//共用一个发送缓存 极端情况下可能会资源冲突
     min_cmd_t *s = UartTxBuff;
     s->head = CMD_HEAD;
     s->sendID = MCU_ID;
@@ -55,15 +60,15 @@ void uart_send(UART_HandleTypeDef *huart, uint8_t cmd, void *data, uint8_t dataL
     HAL_UART_Transmit_DMA(huart, UartTxBuff, length);
 }
 
-void pc_send_ack(uart_para_t *uart_para, uint8_t cmd, void *data, uint8_t dataLen)
+void send_ack(UART_HandleTypeDef *huart, uint8_t cmd, void *data, uint8_t dataLen)
 {
-    if (CheckUartReady(uart_para->huart))
+    if (CheckUartReady(huart))
     {
-        uart_send(uart_para->huart, cmd, data, dataLen);
+        uart_send(huart, cmd, data, dataLen);
     }
 }
 
-void pc_parse_and_execute_command(uart_para_t *uart_para, CommandFunction exec_commands)
+void parse_and_execute_command(uart_para_t *uart_para, CommandFunction exec_commands)
 {
     // uart_para_t *uart_para = &uart1_para;
     // 拷贝数据后 再进行处理？
@@ -82,7 +87,7 @@ void pc_parse_and_execute_command(uart_para_t *uart_para, CommandFunction exec_c
                 *(uint16_t *)(uart_para->rxbuf + i + 7 + data->len) == CMD_TAIL                                       /* 帧尾校验 */
             )
             {
-                exec_commands(uart_para, data->cmd, (uint8_t *)data + 6, data->len);
+                exec_commands(uart_para->huart, data->cmd, (uint8_t *)data + 6, data->len);
                 i += sizeof(min_cmd_t) + data->len - 1;
                 cmd_pos = i + 1;
             }
@@ -104,4 +109,93 @@ void pc_parse_and_execute_command(uart_para_t *uart_para, CommandFunction exec_c
         // Enable_UART1_Receive();
     }
     // UART1_Check();
+}
+
+void set_pulse_width(uint16_t width)
+{
+    set_param.Pulse_para.Width = width;
+    CalcPulse_SPWMParam();
+    CalcPulse_NORParam();
+}
+
+void set_Q_delay(uint16_t delay)
+{
+    set_param.T_Q.delay = delay;
+    CalcPulse_SPWMParam();
+    CalcPulse_NORParam(); 
+}
+
+void set_nor_freq(uint16_t freq)
+{
+    set_param.Pulse_para.Nor_Freq = freq;
+    CalcPulse_NORParam();
+}
+
+
+void set_pulse_param(uint8_t *data)
+{
+    Pulse_param_packet_t *p = data;
+    uint16_t sum_pulse_width=0;
+    // todo 判断
+    if (p->Num > PULSE_MAX_SECTION)
+    {
+        return;
+    }
+    for (size_t i = 0; i < p->Num; i++)
+    {
+        sum_pulse_width += p->Interval[i];
+        if (p->Interval[i] > 660 || p->Interval[i] < 240)
+        {
+            return;
+        }
+    }
+    if (sum_pulse_width > 5000)
+    {
+        return;
+    }
+    set_param.Pulse_para.Num = p->Num;
+    for (size_t i = 0; i < p->Num; i++)
+    {
+        set_param.Pulse_para.Interval[i] = p->Interval[i];
+    }
+    CalcPulse_SPWMParam();
+}
+
+void get_pulse_param(UART_HandleTypeDef *huart, uint8_t cmd)
+{
+    Pulse_param_packet_t p;
+    set_param_t *data = &set_param;
+    p.Num = data->Pulse_para.Num;
+    for (size_t i = 0; i < p.Num; i++)
+    {
+        p.Interval[i] = data->Pulse_para.Interval[i];
+    }
+    PC_ACK(cmd, p);
+}
+
+
+void set_pulse_type(uint8_t data)
+{
+    if (set_param.ld[0].sw == WORK_ON || set_param.ld[1].sw == WORK_ON)
+    {
+        return;
+    }
+    if (data == WORK_OFF || data == WORK_ON)
+        set_param.Pulse_Type = data;
+}
+
+void set_TRG_type(uint8_t data)
+{
+    if (set_param.ld[0].sw == WORK_ON || set_param.ld[1].sw == WORK_ON)
+    {
+        return;
+    }
+    if (data == WORK_OFF || data == WORK_ON)
+        set_param.TRG_Type = data;
+}
+
+void get_boot_mode(UART_HandleTypeDef *huart, uint8_t cmd)
+{
+    uint8_t status = get_bootmode();
+    PC_ACK(cmd, status);
 }

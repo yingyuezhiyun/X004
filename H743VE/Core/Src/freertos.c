@@ -40,6 +40,9 @@
 #include "upgrade.h"
 #include "heat.h"
 #include "crc.h"
+#include "protocol_comm.h"
+
+
 
 /* USER CODE END Includes */
 
@@ -278,11 +281,13 @@ void StartTask03(void *argument)
   /* Infinite loop */
   for (;;)
   {
-    bit_check(); 
+    bit_check();
 #ifdef BEBUG_UART
     parse_command();
 #else
-    pc_parse_and_execute_command();
+    parse_and_execute_command(&uart1_para, exec_commands_list1);
+    parse_and_execute_command(&uart2_para, exec_commands_list2);
+    // pc_parse_and_execute_command();
 #endif // BEBUG_UART
 
     osDelay(1);

@@ -9,18 +9,9 @@
 #include "PC_interface.h"
 #include "cmsis_os2.h"
 #include "upgrade.h"
+#include "protocol_comm.h"
+#include "math.h"
 
-#define MAX_SIZE (256)
-#define CMD_HEAD (0x545A)
-#define CMD_TAIL (0xFE5A)
-#define PC_ID (0x14)
-#define MCU_ID (0x1c)
-
-char Version[] = "X004_001";
-
-uint64_t BuildTime = 202509112205;
-
-char Version2[] = {0, 0, 0, 3};//V0.0.0.2
 
 typedef struct
 {
@@ -42,11 +33,7 @@ typedef struct
     uint16_t d; // 单位 0.01
 } pid_packet_t;
 
-typedef struct
-{
-    uint16_t Num;
-    uint16_t Interval[11]; // 单位 us 范围 240-660
-} Pulse_param_packet_t;
+
 
 enum
 {
@@ -228,116 +215,11 @@ enum
 
 };
 
-#pragma pack(1)
-typedef struct
-{
-    uint16_t head;
-    uint8_t sendID;
-    uint8_t revID;
-    uint8_t cmd;
-    uint8_t len;
-    uint8_t crc;
-    uint16_t tail;
-} min_cmd_t;
-#pragma unpack()
 
-uint8_t sum_crc(uint8_t *data, uint8_t len)
-{
-    uint8_t sum = 0;
-    for (size_t i = 0; i < len; i++)
-    {
-        sum += data[i];
-    }
-    return sum;
-  
-}
-
-int CheckUartReady()
-{
-    HAL_DMA_StateTypeDef res = HAL_DMA_GetState(huart1.hdmatx);
-    uint8_t loop = 0;
-    while (res != HAL_DMA_STATE_READY && loop < 50)
-    {
-        Delay_ms(1);
-        loop++;
-        res = HAL_DMA_GetState(huart1.hdmatx);
-    }
-    if (res != HAL_DMA_STATE_READY)
-    {
-        return 0;
-    }
-    return 1;
-}
-
-void uart1_send(uint8_t cmd, void *data, uint8_t dataLen)
-{
-    static uint8_t UartTxBuff[MAX_SIZE];
-    min_cmd_t *s = UartTxBuff;
-    s->head = CMD_HEAD;
-    s->sendID = MCU_ID;
-    s->revID = PC_ID;
-    s->cmd = cmd;
-    s->len = dataLen;
-    if (dataLen > 0)
-    {
-        memcpy((UartTxBuff + 6), data, dataLen);
-    }
-    UartTxBuff[6 + dataLen] = sum_crc(data, dataLen);
-    UartTxBuff[6 + dataLen + 1] = CMD_TAIL & 0xff;
-    UartTxBuff[6 + dataLen + 2] = CMD_TAIL >> 8;
-    uint8_t length = dataLen + sizeof(min_cmd_t);
-    // HAL_UART_Transmit(&huart1, UartTxBuff, length, 0xfff);
-    HAL_UART_Transmit_DMA(&huart1, UartTxBuff, length);
-}
-
-void pc_send_ack(uint8_t cmd, void *data, uint8_t dataLen)
-{
-    if (CheckUartReady())
-    {
-        uart1_send(cmd, data, dataLen);
-    }
-}
-
-
-#define PC_ACK(cmd, data) pc_send_ack(cmd, &data, sizeof(data))
-
-#define PC_ACK_INT16(cmd, data)                    \
-    {                                              \
-        int16_t data1 = (int16_t)round(data);      \
-        pc_send_ack(cmd, &data1, sizeof(int16_t)); \
-    }
-
-#define PC_ACK_UINT16(cmd, data)                    \
-    {                                               \
-        uint16_t data1 = (uint16_t)round(data);     \
-        pc_send_ack(cmd, &data1, sizeof(uint16_t)); \
-    }
-
-
-
-
-#define SET_PARAM_INT16(param) (param) = *(uint16_t *)data
-#define SET_PARAM_INT8(param) (param) = *(uint8_t *)data
-
-#define SET_SW_STA(param)                        \
-    {                                            \
-        uint8_t type = *(uint8_t *)data;         \
-        if (type == WORK_OFF || type == WORK_ON) \
-            param = type;                        \
-    }
-
-#define SET_PULSE_TYPE(param)                    \
-    {                                            \
-        uint8_t type = *(uint8_t *)data;         \
-        if (type == WORK_OFF || type == WORK_ON) \
-        {                                        \
-            param = type;                        \
-        }                                        \
-    }
-
-void set_tec_param(uint8_t ch, tec_setparam_t *tec, uint8_t *data)
+static void set_tec_param(uint8_t ch, uint8_t *data)
 {
     tec_packet_t *p = data;
+    tec_setparam_t *tec = &set_param.tec[ch];
     if (p->Temp >= TEC_SET_MIN_TEMP && p->Temp <= TEC_SET_MAX_TEMP)
     {
         tec->Temp = p->Temp;
@@ -349,16 +231,18 @@ void set_tec_param(uint8_t ch, tec_setparam_t *tec, uint8_t *data)
     }
 }
 
-void get_tec_param(uint8_t cmd, tec_setparam_t *tec)
+static void get_tec_param(UART_HandleTypeDef *huart, uint8_t cmd, uint8_t ch)
 {
     tec_packet_t p;
+    tec_setparam_t *tec = &set_param.tec[ch];
     p.Temp = tec->Temp;
     p.V = tec->MaxVol;
     PC_ACK(cmd, p);
 }
 
-void get_all_set_param(uint8_t cmd, set_param_t *data)
+static void get_all_set_param(UART_HandleTypeDef *huart, uint8_t cmd)
 {
+    set_param_t *data = &set_param;
 #pragma pack(1)
     struct
     {
@@ -391,19 +275,9 @@ void get_all_set_param(uint8_t cmd, set_param_t *data)
     PC_ACK(cmd, p);
 }
 
-void get_pulse_param(uint8_t cmd, set_param_t *data)
+static void get_all_measure_param(UART_HandleTypeDef *huart, uint8_t cmd)
 {
-    Pulse_param_packet_t p;
-    p.Num = data->Pulse_para.Num;
-    for (size_t i = 0; i < p.Num; i++)
-    {
-        p.Interval[i] = data->Pulse_para.Interval[i];
-    }
-    PC_ACK(cmd, p);
-}
-
-void get_all_measure_param(uint8_t cmd, measure_param_t *data)
-{
+    measure_param_t *data = &measure_param;
 #pragma pack(1)
     struct
     {
@@ -447,36 +321,6 @@ void get_all_measure_param(uint8_t cmd, measure_param_t *data)
     p.sys_cur = round(data->sys.Cur * 10);
     p.Work_Status = Work_Status;
     PC_ACK(cmd, p);
-   
-}
-
-void set_pulse_param(uint8_t *data)
-{
-    Pulse_param_packet_t *p = data;
-    uint16_t sum_pulse_width=0;
-    // todo 判断
-    if (p->Num > PULSE_MAX_SECTION)
-    {
-        return;
-    }
-    for (size_t i = 0; i < p->Num; i++)
-    {
-        sum_pulse_width += p->Interval[i];
-        if (p->Interval[i] > 660 || p->Interval[i] < 240)
-        {
-            return;
-        }
-    }
-    if (sum_pulse_width > 5000)
-    {
-        return;
-    }
-    set_param.Pulse_para.Num = p->Num;
-    for (size_t i = 0; i < p->Num; i++)
-    {
-        set_param.Pulse_para.Interval[i] = p->Interval[i];
-    }
-    CalcPulse_SPWMParam();
 }
 
 void set_kb_param(cali_coef_t *coef, uint8_t *data)
@@ -486,7 +330,7 @@ void set_kb_param(cali_coef_t *coef, uint8_t *data)
     coef->b = p->b / 100.0;
 }
 
-void get_kb_param(uint8_t cmd, cali_coef_t *coef)
+void get_kb_param(UART_HandleTypeDef *huart,uint8_t cmd, cali_coef_t *coef)
 {
     kb_packet_t p;
     p.k = round(coef->k * 100) ;
@@ -502,7 +346,7 @@ void set_pid_param(PID_Controller *pid, uint8_t *data)
     pid->Kd = p->d / 100.0;
 }
 
-void get_pid_param(uint8_t cmd, PID_Controller *pid)
+void get_pid_param(UART_HandleTypeDef *huart,uint8_t cmd, PID_Controller *pid)
 {
     pid_packet_t p;
     p.p = round(pid->Kp * 100);
@@ -596,7 +440,7 @@ void ClearErrs()
     upgrade_ini();
 }
 
-void save_param(uint8_t cmd)
+void save_param(UART_HandleTypeDef *huart,uint8_t cmd)
 {
     uint8_t p = 0;
     p = savePara();
@@ -609,35 +453,9 @@ void set_Version(uint8_t *p)
    saveBitInfo();
 }
 
-void set_pulse_type(uint8_t data)
-{
-    if (set_param.ld[0].sw == WORK_ON || set_param.ld[1].sw == WORK_ON)
-    {
-        return;
-    }
-    if (data == WORK_OFF || data == WORK_ON)
-        set_param.Pulse_Type = data;
-}
-
-void set_TRG_type(uint8_t data)
-{
-    if (set_param.ld[0].sw == WORK_ON || set_param.ld[1].sw == WORK_ON)
-    {
-        return;
-    }
-    if (data == WORK_OFF || data == WORK_ON)
-        set_param.TRG_Type = data;
-}
 
 
-
-void ack_boot_mode()
-{
-    uint8_t status = get_bootmode();
-    PC_ACK(M_BOOT_MODE, status);
-}
-
-void exec_commands(uint8_t cmd, uint8_t *data, size_t data_len)
+void exec_commands_list1(UART_HandleTypeDef *huart, uint8_t cmd, uint8_t *data, size_t data_len)
 {
      
    // *(float *)data
@@ -646,12 +464,12 @@ void exec_commands(uint8_t cmd, uint8_t *data, size_t data_len)
     
    case P_S_LD1_S_Cur:              SET_PARAM_INT16(set_param.ld[0].Cur);                                       break;
    case P_S_LD2_S_Cur:              SET_PARAM_INT16(set_param.ld[1].Cur);                                       break;
-   case P_S_DFLT_V:                 /* SET_PARAM_INT16(set_param.DFLT_V);  */                             break;
-   case P_S_INTER_NOR_FREQ:         SET_PARAM_INT16(set_param.Pulse_para.Nor_Freq);CalcPulse_NORParam();                             break;
-   case P_S_PULSE_WIDTH:            SET_PARAM_INT16(set_param.Pulse_para.Width);CalcPulse_SPWMParam();CalcPulse_NORParam();                                break;
-   case P_S_Q_DELAY:                SET_PARAM_INT16(set_param.T_Q.delay);CalcPulse_SPWMParam();CalcPulse_NORParam();                                       break;
-   case P_S_TRG_TYPE:               set_TRG_type(*(uint8_t *)data);                                         break;
-   case P_S_PulseType:              set_pulse_type(*(uint8_t *)data);                                       break;
+   case P_S_DFLT_V:                 /* SET_PARAM_INT16(set_param.DFLT_V);  */                                   break;
+   case P_S_INTER_NOR_FREQ:         set_nor_freq(*(uint16_t *)data);                                            break;
+   case P_S_PULSE_WIDTH:            set_pulse_width(*(uint16_t *)data);                                         break;
+   case P_S_Q_DELAY:                set_Q_delay(*(uint16_t *)data);                                             break;
+   case P_S_TRG_TYPE:               set_TRG_type(*(uint8_t *)data);                                             break;
+   case P_S_PulseType:              set_pulse_type(*(uint8_t *)data);                                           break;
    case P_S_LD1_SW:                 SET_SW_STA(set_param.ld[0].sw);                                             break;
    case P_S_LD2_SW:                 SET_SW_STA(set_param.ld[1].sw);                                             break;
    case P_S_Q_SW:                   SET_SW_STA(set_param.T_Q.sw);                                               break;
@@ -659,10 +477,10 @@ void exec_commands(uint8_t cmd, uint8_t *data, size_t data_len)
    case P_S_TEC2_SW:                SET_SW_STA(set_param.tec[1].sw);                                            break;
    case P_S_TEC3_SW:                SET_SW_STA(set_param.tec[2].sw);                                            break;
    case P_S_TEC4_SW:                SET_SW_STA(set_param.tec[3].sw);                                            break;
-   case P_S_TEC1_PARA:              set_tec_param(0,&set_param.tec[0], data);                                     break;
-   case P_S_TEC2_PARA:              set_tec_param(1,&set_param.tec[1], data);                                     break;
-   case P_S_TEC3_PARA:              set_tec_param(2,&set_param.tec[2], data);                                     break;
-   case P_S_TEC4_PARA:              set_tec_param(3,&set_param.tec[3], data);                                     break;
+   case P_S_TEC1_PARA:              set_tec_param(0, data);                                                     break;
+   case P_S_TEC2_PARA:              set_tec_param(1, data);                                                     break;
+   case P_S_TEC3_PARA:              set_tec_param(2, data);                                                     break;
+   case P_S_TEC4_PARA:              set_tec_param(3, data);                                                     break;
    case P_S_PULSE_PARA:             set_pulse_param(data);                                                      break;
    case P_G_Cur:       break;
    case P_G_DFLT_V:                 /* PC_ACK(M_DFLT_V, set_param.DFLT_V); */                                   break;
@@ -677,11 +495,11 @@ void exec_commands(uint8_t cmd, uint8_t *data, size_t data_len)
    case P_G_TEC2_SW:                PC_ACK(M_TEC2_SW, set_param.tec[1].sw);                                     break;
    case P_G_TEC3_SW:                PC_ACK(M_TEC3_SW, set_param.tec[2].sw);                                     break;
    case P_G_TEC4_SW:                PC_ACK(M_TEC4_SW, set_param.tec[3].sw);                                     break;
-   case P_G_TEC1_PARA:              get_tec_param(M_TEC1_PARA, &set_param.tec[0]);                              break;
-   case P_G_TEC2_PARA:              get_tec_param(M_TEC2_PARA, &set_param.tec[1]);                              break;
-   case P_G_TEC3_PARA:              get_tec_param(M_TEC3_PARA, &set_param.tec[2]);                              break;
-   case P_G_TEC4_PARA:              get_tec_param(M_TEC4_PARA, &set_param.tec[3]);                              break;
-   case P_G_PULSE_PARA:             get_pulse_param(M_PULSE_PARA, &set_param);                                  break;
+   case P_G_TEC1_PARA:              get_tec_param(huart, M_TEC1_PARA, 0);                                       break;
+   case P_G_TEC2_PARA:              get_tec_param(huart, M_TEC2_PARA, 1);                                       break;
+   case P_G_TEC3_PARA:              get_tec_param(huart, M_TEC3_PARA, 2);                                       break;
+   case P_G_TEC4_PARA:              get_tec_param(huart, M_TEC4_PARA, 3);                                       break;
+   case P_G_PULSE_PARA:             get_pulse_param(huart, M_PULSE_PARA);                                       break;
    case P_G_LD1_M_Cur:              PC_ACK_UINT16(M_LD1_M_Cur, measure_param.ld[0].Cur * 10);                   break;
    case P_G_LD2_M_Cur:              PC_ACK_UINT16(M_LD2_M_Cur, measure_param.ld[1].Cur * 10);                   break;
    case P_G_L1_M_V:                 PC_ACK_UINT16(M_L1_M_V, measure_param.ld[0].Vol * 10);                      break;
@@ -704,8 +522,8 @@ void exec_commands(uint8_t cmd, uint8_t *data, size_t data_len)
    
    
    case P_G_WRK_STA:                PC_ACK(M_WRK_STA, Work_Status);                                             break;
-   case P_G_ALL_SET:                get_all_set_param(M_ALL_SET, &set_param);                                   break;
-   case P_G_ALL_M:                  get_all_measure_param(M_ALL_M, &measure_param);                             break; 
+   case P_G_ALL_SET:                get_all_set_param(huart, M_ALL_SET);                                        break;
+   case P_G_ALL_M:                  get_all_measure_param(huart, M_ALL_M);                                      break; 
 
    case P_G_PulseType:              PC_ACK(M_PulseType, set_param.Pulse_Type);                                  break;
    case P_G_LD1_SW:                 PC_ACK(M_LD1_SW, set_param.ld[0].sw);                                       break;
@@ -730,74 +548,30 @@ void exec_commands(uint8_t cmd, uint8_t *data, size_t data_len)
    case P_G_LD2_Vol:                PC_ACK(M_LD2_Vol, set_param.ld[1].Vol);                                     break;
    case P_G_LD1_HOC:                PC_ACK(M_LD1_HOC, set_param.ld[0].HOC);                                     break;
    case P_G_LD2_HOC:                PC_ACK(M_LD2_HOC, set_param.ld[1].HOC);                                     break;
-   case P_G_LD1_SKB:                get_kb_param(M_LD1_SKB, &set_param.ld[0].calib_set);                        break;
-   case P_G_LD2_SKB:                get_kb_param(M_LD2_SKB, &set_param.ld[1].calib_set);                        break;
-   case P_G_LD1_MKB:                get_kb_param(M_LD1_MKB, &set_param.ld[0].calib_measure);                    break;
-   case P_G_LD2_MKB:                get_kb_param(M_LD2_MKB, &set_param.ld[1].calib_measure);                    break;
-   case P_G_PD_MKB:                 get_kb_param(M_PD_MKB, &set_param.PD_calib);                                break;
-   case P_G_TEC1_PID:               get_pid_param(M_TEC1_PID, &set_param.tec[0].PID);                           break;
-   case P_G_TEC2_PID:               get_pid_param(M_TEC2_PID, &set_param.tec[1].PID);                           break;
-   case P_G_TEC3_PID:               get_pid_param(M_TEC3_PID, &set_param.tec[2].PID);                           break;
-   case P_G_TEC4_PID:               get_pid_param(M_TEC4_PID, &set_param.tec[3].PID);                           break;
+   case P_G_LD1_SKB:                get_kb_param(huart, M_LD1_SKB, &set_param.ld[0].calib_set);                 break;
+   case P_G_LD2_SKB:                get_kb_param(huart, M_LD2_SKB, &set_param.ld[1].calib_set);                 break;
+   case P_G_LD1_MKB:                get_kb_param(huart, M_LD1_MKB, &set_param.ld[0].calib_measure);             break;
+   case P_G_LD2_MKB:                get_kb_param(huart, M_LD2_MKB, &set_param.ld[1].calib_measure);             break;
+   case P_G_PD_MKB:                 get_kb_param(huart, M_PD_MKB, &set_param.PD_calib);                         break;
+   case P_G_TEC1_PID:               get_pid_param(huart, M_TEC1_PID, &set_param.tec[0].PID);                    break;
+   case P_G_TEC2_PID:               get_pid_param(huart, M_TEC2_PID, &set_param.tec[1].PID);                    break;
+   case P_G_TEC3_PID:               get_pid_param(huart, M_TEC3_PID, &set_param.tec[2].PID);                    break;
+   case P_G_TEC4_PID:               get_pid_param(huart, M_TEC4_PID, &set_param.tec[3].PID);                    break;
    case P_G_S_LCM:                  PC_ACK(M_S_LCM, set_param.LCM);                                             break;
    case P_G_M_LCM:                  PC_ACK(M_M_LCM, measure_param.LCM);                                         break;
 
-   case P_SAVE:                     save_param(M_SAVE);                                                         break;
+   case P_SAVE:                     save_param(huart,M_SAVE);                                                   break;
    case P_Clear_Err:                ClearErrs();                                                                break;
    case P_S_Version:                set_Version(data);                                                          break; 
-   case P_S_BOOTMODE:               set_boot_bootmode(*(uint8_t *)data);ack_boot_mode();                        break;
-   case P_G_BOOTMODE:               ack_boot_mode();                                                            break;
+   case P_S_BOOTMODE:               set_boot_bootmode(*(uint8_t *)data);get_boot_mode(huart, M_BOOT_MODE);      break;
+   case P_G_BOOTMODE:               get_boot_mode(huart, M_BOOT_MODE);                                          break;
    default:
        break;
    }
    
 }
 
-void pc_parse_and_execute_command()
-{
 
-    uart_para_t *uart_para = &uart1_para;
-    //拷贝数据后 再进行处理？
-    if (uart_para->pktcplt && uart_para->tail >= sizeof(min_cmd_t))
-    {
-        // Disable_UART1_Receive();
-        uint16_t cmd_pos = 0;
-        for (size_t i = 0; i < uart_para->tail; i++)
-        {
-            min_cmd_t *data = (min_cmd_t *)(uart_para->rxbuf + i);
-            if (data->head == CMD_HEAD &&                                                                         /* 帧头校验 */
-                data->sendID == PC_ID &&                                                                          /* 发送id校验 */
-                data->revID == MCU_ID &&                                                                          /* 接收id校验 */
-                uart_para->tail - cmd_pos >= sizeof(min_cmd_t) + data->len &&                                 /* 长度满足要求 */
-                sum_crc(uart_para->rxbuf + i + 6, data->len) == *(uint8_t *)(uart_para->rxbuf + i + 6 + data->len) && /* 数据和校验 */
-                *(uint16_t *)(uart_para->rxbuf + i + 7 + data->len) == CMD_TAIL                                     /* 帧尾校验 */
-            )
-            {
-                exec_commands(data->cmd, (uint8_t *)data + 6, data->len);
-                i += sizeof(min_cmd_t) + data->len - 1;
-                cmd_pos = i + 1;
-            }
-        }
-
-        if (cmd_pos < uart_para->tail)
-        {
-            memcpy(uart_para->rxbuf, uart_para->rxbuf + cmd_pos, uart_para->tail - cmd_pos);
-            uart_para->tail -= (cmd_pos);
-        }
-        else
-        {
-            uart_para->tail = 0;
-        }
-        if (uart_para->tail == CLI_RX_BUFF)
-        {
-            uart_para->tail = 0;
-        }
-        uart_para->pktcplt = 0;
-        // Enable_UART1_Receive();
-    }
-
-    // UART1_Check();
-}
 
 
 #ifdef BEBUG_UART
