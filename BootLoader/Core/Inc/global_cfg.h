@@ -98,7 +98,7 @@ enum
 #define CLI_RX_BUFF 300
 typedef struct
 {
-
+    UART_HandleTypeDef *huart;
     volatile uint16_t tail;
     volatile uint8_t pktcplt; // 接收完整一包数据
     // volatile uint8_t test;
