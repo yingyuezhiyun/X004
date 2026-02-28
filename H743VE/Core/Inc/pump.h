@@ -24,3 +24,4 @@ typedef struct
 extern pump_get_param_t pump_get_param;
 extern pump_set_param_t pump_set_param;
 extern void pump_setting(pump_set_param_t *p);
+extern void pump_ctrl();

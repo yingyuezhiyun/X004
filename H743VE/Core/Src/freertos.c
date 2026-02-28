@@ -41,6 +41,7 @@
 #include "heat.h"
 #include "crc.h"
 #include "protocol_comm.h"
+#include "pump.h"
 
 
 
@@ -256,7 +257,8 @@ void StartTask02(void *argument)
 
 
     Heat_Ctrl();
-    crc_test_func();
+    pump_ctrl();
+    // crc_test_func();
 #endif // BEBUG_UART
 #undef DEBUGTT
     osDelay(1);

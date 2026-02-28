@@ -341,6 +341,7 @@ uint8_t bit_init()
     running_flag.ld_flags[0].value = 0;
     running_flag.ld_flags[1].value = 0;
     running_flag.pulse_flags.value = 0;
+    running_flag.lcm_auto = 1;
 
     return result;
 }

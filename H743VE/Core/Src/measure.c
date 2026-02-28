@@ -137,6 +137,6 @@ void get_measure_param()
             max_sys_temp = measure_param.sys.Temp[i];
         }
     }
-    //measure_param.PWR_Temp = max_sys_temp;
+    measure_param.PWR_Temp = max_sys_temp;
     
 }

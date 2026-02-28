@@ -41,3 +41,43 @@ void pump_setting(pump_set_param_t *p)
 
     fdcan_send(&PumpTxFrame);
 }
+
+#define PUMP_CTRL_INTERVAL_MS (5000)
+static uint32_t pump_ctrl_ticket = 0;
+
+void pump_ctrl()
+{
+    if (running_flag.lcm_auto)
+    {
+        if (GET_TickCount - pump_ctrl_ticket > PUMP_CTRL_INTERVAL_MS)
+        {
+            pump_ctrl_ticket = GET_TickCount;
+            S_LCM_t *lcm = &set_param.LCM;
+            // 用电路板温度判定，就用小于5度关闭水泵和风扇，大于5度打开水泵和风扇
+            if (measure_param.PWR_Temp >= 5)
+            {
+                lcm->Fan = WORK_ON;
+                lcm->PwrEn = WORK_ON;
+                pump_set_param.MotorSpeed = 30000;
+                pump_set_param.state = 1;
+                START_FAN;
+                HAL_GPIO_WritePin(LCVG_ONOFF_GPIO_Port, LCVG_ONOFF_Pin, 1);
+            }
+            else
+            {
+
+                lcm->PwrEn = WORK_OFF;
+                lcm->Fan = WORK_OFF;
+                pump_set_param.MotorSpeed = 0;
+                pump_set_param.state = 0;
+                STOP_FAN;
+                HAL_GPIO_WritePin(LCVG_ONOFF_GPIO_Port, LCVG_ONOFF_Pin, 0);
+            }
+            pump_set_param.PwrLimit = 250;
+            lcm->PwrLimit = pump_set_param.PwrLimit;
+            lcm->MotorEn = pump_set_param.state == 1 ? WORK_ON : WORK_OFF;
+            lcm->MotorSpeed = pump_set_param.MotorSpeed;
+            pump_setting(&pump_set_param);
+        }
+    }
+}

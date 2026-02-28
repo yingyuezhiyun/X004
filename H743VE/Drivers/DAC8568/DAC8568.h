@@ -37,6 +37,8 @@ void DAC8568_SET(uint8_t sel, uint8_t ch, uint16_t vaule);
 #define SET_CUR2_DAC(vaule) DAC8568_SET(DAC_SEL2, DAC_CHANNEL_D, vaule)
 #define SET_MAX_CUR1_DAC(vaule) DAC8568_SET(DAC_SEL2, DAC_CHANNEL_E, vaule)
 #define SET_MAX_CUR2_DAC(vaule) DAC8568_SET(DAC_SEL2, DAC_CHANNEL_F, vaule)
+#define SET_LD2_BIAS_DAC(vaule) DAC8568_SET(DAC_SEL2, DAC_CHANNEL_H, vaule)
+#define SET_LD1_BIAS_DAC(vaule) DAC8568_SET(DAC_SEL2, DAC_CHANNEL_G, vaule)
 
 #define DAC_MAX_VAULE (UINT16_MAX)
 

@@ -252,20 +252,28 @@ void SET_LD_MAX_Curr(uint8_t ch, float curr)
 void SET_LD_Curr(uint8_t ch, float curr)
 {
     uint16_t dac = 0;
+    uint16_t dac_bias = 0;
     curr = curr * set_param.ld[ch].calib_set.k + set_param.ld[ch].calib_set.b;
-    if (curr < 0)
+    if (curr <= 0)
     {
         curr = 0;
     }
+    else
+    {
+        dac_bias = 0.01 * DAC_MAX_VAULE / DAC_REF_V * 0.003 * 50;
+    }
+    
     // dac = curr * DAC_MAX_VAULE / 0.003 / 50 / DAC_REF_V;
     dac = curr * DAC_MAX_VAULE / DAC_REF_V * 0.003 * 50;
     switch (ch)
     {
     case LD_CH_1:
         SET_CUR1_DAC(dac);
+        SET_LD1_BIAS_DAC(dac_bias);
         break;
     case LD_CH_2:
         SET_CUR2_DAC(dac);
+        SET_LD2_BIAS_DAC(dac_bias);
         break;
     default:
         break;

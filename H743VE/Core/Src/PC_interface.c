@@ -381,7 +381,9 @@ void set_LD_Vol_param(uint8_t ch, uint8_t *data)
 void set_LCM_param(uint8_t *data)
 {
     S_LCM_t p = *(S_LCM_t *)data;
-
+    
+    //退出自动控制
+    running_flag.lcm_auto = 0;
 
     if (p.PwrEn != WORK_ON)
     {
