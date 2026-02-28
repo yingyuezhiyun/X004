@@ -18,6 +18,8 @@
 !/wpfApp/**
 !/wpfApp2/
 !/wpfApp2/**
+!/wpfApp3/
+!/wpfApp3/**
 !/Doc/
 
 # （可选）如果需要在未来允许其它特定文件或目录，

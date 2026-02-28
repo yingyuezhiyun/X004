@@ -486,7 +486,7 @@ void HAL_TIM_OC_DelayElapsedCallback(TIM_HandleTypeDef *htim)
   if (htim->Instance == htim4.Instance)
   {
     if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1 && set_param.TRG_Type == TRG_INTER &&
-        (running_flag.ld_flags[0].content.is_en==1 || running_flag.ld_flags[1].content.is_en==1)) // 内部触发
+        (running_flag.ld_flags[0].content.is_en == 1 || running_flag.ld_flags[1].content.is_en == 1)) // 内部触发
     {
       if (set_param.Pulse_Type == PULSE_SPWM) // 变频
       {
@@ -501,7 +501,6 @@ void HAL_TIM_OC_DelayElapsedCallback(TIM_HandleTypeDef *htim)
       }
     }
 
-    
     // if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_2) // todo 外部触发+变频 判断频率
     // {
     // }
@@ -564,11 +563,10 @@ uint32_t LD_TRG_RCC_NOR[2];
 uint32_t Q_TRG_RCC_NOR[2];
 #define TIM_PULSE_STEP_US (10)
 #define TIM2_CLK (10000000.0)
-//#define QWidth_us (100)
+// #define QWidth_us (100)
 #define QWidth_us (5)
 #define PreCNT (50)
 #define Pulse_Tim_Delay_us (10)
-
 
 void CalcPulse_SPWMParam()
 {
@@ -625,12 +623,12 @@ void CalcPulse_SPWMParam()
 
 void CalcPulse_NORParam()
 {
-  double pt =  TIM2_CLK / set_param.Pulse_para.Nor_Freq/1000;
-  
+  double pt = TIM2_CLK / set_param.Pulse_para.Nor_Freq / 1000;
+
   LD_TRG_RCC_NOR[0] = PreCNT * TIM_PULSE_STEP_US;
   LD_TRG_RCC_NOR[1] = LD_TRG_RCC_NOR[0] + set_param.Pulse_para.Width * pt;
   Q_TRG_RCC_NOR[0] = PreCNT * TIM_PULSE_STEP_US + set_param.T_Q.delay * pt;
-  Q_TRG_RCC_NOR[1] = Q_TRG_RCC_NOR[0] + QWidth_us *pt;
+  Q_TRG_RCC_NOR[1] = Q_TRG_RCC_NOR[0] + QWidth_us * pt;
 }
 
 void SetPulse_SPWMParam()
@@ -660,7 +658,7 @@ void SetPulse_SPWMParam()
   if (set_param.T_Q.sw == WORK_ON)
   {
     HAL_TIM_OC_DMA_Config(&htim2, TIM_CHANNEL_3, Q_TRG_RCC_SPWM, Q_TRG_RCC_SPWM_Len);
-    uint32_t MAX_P = LD_TRG_RCC_SPWM[LD_TRG_RCC_SPWM_Len - 1] > Q_TRG_RCC_SPWM[Q_TRG_RCC_SPWM_Len-1] ? LD_TRG_RCC_SPWM[LD_TRG_RCC_SPWM_Len - 1] : Q_TRG_RCC_SPWM[Q_TRG_RCC_SPWM_Len-1];
+    uint32_t MAX_P = LD_TRG_RCC_SPWM[LD_TRG_RCC_SPWM_Len - 1] > Q_TRG_RCC_SPWM[Q_TRG_RCC_SPWM_Len - 1] ? LD_TRG_RCC_SPWM[LD_TRG_RCC_SPWM_Len - 1] : Q_TRG_RCC_SPWM[Q_TRG_RCC_SPWM_Len - 1];
     __HAL_TIM_SET_AUTORELOAD(&htim2, MAX_P + Pulse_Tim_Delay_us * TIM_PULSE_STEP_US - 1);
   }
   else
@@ -690,6 +688,58 @@ void SetPulse_NORParam()
   HAL_TIM_OC_DMA_Config(&htim2, TIM_CHANNEL_3, Q_TRG_RCC_NOR, 2);
 }
 
+void SetInterTrgFreq()
+{
+  HAL_TIM_OC_Stop(&htim2, TIM_CHANNEL_1);
+  HAL_TIM_OC_Stop(&htim2, TIM_CHANNEL_3);
+  HAL_TIM_Base_Stop_IT(&htim2);
+  __HAL_TIM_SET_COUNTER(&htim2, 0);
+  uint32_t period = TIM2_CLK / set_param.Pulse_para.Nor_Freq;
+  __HAL_TIM_SET_AUTORELOAD(&htim2, period - 1);
+  CalcPulse_NORParam();
+  SetPulse_NORParam();
+  HAL_TIM_Base_Start_IT(&htim2);
+}
+
+void pulse_ini()
+{
+  running_flag.pulse_flags.value = 0;
+  __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, 100);
+  __HAL_TIM_SET_AUTORELOAD(&htim4, 20000 - 1);
+  HAL_TIM_OC_Start_IT(&htim4, TIM_CHANNEL_1);
+  HAL_TIM_Base_Start(&htim4);
+}
+
+void pulse_reconfig()
+{
+  if (set_param.TRG_Type == TRG_INTER && set_param.Pulse_Type == PULSE_NOR &&
+      (running_flag.ld_flags[0].content.is_en == 1 || running_flag.ld_flags[1].content.is_en == 1)) // 内部定频
+  {
+    running_flag.pulse_flags.content.inter_nor = FLAG_RUNNING;
+    SetPulse_NORParam();
+  }
+  else
+  {
+    running_flag.pulse_flags.content.inter_nor = FLAG_IDLE;
+    HAL_TIM_OC_Stop(&htim2, TIM_CHANNEL_1);
+    HAL_TIM_OC_Stop(&htim2, TIM_CHANNEL_3);
+    HAL_TIM_Base_Stop_IT(&htim2);
+    __HAL_TIM_SET_COUNTER(&htim2, 0);
+  }
+
+  if (set_param.Pulse_Type == PULSE_SPWM) // 变频
+  {
+    // HAL_TIM_Base_Stop(&htim2);
+    HAL_TIM_OC_Stop(&htim2, TIM_CHANNEL_1);
+    HAL_TIM_OC_Stop(&htim2, TIM_CHANNEL_3);
+    HAL_TIM_Base_Stop_IT(&htim2);
+
+    running_flag.pulse_flags.value = 0;
+    __HAL_TIM_SET_COUNTER(&htim2, 0);
+  }
+}
+
+#if 0
 void HAL_TIM2_PWM_MspPostInit(TIM_HandleTypeDef *timHandle)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
@@ -768,19 +818,6 @@ void MX_TIM2_PWM_Init(void)
   HAL_TIM2_PWM_MspPostInit(&htim2);
 }
 
-void SetInterTrgFreq()
-{
-  HAL_TIM_OC_Stop(&htim2, TIM_CHANNEL_1);
-  HAL_TIM_OC_Stop(&htim2, TIM_CHANNEL_3);
-  HAL_TIM_Base_Stop_IT(&htim2);
-  __HAL_TIM_SET_COUNTER(&htim2, 0);
-  uint32_t period = TIM2_CLK / set_param.Pulse_para.Nor_Freq;
-  __HAL_TIM_SET_AUTORELOAD(&htim2, period - 1);
-  CalcPulse_NORParam();
-  SetPulse_NORParam();
-  HAL_TIM_Base_Start_IT(&htim2);
-}
-#if 0
 void SetPulseMode()
 {
   HAL_TIM_OC_Stop_IT(&htim4, TIM_CHANNEL_1);
@@ -881,43 +918,5 @@ void SetPulseMode()
 #endif
 }
 #endif
-void pulse_ini()
-{
-  running_flag.pulse_flags.value = 0;
-  __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, 100);
-  __HAL_TIM_SET_AUTORELOAD(&htim4, 20000 - 1);
-  HAL_TIM_OC_Start_IT(&htim4, TIM_CHANNEL_1);
-  HAL_TIM_Base_Start(&htim4);
-	
-}
-
-void pulse_reconfig()
-{
-  if (set_param.TRG_Type == TRG_INTER && set_param.Pulse_Type == PULSE_NOR &&
-      (running_flag.ld_flags[0].content.is_en == 1 || running_flag.ld_flags[1].content.is_en == 1)) // 内部定频
-  {
-    running_flag.pulse_flags.content.inter_nor = FLAG_RUNNING;
-    SetPulse_NORParam();
-  }
-  else
-  {
-    running_flag.pulse_flags.content.inter_nor = FLAG_IDLE;    
-    HAL_TIM_OC_Stop(&htim2, TIM_CHANNEL_1);
-    HAL_TIM_OC_Stop(&htim2, TIM_CHANNEL_3);
-    HAL_TIM_Base_Stop_IT(&htim2);
-    __HAL_TIM_SET_COUNTER(&htim2, 0);
-  }
-
-  if (set_param.Pulse_Type == PULSE_SPWM) // 变频
-  {
-    // HAL_TIM_Base_Stop(&htim2);
-    HAL_TIM_OC_Stop(&htim2, TIM_CHANNEL_1);
-    HAL_TIM_OC_Stop(&htim2, TIM_CHANNEL_3);    
-    HAL_TIM_Base_Stop_IT(&htim2);
-
-    running_flag.pulse_flags.value = 0;
-    __HAL_TIM_SET_COUNTER(&htim2, 0);
-  }
-}
 
 /* USER CODE END 1 */
