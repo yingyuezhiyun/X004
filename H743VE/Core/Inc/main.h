@@ -126,12 +126,12 @@ void Error_Handler(void);
 #define LED2_GPIO_Port GPIOC
 #define LD_TRG_OUT_Pin GPIO_PIN_15
 #define LD_TRG_OUT_GPIO_Port GPIOA
-#define LD_OC_IN2_Pin GPIO_PIN_0
-#define LD_OC_IN2_GPIO_Port GPIOD
-#define LD_OC_IN2_EXTI_IRQn EXTI0_IRQn
-#define LD_OC_IN1_Pin GPIO_PIN_1
+#define LD_OC_IN1_Pin GPIO_PIN_0
 #define LD_OC_IN1_GPIO_Port GPIOD
-#define LD_OC_IN1_EXTI_IRQn EXTI1_IRQn
+#define LD_OC_IN1_EXTI_IRQn EXTI0_IRQn
+#define LD_OC_IN2_Pin GPIO_PIN_1
+#define LD_OC_IN2_GPIO_Port GPIOD
+#define LD_OC_IN2_EXTI_IRQn EXTI1_IRQn
 #define LD_ON_OFF2_Pin GPIO_PIN_7
 #define LD_ON_OFF2_GPIO_Port GPIOD
 #define LD_ON_OFF1_Pin GPIO_PIN_3
