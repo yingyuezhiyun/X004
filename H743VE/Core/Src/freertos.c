@@ -256,8 +256,8 @@ void StartTask02(void *argument)
     LD_Ctrl(LD_CH_2, &set_param.ld[1], &measure_param.ld[1]);
 
 
-    Heat_Ctrl();
-    pump_ctrl();
+    // Heat_Ctrl();
+    // pump_ctrl();
     // crc_test_func();
 #endif // BEBUG_UART
 #undef DEBUGTT

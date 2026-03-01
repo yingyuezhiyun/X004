@@ -159,18 +159,36 @@ void Clear_LD_TRG_IN_Params()
     memset(&LD_TRG_IN_param, 0, sizeof(LD_TRG_IN_param));
 }
 
+void delay_nop(uint16_t nop)
+{
+    while (nop--)
+    {
+        __nop();
+    }
+}
+
 /// @brief
 /// @param GPIO_Pin
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
     if (GPIO_Pin == LD_OC_IN1_Pin)
     {
+        delay_nop(24);//100ns
+        if (HAL_GPIO_ReadPin(LD_OC_IN1_GPIO_Port, LD_OC_IN1_Pin) == GPIO_PIN_RESET)
+        {
+            return;
+        } 
         SET_LD_SW_OFF(LD_CH_1);
         SET_LD_Curr(LD_CH_1, 0);
         LD_OC_funexec(LD_CH_1);
     }
     if (GPIO_Pin == LD_OC_IN2_Pin)
     {
+        delay_nop(24);//100ns
+        if (HAL_GPIO_ReadPin(LD_OC_IN2_GPIO_Port, LD_OC_IN2_Pin) == GPIO_PIN_RESET)
+        {
+            return;
+        } 
         SET_LD_SW_OFF(LD_CH_2);
         SET_LD_Curr(LD_CH_2, 0);
         LD_OC_funexec(LD_CH_2);
@@ -178,9 +196,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
     if (GPIO_Pin == LD_TRG_IN_Pin && set_param.TRG_Type == TRG_OUT)
     {
-        int dly = 1000;
-        while (dly--)
-            ;
+        delay_nop(1000);//4.1us
         if (HAL_GPIO_ReadPin(LD_TRG_IN_GPIO_Port, LD_TRG_IN_Pin) == GPIO_PIN_RESET)
         {
             return;

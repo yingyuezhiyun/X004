@@ -180,8 +180,11 @@ void set_pulse_type(uint8_t data)
     {
         return;
     }
-    if (data == WORK_OFF || data == WORK_ON)
+    if (data == PULSE_SPWM || data == PULSE_NOR)
+    {
         set_param.Pulse_Type = data;
+    }
+       
 }
 
 void set_TRG_type(uint8_t data)
@@ -190,8 +193,15 @@ void set_TRG_type(uint8_t data)
     {
         return;
     }
-    if (data == WORK_OFF || data == WORK_ON)
+    if (data == TRG_INTER)
+    {
         set_param.TRG_Type = data;
+    }
+    else if (data == TRG_OUT)
+    {
+        set_param.Pulse_Type = PULSE_SPWM;
+        set_param.TRG_Type = data;
+    }
 }
 
 void get_boot_mode(UART_HandleTypeDef *huart, uint8_t cmd)

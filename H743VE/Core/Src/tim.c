@@ -635,6 +635,7 @@ void SetPulse_SPWMParam()
 {
   if (running_flag.pulse_flags.value != 0)
   {
+    running_flag.pulse_err_cnt++;
     return;
   }
 

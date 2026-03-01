@@ -332,6 +332,7 @@ typedef struct
         } content;
         uint8_t value;
     } ld_flags[2];
+    uint8_t pulse_err_cnt;
     uint8_t lcm_auto; // 液冷自动控制 或 手动控制
 } running_flag_t;
 
