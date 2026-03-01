@@ -109,7 +109,11 @@ enum
     P_G_TEC4_M_PW = 0xE2,   /* 查询第4路TEC输出功率检测值 */
     P_S_BOOTMODE = 0xE3,    /* 设置BOOT模式 */
     P_G_BOOTMODE = 0xE4,    /* 查询BOOT模式 */
-
+    P_G_LD1_SW = 0xE5,      /* 查询LD1开关 */
+    P_G_LD2_SW = 0xE6,      /* 查询LD2开关 */
+    P_G_Q_SW = 0xE7,        /* 查询Q脉冲开关 */
+    P_S_PulseType = 0xE8,   /* 设置脉冲类型  0x55：变频 0xAA：定频; */
+    P_G_PulseType = 0xE9,   /* 查询脉冲类型 */
 };
 
 enum
@@ -143,8 +147,8 @@ enum
     M_LD2_S_Cur = 0xE0,   /* 查询LD电流设定值通道2 */
     M_TEC3_SW = 0xE8,     /* 查询TEC3开关 */
     M_TEC4_SW = 0xE9,     /* 查询TEC4开关 */
-    M_TEC3_PARA = 0xEA,   /* 查询第3路TEC：温度、限压、模式设定值 */
-    M_TEC4_PARA = 0xEB,   /* 查询第4路TEC：温度、限压、模式设定值 */
+    M_TEC3_PARA = 0xEA,   /* 查询第3路TEC：温度、限压设定值 */
+    M_TEC4_PARA = 0xEB,   /* 查询第4路TEC：温度、限压设定值 */
     M_LD2_M_Cur = 0xBD,   /* 查询LD电流检测值通道2 */
     M_LD2_M_V = 0xB9,     /* 查询负载电压检测值通道2 */
     M_TEC3_M_TEMP = 0xB2, /* 查询第3路检测温度检测值 */
@@ -152,6 +156,7 @@ enum
     M_TEC4_M_TEMP = 0xE4, /* 查询第4路检测温度检测值 */
     M_TEC4_M_PW = 0xE5,   /* 查询第4路TEC输出功率检测值 */
     M_BOOT_MODE = 0xE6,   /* BOOT模式 反馈 */
+    M_PulseType = 0xE7,   /* 查询脉冲类型 0x55：变频 0xAA：定频;  */
 };
 
 
@@ -326,7 +331,7 @@ void exec_commands_list2(UART_HandleTypeDef *huart, uint8_t cmd, uint8_t *data, 
    case P_S_Q_DELAY:                set_Q_delay(*(uint16_t *)data);                                             break;
 
    case P_S_TRG_TYPE:               set_TRG_type(*(uint8_t *)data);                                             break;
-//    case P_S_PulseType:              set_pulse_type(*(uint8_t *)data);                                       break;
+   case P_S_PulseType:              set_pulse_type(*(uint8_t *)data);                                       break;
    case P_S_LD1_SW:                 SET_SW_STA(set_param.ld[0].sw);                                             break;
    case P_S_LD2_SW:                 SET_SW_STA(set_param.ld[1].sw);                                             break;
    case P_S_Q_SW:                   SET_SW_STA(set_param.T_Q.sw);                                               break;
@@ -370,14 +375,14 @@ void exec_commands_list2(UART_HandleTypeDef *huart, uint8_t cmd, uint8_t *data, 
    case P_G_TEC4_M_TEMP:            PC_ACK_INT16(M_TEC4_M_TEMP, measure_param.tec[3].Temp * 10);                break;
    case P_G_TEC4_M_PW:              PC_ACK_INT16(M_TEC4_M_PW, measure_param.tec[3].Power * 10);                 break;
     
-//    case P_G_Q_SW:                   PC_ACK(M_Q_SW, set_param.T_Q.sw);                                           break;
+   case P_G_Q_SW:                   PC_ACK(M_Q_SW, set_param.T_Q.sw);                                           break;
    case P_G_WRK_STA:                get_work_status(huart, M_WRK_STA);                                          break;
    case P_G_ALL_SET:                get_all_set_param(huart, M_ALL_SET);                                        break;
    case P_G_ALL_M:                  get_all_measure_param(huart, M_ALL_M);                                      break; 
 
-//    case P_G_PulseType:              PC_ACK(M_PulseType, set_param.Pulse_Type);                                  break;
-//    case P_G_LD1_SW:                 PC_ACK(M_LD1_SW, set_param.ld[0].sw);                                       break;
-//    case P_G_LD2_SW:                 PC_ACK(M_LD2_SW, set_param.ld[1].sw);                                       break;
+   case P_G_PulseType:              PC_ACK(M_PulseType, set_param.Pulse_Type);                                  break;
+   case P_G_LD1_SW:                 PC_ACK(M_LD1_SW, set_param.ld[0].sw);                                       break;
+   case P_G_LD2_SW:                 PC_ACK(M_LD2_SW, set_param.ld[1].sw);                                       break;
 
    case P_S_BOOTMODE:               set_boot_bootmode(*(uint8_t *)data);get_boot_mode(huart, M_BOOT_MODE);      break;
    case P_G_BOOTMODE:               get_boot_mode(huart, M_BOOT_MODE);                                          break;

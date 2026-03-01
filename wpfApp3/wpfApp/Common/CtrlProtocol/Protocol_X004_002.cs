@@ -13,8 +13,49 @@ namespace wpfApp.Common.CtrlProtocol
 
         public Protocol_X004_002()
         {
+            // Build enum mapping dictionaries once at construction
+            BuildMappings();
+
             Thread thread = new Thread(new ThreadStart(() => { dataHandler(); }));
             thread.Start();
+        }
+
+        // Dictionaries for fast name-based mapping between PLD enums and device enums
+        private readonly Dictionary<PLDParamsToSet, DEV_SET_CMD_TYPE> setMap = new Dictionary<PLDParamsToSet, DEV_SET_CMD_TYPE>();
+        private readonly Dictionary<PLDParamsToQuery, DEV_QUERY_CMD_TYPE> queryMap = new Dictionary<PLDParamsToQuery, DEV_QUERY_CMD_TYPE>();
+        private readonly Dictionary<DEV_GET_CMD_TYPE, PLDParamsFromGet> getMap = new Dictionary<DEV_GET_CMD_TYPE, PLDParamsFromGet>();
+
+        private void BuildMappings()
+        {
+            // Map PLDParamsToSet -> DEV_SET_CMD_TYPE by matching member names
+            foreach (PLDParamsToSet s in Enum.GetValues(typeof(PLDParamsToSet)))
+            {
+                var name = s.ToString();
+                if (Enum.TryParse<DEV_SET_CMD_TYPE>(name, out var dev))
+                {
+                    setMap[s] = dev;
+                }
+            }
+
+            // Map PLDParamsToQuery -> DEV_QUERY_CMD_TYPE by matching member names
+            foreach (PLDParamsToQuery q in Enum.GetValues(typeof(PLDParamsToQuery)))
+            {
+                var name = q.ToString();
+                if (Enum.TryParse<DEV_QUERY_CMD_TYPE>(name, out var dev))
+                {
+                    queryMap[q] = dev;
+                }
+            }
+
+            // Map DEV_GET_CMD_TYPE -> PLDParamsFromGet by matching member names
+            foreach (DEV_GET_CMD_TYPE g in Enum.GetValues(typeof(DEV_GET_CMD_TYPE)))
+            {
+                var name = g.ToString();
+                if (Enum.TryParse<PLDParamsFromGet>(name, out var p))
+                {
+                    getMap[g] = p;
+                }
+            }
         }
 
         private class PLDRev
@@ -233,44 +274,7 @@ namespace wpfApp.Common.CtrlProtocol
         // Many enum member names are identical between the PLD types and device command enums,
         // so Enum.TryParse by name provides a lightweight pairing mechanism. These helpers
         // make it convenient to obtain the device command for a given PLD enum (and vice versa).
-        private static bool TryMapSetCmd(PLDParamsToSet src, out DEV_SET_CMD_TYPE cmd)
-        {
-            cmd = default;
-            try
-            {
-                return Enum.TryParse(src.ToString(), out cmd);
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        private static bool TryMapQueryCmd(PLDParamsToQuery src, out DEV_QUERY_CMD_TYPE cmd)
-        {
-            cmd = default;
-            try
-            {
-                return Enum.TryParse(src.ToString(), out cmd);
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        private static bool TryMapGetToParams(DEV_GET_CMD_TYPE src, out PLDParamsFromGet dst)
-        {
-            dst = PLDParamsFromGet.None;
-            try
-            {
-                return Enum.TryParse(src.ToString(), out dst);
-            }
-            catch
-            {
-                return false;
-            }
-        }
+        // Removed TryMap* wrappers: use setMap/queryMap/getMap directly for lookups.
         private void dataHandler()
         {
             while (true)
@@ -297,81 +301,63 @@ namespace wpfApp.Common.CtrlProtocol
             object result = null;
             PLDParams p = new PLDParams();
             int idx = 0;
-            // Try to map incoming device cmd to PLDParamsFromGet by name as a default.
-            try
+            // Require a prebuilt mapping from device cmd -> PLDParamsFromGet.
+            // Instead of using Enum.IsDefined (which can be unreliable with boxed byte values)
+            // or catching exceptions, cast the incoming byte to the enum and rely on the
+            // prebuilt `getMap` to determine whether we know how to handle this command.
+            DEV_GET_CMD_TYPE devCmd = (DEV_GET_CMD_TYPE)data.cmd;
+            if (!getMap.TryGetValue(devCmd, out var mappedGet))
             {
-                if (Enum.IsDefined(typeof(DEV_GET_CMD_TYPE), data.cmd))
-                {
-                    DEV_GET_CMD_TYPE devCmd = (DEV_GET_CMD_TYPE)data.cmd;
-                    if (TryMapGetToParams(devCmd, out var mapped))
-                    {
-                        paramsGet = mapped;
-                    }
-                }
+                return (PLDParamsFromGet.None, null);
             }
-            catch { }
+            paramsGet = mappedGet;
             switch ((DEV_GET_CMD_TYPE)data.cmd)
             {
-                case DEV_GET_CMD_TYPE.LD1_S_Cur:
-                    paramsGet = PLDParamsFromGet.LD1_S_Cur;
+                case DEV_GET_CMD_TYPE.LD1_S_Cur:                    
                     p.SetParams.LDParams[0].Curr = data.ToUFloat;
                     break;
                 case DEV_GET_CMD_TYPE.LD2_S_Cur:
-                    paramsGet = PLDParamsFromGet.LD2_S_Cur;
                     p.SetParams.LDParams[1].Curr = data.ToUFloat;
                     break;
                 case DEV_GET_CMD_TYPE.DFLT_V:
-
                     break;
                 case DEV_GET_CMD_TYPE.INTER_TRG_FREQ:
-                    paramsGet = PLDParamsFromGet.INTER_TRG_FREQ;
                     p.SetParams.PulseParams.Freq = data.ToUInt16;
                     break;
                 case DEV_GET_CMD_TYPE.PULSE_WIDTH:
-                    paramsGet = PLDParamsFromGet.PULSE_WIDTH;
                     p.SetParams.PulseParams.Width = data.ToUInt16;
                     break;
                 case DEV_GET_CMD_TYPE.Q_DELAY:
-                    paramsGet = PLDParamsFromGet.Q_DELAY;
                     p.SetParams.TQParams.Delay = data.ToUInt16;
                     break;
                 case DEV_GET_CMD_TYPE.TRG_TYPE:
-                    paramsGet = PLDParamsFromGet.TRG_TYPE;
                     p.SetParams.TrigType = data.data[0] == (byte)TrigType.INTER ? TrigType.INTER : TrigType.OUT;
                     break;
                 case DEV_GET_CMD_TYPE.LD1_SW:
-                    paramsGet = PLDParamsFromGet.LD1_SW;
                     p.SetParams.LDParams[0].WorkType = data.data[0] == (byte)WorkType.ON ? WorkType.ON : WorkType.OFF;
                     break;
                 case DEV_GET_CMD_TYPE.LD2_SW:
-                    paramsGet = PLDParamsFromGet.LD2_SW;
                     p.SetParams.LDParams[1].WorkType = data.data[0] == (byte)WorkType.ON ? WorkType.ON : WorkType.OFF;
                     break;
                 case DEV_GET_CMD_TYPE.Q_SW:
-                    paramsGet = PLDParamsFromGet.Q_SW;
                     p.SetParams.TQParams.WorkType = data.data[0] == (byte)WorkType.ON ? WorkType.ON : WorkType.OFF;
                     break;
                 case DEV_GET_CMD_TYPE.TEC1_SW:
-                    paramsGet = PLDParamsFromGet.TEC1_SW;
                     p.SetParams.TECParams[0].WorkType = data.data[0] == (byte)WorkType.ON ? WorkType.ON : WorkType.OFF;
                     break;
                 case DEV_GET_CMD_TYPE.TEC2_SW:
-                    paramsGet = PLDParamsFromGet.TEC2_SW;
                     p.SetParams.TECParams[1].WorkType = data.data[0] == (byte)WorkType.ON ? WorkType.ON : WorkType.OFF;
                     break;
                 case DEV_GET_CMD_TYPE.TEC3_SW:
-                    paramsGet = PLDParamsFromGet.TEC3_SW;
                     p.SetParams.TECParams[2].WorkType = data.data[0] == (byte)WorkType.ON ? WorkType.ON : WorkType.OFF;
                     break;
                 case DEV_GET_CMD_TYPE.TEC4_SW:
-                    paramsGet = PLDParamsFromGet.TEC4_SW;
                     p.SetParams.TECParams[3].WorkType = data.data[0] == (byte)WorkType.ON ? WorkType.ON : WorkType.OFF;
                     break;
-                case DEV_GET_CMD_TYPE.TEC1_PARA: paramsGet = PLDParamsFromGet.TEC1_PARA; idx = 0; goto TECParam;
-                case DEV_GET_CMD_TYPE.TEC2_PARA: paramsGet = PLDParamsFromGet.TEC2_PARA; idx = 1; goto TECParam;
-                case DEV_GET_CMD_TYPE.TEC3_PARA: paramsGet = PLDParamsFromGet.TEC3_PARA; idx = 2; goto TECParam;
-                case DEV_GET_CMD_TYPE.TEC4_PARA:
-                    paramsGet = PLDParamsFromGet.TEC4_PARA; idx = 3; goto TECParam;
+                case DEV_GET_CMD_TYPE.TEC1_PARA:  idx = 0; goto TECParam;
+                case DEV_GET_CMD_TYPE.TEC2_PARA:  idx = 1; goto TECParam;
+                case DEV_GET_CMD_TYPE.TEC3_PARA: idx = 2; goto TECParam;
+                case DEV_GET_CMD_TYPE.TEC4_PARA: idx = 3; goto TECParam;
                 TECParam:
                     {
                         p.SetParams.TECParams[idx].Temp = BitConverter.ToInt16(data.data, 0) / 10.0f;
@@ -380,7 +366,7 @@ namespace wpfApp.Common.CtrlProtocol
                     break;
                 case DEV_GET_CMD_TYPE.PULSE_PARA:
                     {
-                        paramsGet = PLDParamsFromGet.PULSE_PARA;
+                        
                         p.SetParams.PulseParams.Num = BitConverter.ToUInt16(data.data, 0);
                         for (int i = 0; i < 11; i++)
                         {
@@ -389,94 +375,72 @@ namespace wpfApp.Common.CtrlProtocol
                     }
                     break;
                 case DEV_GET_CMD_TYPE.LD1_M_Cur:
-                    paramsGet = PLDParamsFromGet.LD1_M_Cur;
                     p.MeasureParams.LDParams[0].Curr = data.ToUFloat;
                     break;
                 case DEV_GET_CMD_TYPE.LD2_M_Cur:
-                    paramsGet = PLDParamsFromGet.LD2_M_Cur;
                     p.MeasureParams.LDParams[1].Curr = data.ToUFloat;
                     break;
                 case DEV_GET_CMD_TYPE.L1_M_V:
-                    paramsGet = PLDParamsFromGet.L1_M_V;
                     p.MeasureParams.LDParams[0].Vol = data.ToUFloat;
                     break;
                 case DEV_GET_CMD_TYPE.L2_M_V:
-                    paramsGet = PLDParamsFromGet.L2_M_V;
                     p.MeasureParams.LDParams[1].Vol = data.ToUFloat;
                     break;
                 case DEV_GET_CMD_TYPE.PWR_TEMP:
-                    paramsGet = PLDParamsFromGet.PWR_TEMP;
                     p.MeasureParams.OtherInfos.PwrTemp = data.ToSFloat;
 
                     break;
                 case DEV_GET_CMD_TYPE.OUT_PD:
-                    paramsGet = PLDParamsFromGet.OUT_PD;
                     p.MeasureParams.PDParams.Power = data.ToUFloat;
 
                     break;
                 case DEV_GET_CMD_TYPE.OUT_TEMP:
-                    paramsGet = PLDParamsFromGet.OUT_TEMP;
                     p.MeasureParams.PDParams.Temp = data.ToSFloat;
                     break;
                 case DEV_GET_CMD_TYPE.TEC1_M_TEMP:
-                    paramsGet = PLDParamsFromGet.TEC1_M_TEMP;
                     p.MeasureParams.TECParams[0].Temp = data.ToSFloat;
                     break;
                 case DEV_GET_CMD_TYPE.TEC1_M_PW:
-                    paramsGet = PLDParamsFromGet.TEC1_M_PW;
                     p.MeasureParams.TECParams[0].Power = data.ToSFloat;
                     break;
                 case DEV_GET_CMD_TYPE.TEC2_M_TEMP:
-                    paramsGet = PLDParamsFromGet.TEC2_M_TEMP;
                     p.MeasureParams.TECParams[1].Temp = data.ToSFloat;
                     break;
                 case DEV_GET_CMD_TYPE.TEC2_M_PW:
-                    paramsGet = PLDParamsFromGet.TEC2_M_PW;
                     p.MeasureParams.TECParams[1].Power = data.ToSFloat;
                     break;
                 case DEV_GET_CMD_TYPE.TEC3_M_TEMP:
-                    paramsGet = PLDParamsFromGet.TEC3_M_TEMP;
                     p.MeasureParams.TECParams[2].Temp = data.ToSFloat;
                     break;
                 case DEV_GET_CMD_TYPE.TEC3_M_PW:
-                    paramsGet = PLDParamsFromGet.TEC3_M_PW;
                     p.MeasureParams.TECParams[2].Power = data.ToSFloat;
                     break;
                 case DEV_GET_CMD_TYPE.TEC4_M_TEMP:
-                    paramsGet = PLDParamsFromGet.TEC4_M_TEMP;
                     p.MeasureParams.TECParams[3].Temp = data.ToSFloat;
                     break;
                 case DEV_GET_CMD_TYPE.TEC4_M_PW:
-                    paramsGet = PLDParamsFromGet.TEC4_M_PW;
                     p.MeasureParams.TECParams[3].Power = data.ToSFloat;
                     break;
                 case DEV_GET_CMD_TYPE.TEC1_M_Cur:
-                    paramsGet = PLDParamsFromGet.TEC1_M_Cur;
                     p.MeasureParams.TECParams[0].Curr = data.ToSFloat;
                     break;
                 case DEV_GET_CMD_TYPE.TEC2_M_Cur:
-                    paramsGet = PLDParamsFromGet.TEC2_M_Cur;
                     p.MeasureParams.TECParams[1].Curr = data.ToSFloat;
                     break;
                 case DEV_GET_CMD_TYPE.TEC3_M_Cur:
-                    paramsGet = PLDParamsFromGet.TEC3_M_Cur;
                     p.MeasureParams.TECParams[2].Curr = data.ToSFloat;
                     break;
                 case DEV_GET_CMD_TYPE.TEC4_M_Cur:
-                    paramsGet = PLDParamsFromGet.TEC4_M_Cur;
                     p.MeasureParams.TECParams[3].Curr = data.ToSFloat;
                     break;
 
-
                 case DEV_GET_CMD_TYPE.WRK_STA:
-                    paramsGet = PLDParamsFromGet.WRK_STA;
                     p.MeasureParams.Status = (uint)(data.data[0] << 0 | data.data[1] << 8 | data.data[2] << 16 | data.data[3] << 24);
                     break;
                 case DEV_GET_CMD_TYPE.ALL_SET:
                     break;
                 case DEV_GET_CMD_TYPE.ALL_M:
                     {
-                        paramsGet = PLDParamsFromGet.ALL_M;
                         p.MeasureParams.LDParams[0].Curr = BitConverter.ToInt16(data.data, 0) / 10.0f;
                         p.MeasureParams.LDParams[1].Curr = BitConverter.ToInt16(data.data, 2) / 10.0f;
                         p.MeasureParams.LDParams[0].Vol = BitConverter.ToInt16(data.data, 4) / 10.0f;
@@ -499,61 +463,49 @@ namespace wpfApp.Common.CtrlProtocol
                     }
                     break;
                 case DEV_GET_CMD_TYPE.Upgrade:
-                    paramsGet = PLDParamsFromGet.Upgrade;
                     p.MeasureParams.UpgradeParams.CurrIdx = BitConverter.ToUInt16(data.data);
                     p.MeasureParams.UpgradeParams.Status = (UpgradeStatus)data.data[2];
-
                     break;
                 case DEV_GET_CMD_TYPE.PulseType:
-                    paramsGet = PLDParamsFromGet.PulseType;
                     p.SetParams.PulseType = data.data[0] == (byte)PulseType.SPWM ? PulseType.SPWM : PulseType.NOR;
                     break;
                 case DEV_GET_CMD_TYPE.LD1_Vol:
-                    paramsGet = PLDParamsFromGet.LD1_Vol;
                     p.SetParams.LDParams[0].Vol = data.ToUFloat;
                     break;
                 case DEV_GET_CMD_TYPE.LD2_Vol:
-                    paramsGet = PLDParamsFromGet.LD2_Vol;
                     p.SetParams.LDParams[1].Vol = data.ToUFloat;
                     break;
                 case DEV_GET_CMD_TYPE.LD1_HOC:
-                    paramsGet = PLDParamsFromGet.LD1_HOC;
                     p.SetParams.LDParams[0].HOC = data.ToUFloat;
                     break;
                 case DEV_GET_CMD_TYPE.LD2_HOC:
-                    paramsGet = PLDParamsFromGet.LD2_HOC;
                     p.SetParams.LDParams[1].HOC = data.ToUFloat;
                     break;
                 case DEV_GET_CMD_TYPE.LD1_SKB:
-                    paramsGet = PLDParamsFromGet.LD1_SKB;
                     p.SetParams.LDParams[0].CalibSet.K = BitConverter.ToInt16(data.data, 0) / 100.0f;
                     p.SetParams.LDParams[0].CalibSet.B = BitConverter.ToInt16(data.data, 2) / 100.0f;
                     break;
                 case DEV_GET_CMD_TYPE.LD2_SKB:
-                    paramsGet = PLDParamsFromGet.LD2_SKB;
                     p.SetParams.LDParams[1].CalibSet.K = BitConverter.ToInt16(data.data, 0) / 100.0f;
                     p.SetParams.LDParams[1].CalibSet.B = BitConverter.ToInt16(data.data, 2) / 100.0f;
                     break;
                 case DEV_GET_CMD_TYPE.LD1_MKB:
-                    paramsGet = PLDParamsFromGet.LD1_MKB;
                     p.SetParams.LDParams[0].CalibMeasure.K = BitConverter.ToInt16(data.data, 0) / 100.0f;
                     p.SetParams.LDParams[0].CalibMeasure.B = BitConverter.ToInt16(data.data, 2) / 100.0f;
                     break;
                 case DEV_GET_CMD_TYPE.LD2_MKB:
-                    paramsGet = PLDParamsFromGet.LD2_MKB;
                     p.SetParams.LDParams[1].CalibMeasure.K = BitConverter.ToInt16(data.data, 0) / 100.0f;
                     p.SetParams.LDParams[1].CalibMeasure.B = BitConverter.ToInt16(data.data, 2) / 100.0f;
                     break;
                 case DEV_GET_CMD_TYPE.PD_MKB:
-                    paramsGet = PLDParamsFromGet.PD_MKB;
                     p.SetParams.CalibPD.K = BitConverter.ToInt16(data.data, 0) / 100.0f;
                     p.SetParams.CalibPD.B = BitConverter.ToInt16(data.data, 2) / 100.0f;
                     break;
-                case DEV_GET_CMD_TYPE.TEC1_PID: paramsGet = PLDParamsFromGet.TEC1_PID; idx = 0; goto PID;
-                case DEV_GET_CMD_TYPE.TEC2_PID: paramsGet = PLDParamsFromGet.TEC2_PID; idx = 1; goto PID;
-                case DEV_GET_CMD_TYPE.TEC3_PID: paramsGet = PLDParamsFromGet.TEC3_PID; idx = 2; goto PID;
+                case DEV_GET_CMD_TYPE.TEC1_PID: idx = 0; goto PID;
+                case DEV_GET_CMD_TYPE.TEC2_PID: idx = 1; goto PID;
+                case DEV_GET_CMD_TYPE.TEC3_PID: idx = 2; goto PID;
                 case DEV_GET_CMD_TYPE.TEC4_PID:
-                    paramsGet = PLDParamsFromGet.TEC4_PID; idx = 3; goto PID;
+                     idx = 3; goto PID;
                 PID:
                     {
                         p.SetParams.TECParams[idx].PID.P = BitConverter.ToInt16(data.data, 0) / 100.0f;
@@ -563,7 +515,7 @@ namespace wpfApp.Common.CtrlProtocol
                     break;
                 case DEV_GET_CMD_TYPE.S_LCM:
                     {
-                        paramsGet = PLDParamsFromGet.S_LCM;
+                        
                         p.SetParams.LCMParams.IsPowerOn = data.data[0] == (byte)WorkType.ON ? WorkType.ON : WorkType.OFF;
                         p.SetParams.LCMParams.IsIsMotorWork = data.data[1] == (byte)WorkType.ON ? WorkType.ON : WorkType.OFF;
                         p.SetParams.LCMParams.MotorSpeed = BitConverter.ToUInt16(data.data, 2);
@@ -574,7 +526,6 @@ namespace wpfApp.Common.CtrlProtocol
                     break;
                 case DEV_GET_CMD_TYPE.M_LCM:
                     {
-                        paramsGet = PLDParamsFromGet.M_LCM;
                         p.MeasureParams.LCMParams.IsIsMotorWork = data.data[0] == (byte)WorkType.ON ? WorkType.ON : WorkType.OFF;
                         p.MeasureParams.LCMParams.MotorSpeed = BitConverter.ToUInt16(data.data, 1);
                         p.MeasureParams.LCMParams.Vol = BitConverter.ToUInt16(data.data, 3) / 10.0f;
@@ -583,13 +534,11 @@ namespace wpfApp.Common.CtrlProtocol
                         p.MeasureParams.LCMParams.Power = data.data[8];
                     }
                     break;
-                case DEV_GET_CMD_TYPE.SaveParam:
-                    paramsGet = PLDParamsFromGet.SaveParam;
+                case DEV_GET_CMD_TYPE.SaveParam:                   
                     p.MeasureParams.ParamSaveStatus = data.data[0] == 1 ? true : false;
                     break;
 
-                case DEV_GET_CMD_TYPE.BootMode:
-                    paramsGet = PLDParamsFromGet.BootMode;
+                case DEV_GET_CMD_TYPE.BootMode:                    
                     p.MeasureParams.BootMode = (BootMode)data.data[0];
                     break;
                 default:
@@ -669,13 +618,22 @@ namespace wpfApp.Common.CtrlProtocol
         {
             List<byte> frame = new List<byte>();
             List<byte> databytes = new List<byte>();
-
             if (paramsSet as PLDParamsToSet? == null)
             {
                 return frame;
             }
             byte cmd = 0;
             var a = (PLDParamsToSet)paramsSet;
+            if (setMap.TryGetValue(a, out var mappedSetCmd))
+            {
+                cmd = (byte)mappedSetCmd;
+            }
+            else
+            {
+                // No mapping found -> cannot form a valid frame for this PLDParamsToSet
+                return new List<byte>();
+            }
+
 
             PLDParams p;
             if (data.Count() > 0 && data[0] is PLDParams)
@@ -690,170 +648,135 @@ namespace wpfApp.Common.CtrlProtocol
 
             switch (a)
             {
-                case PLDParamsToSet.LD1_S_Cur:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.LD1_S_Cur:                    
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.LDParams[0].Curr));
                     break;
-                case PLDParamsToSet.LD2_S_Cur:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.LD2_S_Cur:                    
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.LDParams[1].Curr));
                     break;
-                case PLDParamsToSet.DFLT_V:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.DFLT_V:                    
                     break;
-                case PLDParamsToSet.INTER_TRG_FREQ:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.INTER_TRG_FREQ:                    
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.PulseParams.Freq, 1));
                     break;
-                case PLDParamsToSet.PULSE_WIDTH:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.PULSE_WIDTH:                    
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.PulseParams.Width, 1));
                     break;
-                case PLDParamsToSet.Q_DELAY:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.Q_DELAY:                    
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.TQParams.Delay, 1));
                     break;
-                case PLDParamsToSet.TRG_TYPE:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.TRG_TYPE:                    
                     databytes.Add((byte)p.SetParams.TrigType);
                     break;
-                case PLDParamsToSet.PulseType:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.PulseType:                    
                     databytes.Add((byte)p.SetParams.PulseType);
                     break;
-                case PLDParamsToSet.LD1_SW:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.LD1_SW:                    
                     databytes.Add((byte)p.SetParams.LDParams[0].WorkType);
                     break;
-                case PLDParamsToSet.LD2_SW:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.LD2_SW:                    
                     databytes.Add((byte)p.SetParams.LDParams[1].WorkType);
                     break;
-                case PLDParamsToSet.Q_SW:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.Q_SW:                    
                     databytes.Add((byte)p.SetParams.TQParams.WorkType);
                     break;
-                case PLDParamsToSet.TEC1_SW:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.TEC1_SW:                    
                     databytes.Add((byte)p.SetParams.TECParams[0].WorkType);
                     break;
-                case PLDParamsToSet.TEC2_SW:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.TEC2_SW:                    
                     databytes.Add((byte)p.SetParams.TECParams[1].WorkType);
                     break;
-                case PLDParamsToSet.TEC3_SW:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.TEC3_SW:                    
                     databytes.Add((byte)p.SetParams.TECParams[2].WorkType);
                     break;
-                case PLDParamsToSet.TEC4_SW:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.TEC4_SW:                    
                     databytes.Add((byte)p.SetParams.TECParams[3].WorkType);
                     break;
-                case PLDParamsToSet.TEC1_PARA:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.TEC1_PARA:                    
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.TECParams[0].Temp));
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.TECParams[0].Vol));
                     databytes.AddRange(BitConverter.GetBytes(p.SetParams.TECParams[0].Mode));
                     break;
-                case PLDParamsToSet.TEC2_PARA:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.TEC2_PARA:                    
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.TECParams[1].Temp));
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.TECParams[1].Vol));
                     databytes.AddRange(BitConverter.GetBytes(p.SetParams.TECParams[1].Mode));
                     break;
-                case PLDParamsToSet.TEC3_PARA:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.TEC3_PARA:                    
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.TECParams[2].Temp));
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.TECParams[2].Vol));
                     databytes.AddRange(BitConverter.GetBytes(p.SetParams.TECParams[2].Mode));
                     break;
-                case PLDParamsToSet.TEC4_PARA:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.TEC4_PARA:                    
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.TECParams[3].Temp));
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.TECParams[3].Vol));
                     databytes.AddRange(BitConverter.GetBytes(p.SetParams.TECParams[3].Mode));
                     break;
-                case PLDParamsToSet.PULSE_PARA:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.PULSE_PARA:                    
                     databytes.AddRange(BitConverter.GetBytes(p.SetParams.PulseParams.Num));
                     for (int i = 0; i < 11; i++)
                     {
                         databytes.AddRange(BitConverter.GetBytes(p.SetParams.PulseParams.Interval[i]));
                     }
                     break;
-                case PLDParamsToSet.Upgrade:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.Upgrade:                    
                     databytes.AddRange(BitConverter.GetBytes(p.SetParams.UpgradeParams.CurrIdx));
                     databytes.AddRange(BitConverter.GetBytes(p.SetParams.UpgradeParams.TotalPaketNum));
                     databytes.AddRange(p.SetParams.UpgradeParams.Data);
                     break;
-                case PLDParamsToSet.LD1_Vol:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.LD1_Vol:                    
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.LDParams[0].Vol));
                     break;
-                case PLDParamsToSet.LD2_Vol:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.LD2_Vol:                    
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.LDParams[1].Vol));
                     break;
-                case PLDParamsToSet.LD1_HOC:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.LD1_HOC:                    
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.LDParams[0].HOC));
                     break;
-                case PLDParamsToSet.LD2_HOC:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.LD2_HOC:                    
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.LDParams[1].HOC));
                     break;
-                case PLDParamsToSet.LD1_SKB:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.LD1_SKB:                    
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.LDParams[0].CalibSet.K, 100));
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.LDParams[0].CalibSet.B, 100));
                     break;
-                case PLDParamsToSet.LD2_SKB:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.LD2_SKB:                    
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.LDParams[1].CalibSet.K, 100));
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.LDParams[1].CalibSet.B, 100));
                     break;
-                case PLDParamsToSet.LD1_MKB:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.LD1_MKB:                    
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.LDParams[0].CalibMeasure.K, 100));
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.LDParams[0].CalibMeasure.B, 100));
                     break;
-                case PLDParamsToSet.LD2_MKB:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.LD2_MKB:                    
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.LDParams[1].CalibMeasure.K, 100));
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.LDParams[1].CalibMeasure.B, 100));
                     break;
-                case PLDParamsToSet.PD_MKB:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.PD_MKB:                    
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.CalibPD.K, 100));
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.CalibPD.B, 100));
                     break;
-                case PLDParamsToSet.TEC1_PID:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.TEC1_PID:                    
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.TECParams[0].PID.P, 100));
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.TECParams[0].PID.I, 100));
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.TECParams[0].PID.D, 100));
                     break;
-                case PLDParamsToSet.TEC2_PID:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.TEC2_PID:                    
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.TECParams[1].PID.P, 100));
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.TECParams[1].PID.I, 100));
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.TECParams[1].PID.D, 100));
                     break;
-                case PLDParamsToSet.TEC3_PID:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.TEC3_PID:                    
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.TECParams[2].PID.P, 100));
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.TECParams[2].PID.I, 100));
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.TECParams[2].PID.D, 100));
                     break;
-                case PLDParamsToSet.TEC4_PID:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.TEC4_PID:                    
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.TECParams[3].PID.P, 100));
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.TECParams[3].PID.I, 100));
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.TECParams[3].PID.D, 100));
                     break;
-                case PLDParamsToSet.LCM:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.LCM:                    
                     databytes.Add((byte)p.SetParams.LCMParams.IsPowerOn);
                     databytes.Add((byte)p.SetParams.LCMParams.IsIsMotorWork);
                     databytes.AddRange(BitConverter.GetBytes(p.SetParams.LCMParams.MotorSpeed));
@@ -861,36 +784,18 @@ namespace wpfApp.Common.CtrlProtocol
                     // databytes.Add(p.SetParams.LCMParams.FanSpeed);
                     databytes.Add(p.SetParams.LCMParams.PwrLimit);
                     break;
-                case PLDParamsToSet.SaveParam:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.SaveParam:                    
                     break;
-                case PLDParamsToSet.ClearErr:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.ClearErr:                    
                     break;
-                case PLDParamsToSet.SetVersion:
-                    // cmd resolved by name mapping
+                case PLDParamsToSet.SetVersion:                    
                     break;
-                case PLDParamsToSet.BootMode:
-                    cmd = (byte)DEV_SET_CMD_TYPE.BootMode;
+                case PLDParamsToSet.BootMode:                    
                     databytes.Add((byte)p.SetParams.BootMode);
                     break;
                 default:
                     break;
             }
-
-            // If cmd not set explicitly in the switch above (or to ensure pairing), try to map
-            // the PLDParamsToSet to the device set command by name.
-            try
-            {
-                if (TryMapSetCmd(a, out var mappedSetCmd))
-                {
-                    // Only override if cmd is still zero (meaning switch didn't set it),
-                    // or override intentionally to use the name-based mapping.
-                    if (cmd == 0)
-                        cmd = (byte)mappedSetCmd;
-                }
-            }
-            catch { }
 
             frame.Add(CMD_HEAD & 0xff);
             frame.Add(CMD_HEAD >> 8);
@@ -919,190 +824,15 @@ namespace wpfApp.Common.CtrlProtocol
             }
             var a = (PLDParamsToQuery)paramsQuery;
             byte cmd = 0;
-            switch (a)
+            if (queryMap.TryGetValue(a, out var mappedQueryCmd))
             {
-                case PLDParamsToQuery.Cur:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.DFLT_V:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.INTER_TRG_FREQ:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.PULSE_WIDTH:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.Q_DELAY:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.TRG_TYPE:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.PulseType:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.LD1_S_Cur:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.LD2_S_Cur:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.Q_SW:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.TEC1_SW:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.TEC2_SW:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.TEC3_SW:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.TEC4_SW:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.TEC1_PARA:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.TEC2_PARA:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.TEC3_PARA:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.TEC4_PARA:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.PULSE_PARA:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.LD1_M_Cur:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.LD2_M_Cur:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.L1_M_V:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.L2_M_V:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.PWR_TEMP:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.OUT_PD:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.OUT_TEMP:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.TEC1_M_TEMP:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.TEC1_M_PW:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.TEC2_M_TEMP:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.TEC2_M_PW:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.TEC3_M_TEMP:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.TEC3_M_PW:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.TEC4_M_TEMP:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.TEC4_M_PW:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.WRK_STA:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.ALL_SET:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.ALL_M:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.LD1_SW:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.LD2_SW:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.LD1_Vol:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.LD2_Vol:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.LD1_HOC:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.LD2_HOC:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.LD1_SKB:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.LD2_SKB:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.LD1_MKB:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.LD2_MKB:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.PD_MKB:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.TEC1_PID:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.TEC2_PID:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.TEC3_PID:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.TEC4_PID:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.S_LCM:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.M_LCM:
-                    // cmd resolved by name mapping
-                    break;
-                case PLDParamsToQuery.Upgrade:
-                    // cmd resolved by name mapping
-                    break;
-
-                case PLDParamsToQuery.BootMode:
-                    // cmd resolved by name mapping
-                    break;
-                default:
-                    break;
+                cmd = (byte)mappedQueryCmd;
             }
-            // Try to map PLDParamsToQuery to device query command by name as a convenience.
-            try
+            else
             {
-                if (TryMapQueryCmd(a, out var mappedQueryCmd))
-                {
-                    if (cmd == 0)
-                        cmd = (byte)mappedQueryCmd;
-                }
+                // No mapping -> cannot form a valid query frame
+                return new List<byte>();
             }
-            catch { }
             frame.Add(CMD_HEAD & 0xff);
             frame.Add(CMD_HEAD >> 8);
             frame.Add(PC_ID);

@@ -14,15 +14,15 @@ using static wpfApp.ViewModels.PLDMainViewModel;
 namespace wpfApp.Common.CtrlProtocol
 {
 
-   
- 
+
+
 
     public class PLDParams
     {
 
         public DateTime time { get; set; }
 
-        public MeasureParam MeasureParams { get; set; } =   new MeasureParam();
+        public MeasureParam MeasureParams { get; set; } = new MeasureParam();
         public SetParam SetParams { get; set; } = new SetParam();
 
         public class MeasureParam
@@ -98,7 +98,7 @@ namespace wpfApp.Common.CtrlProtocol
             }
         }
 
-        
+
 
 
 
@@ -156,7 +156,7 @@ namespace wpfApp.Common.CtrlProtocol
             {
                 public WorkType WorkType { get; set; }
                 public float Delay { get; set; }
-              
+
             }
             public class LCMParam
             {
@@ -168,7 +168,7 @@ namespace wpfApp.Common.CtrlProtocol
 
                 public ushort MotorSpeed { get; set; }
                 public byte PwrLimit { get; set; }
-               
+
             }
             public class PulseParam
             {
@@ -181,7 +181,7 @@ namespace wpfApp.Common.CtrlProtocol
             }
             public PulseParam PulseParams { get; set; }
             public TQParam TQParams { get; set; }
-            public LCMParam LCMParams { get; set; }          
+            public LCMParam LCMParams { get; set; }
             public List<TECParam> TECParams { get; set; }
             public List<LDParam> LDParams { get; set; }
 
@@ -213,7 +213,7 @@ namespace wpfApp.Common.CtrlProtocol
             }
         }
 
-        
+
 
         public class PulseParams
         {
@@ -221,7 +221,7 @@ namespace wpfApp.Common.CtrlProtocol
             public ushort[] Interval = new ushort[11];
         }
 
-        
+
         public class TECParams
         {
             public float Temp;
@@ -229,10 +229,10 @@ namespace wpfApp.Common.CtrlProtocol
             public ushort Mode;
         }
 
-       
-    
 
- 
+
+
+
         public class LCMSetParams
         {
             public byte PwrEn;        // 电泵供电开关
@@ -242,44 +242,44 @@ namespace wpfApp.Common.CtrlProtocol
             public byte PwrLimit;     // 功率限制 W
         }
 
-     
 
-       
-     
+
+
+
 
 
         [Flags]
         public enum StatusFlags : uint
         {
-            
-            LD1_UC      = 1 << 0,       // LD1驱动欠压
-            LD1_OC      = 1 << 1,       // LD1驱动过压
-            LD2_UC      = 1 << 2,       // LD2驱动欠压
-            LD2_OC      = 1 << 3,       // LD2驱动过压           
-            NTC1_ERR    = 1 << 4,       // 热敏电阻1异常
-            NTC2_ERR    = 1 << 5,       // 热敏电阻2异常
-            NTC3_ERR    = 1 << 6,       // 热敏电阻3异常
-            NTC4_ERR    = 1 << 7,      // 热敏电阻4异常
-            TEC1_UT     = 1 << 8,       // TEC1欠温
-            TEC1_OT     = 1 << 9,       // TEC1过温
-            TEC2_UT     = 1 << 10,       // TEC2欠温
-            TEC2_OT     = 1 << 11,       // TEC2过温   
-            TEC3_UT     = 1 << 12,       // TEC3欠温
-            TEC3_OT     = 1 << 13,       // TEC3过温
-            TEC4_UT     = 1 << 14,       // TEC4欠温
-            TEC4_OT     = 1 << 15,       // TEC4过温   
-            EPPROM_ERR  = 1 << 16,       // 参数存储错误
-            PWR_OT      = 1 << 17,       // 电源过热
-            PWR_ERR     = 1 << 18,       // 电路故障
-            TEC1_SW     = 1 << 19,      // TEC1 开关 1：开启; 0：关闭
-            TEC2_SW     = 1 << 20,      // TEC2 开关 1：开启; 0：关闭
-            TEC3_SW     = 1 << 21,      // TEC3 开关 1：开启; 0：关闭
-            TEC4_SW     = 1 << 22,      // TEC4 开关 1：开启; 0：关闭
-            Q_SW        = 1 << 23,      // 调Q 开关 1：开启; 0：关闭
-            LD1_SW      = 1 << 24,      // LD1 开关 1：开启; 0：关闭
-            LD2_SW      = 1 << 25,      // LD2 开关 1：开启; 0：关闭
-            TRQ_Type    = 1 << 26,      // 触发状态 1：外触发; 0：内触发
-            Pulse_Type  = 1 << 27,      // 脉冲类型 1：定频 0：变频
+
+            LD1_UC = 1 << 0,       // LD1驱动欠压
+            LD1_OC = 1 << 1,       // LD1驱动过压
+            LD2_UC = 1 << 2,       // LD2驱动欠压
+            LD2_OC = 1 << 3,       // LD2驱动过压           
+            NTC1_ERR = 1 << 4,       // 热敏电阻1异常
+            NTC2_ERR = 1 << 5,       // 热敏电阻2异常
+            NTC3_ERR = 1 << 6,       // 热敏电阻3异常
+            NTC4_ERR = 1 << 7,      // 热敏电阻4异常
+            TEC1_UT = 1 << 8,       // TEC1欠温
+            TEC1_OT = 1 << 9,       // TEC1过温
+            TEC2_UT = 1 << 10,       // TEC2欠温
+            TEC2_OT = 1 << 11,       // TEC2过温   
+            TEC3_UT = 1 << 12,       // TEC3欠温
+            TEC3_OT = 1 << 13,       // TEC3过温
+            TEC4_UT = 1 << 14,       // TEC4欠温
+            TEC4_OT = 1 << 15,       // TEC4过温   
+            EPPROM_ERR = 1 << 16,       // 参数存储错误
+            PWR_OT = 1 << 17,       // 电源过热
+            PWR_ERR = 1 << 18,       // 电路故障
+            TEC1_SW = 1 << 19,      // TEC1 开关 1：开启; 0：关闭
+            TEC2_SW = 1 << 20,      // TEC2 开关 1：开启; 0：关闭
+            TEC3_SW = 1 << 21,      // TEC3 开关 1：开启; 0：关闭
+            TEC4_SW = 1 << 22,      // TEC4 开关 1：开启; 0：关闭
+            Q_SW = 1 << 23,      // 调Q 开关 1：开启; 0：关闭
+            LD1_SW = 1 << 24,      // LD1 开关 1：开启; 0：关闭
+            LD2_SW = 1 << 25,      // LD2 开关 1：开启; 0：关闭
+            TRQ_Type = 1 << 26,      // 触发状态 1：外触发; 0：内触发
+            Pulse_Type = 1 << 27,      // 脉冲类型 1：定频 0：变频
         }
 
 
@@ -393,9 +393,9 @@ namespace wpfApp.Common.CtrlProtocol
             M_LCM,          /* 查询液冷模块反馈参数 */
             SaveParam,/* 参数保存 */
             PulseType,/* 触发频率模式 */
-            BootMode ,/*BOOT模式*/ 
+            BootMode,/*BOOT模式*/
         }
-      
+
 
         public enum PLDParamsToSet
         {
@@ -451,12 +451,12 @@ namespace wpfApp.Common.CtrlProtocol
             Cur,         /* 电流设定值 */
             DFLT_V,             /* 初始电压设定值 */
             INTER_TRG_FREQ,     /* 内触发频率设定值 */
-            PULSE_WIDTH , /* 脉宽设定值 */
+            PULSE_WIDTH, /* 脉宽设定值 */
             Q_DELAY,            /* 调Ｑ延时设定值 */
             TRG_TYPE,           /* 触发模式 */
             LD1_S_Cur,          /* LD电流设定值通道1 */
-            LD2_S_Cur ,   /* LD电流设定值通道2 */
-            Q_SW ,        /* Q开关 */
+            LD2_S_Cur,   /* LD电流设定值通道2 */
+            Q_SW,        /* Q开关 */
             TEC1_SW,            /* TEC1开关 */
             TEC2_SW,            /* TEC2开关 */
             TEC3_SW,     /* TEC3开关 */
@@ -483,7 +483,7 @@ namespace wpfApp.Common.CtrlProtocol
             TEC2_PID,       /* TEC2的PID参数 */
             TEC3_PID,       /* TEC3的PID参数 */
             TEC4_PID,       /* TEC4的PID参数 */
-            S_LCM,          /* 液冷模块设置参数 */ 
+            S_LCM,          /* 液冷模块设置参数 */
             BootMode,       /*查询BOOT模式*/
             ALL_SET,        /* 所有设定参数 */
 
@@ -508,7 +508,7 @@ namespace wpfApp.Common.CtrlProtocol
             TEC3_M_Cur,         /* 查询第3路TEC输出电流检测值 */
             TEC4_M_Cur,         /* 查询第4路TEC输出电流检测值 */
             M_LCM,          /* 液冷模块反馈参数 */
-            WRK_STA,         /* 工作状态 */            
+            WRK_STA,         /* 工作状态 */
             ALL_M,          /* 所有检测参数 */
             PulseType,/* 触发频率模式 */
             Upgrade,
@@ -519,7 +519,7 @@ namespace wpfApp.Common.CtrlProtocol
             INTER = 0x55,
             OUT = 0xAA
         }
-       
+
         public enum WorkType
         {
             OFF = 0x55,
@@ -558,25 +558,65 @@ namespace wpfApp.Common.CtrlProtocol
         public enum BootMode
         {
             Boot,
-            App,           
+            App,
             None
 
         }
     }
 
-  
+
     public class Protocol_X004_001 : ICommunicationProtocol
     {
 
 
         public Protocol_X004_001()
         {
+            BuildMappings();
             Thread thread = new Thread(new ThreadStart(() => { dataHandler(); }));
             thread.Start();
-           
+
         }
 
-        
+        // Dictionaries for fast name-based mapping between PLD enums and device enums
+        private readonly Dictionary<PLDParamsToSet, DEV_SET_CMD_TYPE> setMap = new Dictionary<PLDParamsToSet, DEV_SET_CMD_TYPE>();
+        private readonly Dictionary<PLDParamsToQuery, DEV_QUERY_CMD_TYPE> queryMap = new Dictionary<PLDParamsToQuery, DEV_QUERY_CMD_TYPE>();
+        private readonly Dictionary<DEV_GET_CMD_TYPE, PLDParamsFromGet> getMap = new Dictionary<DEV_GET_CMD_TYPE, PLDParamsFromGet>();
+
+        private void BuildMappings()
+        {
+            // Map PLDParamsToSet -> DEV_SET_CMD_TYPE by matching member names
+            foreach (PLDParamsToSet s in Enum.GetValues(typeof(PLDParamsToSet)))
+            {
+                var name = s.ToString();
+                if (Enum.TryParse<DEV_SET_CMD_TYPE>(name, out var dev))
+                {
+                    setMap[s] = dev;
+                }
+            }
+
+            // Map PLDParamsToQuery -> DEV_QUERY_CMD_TYPE by matching member names
+            foreach (PLDParamsToQuery q in Enum.GetValues(typeof(PLDParamsToQuery)))
+            {
+                var name = q.ToString();
+                if (Enum.TryParse<DEV_QUERY_CMD_TYPE>(name, out var dev))
+                {
+                    queryMap[q] = dev;
+                }
+            }
+
+            // Map DEV_GET_CMD_TYPE -> PLDParamsFromGet by matching member names
+            foreach (DEV_GET_CMD_TYPE g in Enum.GetValues(typeof(DEV_GET_CMD_TYPE)))
+            {
+                var name = g.ToString();
+                if (Enum.TryParse<PLDParamsFromGet>(name, out var p))
+                {
+                    getMap[g] = p;
+                }
+            }
+        }
+
+
+
 
         private class PLDRev
         {
@@ -609,7 +649,7 @@ namespace wpfApp.Common.CtrlProtocol
         private const byte PC_ID = 0x14;
         private const byte MCU_ID = 0x1c;
 
- 
+
 
 
         private enum DEV_QUERY_CMD_TYPE
@@ -675,8 +715,8 @@ namespace wpfApp.Common.CtrlProtocol
             TEC3_PID,       /* TEC3的PID参数 */
             TEC4_PID,       /* TEC4的PID参数 */
             S_LCM,          /* 液冷模块设置参数 */
-            M_LCM,          /* 液冷模块反馈参数 */ 
-            BootMode=0x14,       /*查询BOOT模式*/
+            M_LCM,          /* 液冷模块反馈参数 */
+            BootMode = 0x14,       /*查询BOOT模式*/
         }
         private enum DEV_SET_CMD_TYPE
         {
@@ -721,9 +761,9 @@ namespace wpfApp.Common.CtrlProtocol
             TEC4_PID,       /* TEC4的PID参数 */
             LCM,            /* 液冷模块参数 */
             SaveParam = 0x10,/* 参数保存 */
-            ClearErr =0x11,
+            ClearErr = 0x11,
             SetVersion,
-            BootMode=0x13,/*进入BOOT模式*/
+            BootMode = 0x13,/*进入BOOT模式*/
         }
 
         private enum DEV_GET_CMD_TYPE
@@ -787,7 +827,7 @@ namespace wpfApp.Common.CtrlProtocol
             TEC4_PID,       /* TEC4的PID参数 */
             S_LCM,          /* 液冷模块设置参数 */
             M_LCM,          /* 液冷模块反馈参数 */
-            SaveParam = 0xE0,/* 参数保存 */ 
+            SaveParam = 0xE0,/* 参数保存 */
             BootMode = 0xE4,/*BOOT模式*/
         }
         private void dataHandler()
@@ -805,7 +845,7 @@ namespace wpfApp.Common.CtrlProtocol
                 {
                     var d = ParseFrame(item);
                     _callback?.Invoke(d.ParamsGet, d.result);
-                    
+
                 }
             }
         }
@@ -816,72 +856,71 @@ namespace wpfApp.Common.CtrlProtocol
             object result = null;
             PLDParams p = new PLDParams();
             int idx = 0;
+            // Require a prebuilt mapping from device cmd -> PLDParamsFromGet.
+            // If there is no mapping, skip parsing because we don't know how to interpret this cmd.
+            DEV_GET_CMD_TYPE devCmd = (DEV_GET_CMD_TYPE)data.cmd;
+            if (!getMap.TryGetValue(devCmd, out var mappedGet))
+            {
+                return (PLDParamsFromGet.None, null);
+            }
+            paramsGet = mappedGet;
             switch ((DEV_GET_CMD_TYPE)data.cmd)
             {
                 case DEV_GET_CMD_TYPE.LD1_S_Cur:
-                    paramsGet = PLDParamsFromGet.LD1_S_Cur;
                     p.SetParams.LDParams[0].Curr = data.ToUFloat;
                     break;
                 case DEV_GET_CMD_TYPE.LD2_S_Cur:
-                    paramsGet = PLDParamsFromGet.LD2_S_Cur;
-                    p.SetParams.LDParams[1].Curr  = data.ToUFloat;
+                    p.SetParams.LDParams[1].Curr = data.ToUFloat;
                     break;
                 case DEV_GET_CMD_TYPE.DFLT_V:
-
                     break;
                 case DEV_GET_CMD_TYPE.INTER_TRG_FREQ:
-                    paramsGet = PLDParamsFromGet.INTER_TRG_FREQ;
                     p.SetParams.PulseParams.Freq = data.ToUInt16;
                     break;
                 case DEV_GET_CMD_TYPE.PULSE_WIDTH:
-                    paramsGet = PLDParamsFromGet.PULSE_WIDTH;
                     p.SetParams.PulseParams.Width = data.ToUInt16;
                     break;
                 case DEV_GET_CMD_TYPE.Q_DELAY:
-                    paramsGet = PLDParamsFromGet.Q_DELAY;
                     p.SetParams.TQParams.Delay = data.ToUInt16;
                     break;
                 case DEV_GET_CMD_TYPE.TRG_TYPE:
-                    paramsGet = PLDParamsFromGet.TRG_TYPE;                    
                     p.SetParams.TrigType = data.data[0] == (byte)TrigType.INTER ? TrigType.INTER : TrigType.OUT;
                     break;
-                case DEV_GET_CMD_TYPE.LD1_SW: 
-                    paramsGet = PLDParamsFromGet.LD1_SW;
+                case DEV_GET_CMD_TYPE.LD1_SW:
                     p.SetParams.LDParams[0].WorkType = data.data[0] == (byte)WorkType.ON ? WorkType.ON : WorkType.OFF;
                     break;
-                case DEV_GET_CMD_TYPE.LD2_SW: paramsGet = PLDParamsFromGet.LD2_SW;
+                case DEV_GET_CMD_TYPE.LD2_SW:
                     p.SetParams.LDParams[1].WorkType = data.data[0] == (byte)WorkType.ON ? WorkType.ON : WorkType.OFF;
                     break;
-                case DEV_GET_CMD_TYPE.Q_SW: paramsGet = PLDParamsFromGet.Q_SW;
+                case DEV_GET_CMD_TYPE.Q_SW:
                     p.SetParams.TQParams.WorkType = data.data[0] == (byte)WorkType.ON ? WorkType.ON : WorkType.OFF;
                     break;
-                case DEV_GET_CMD_TYPE.TEC1_SW: paramsGet = PLDParamsFromGet.TEC1_SW;
+                case DEV_GET_CMD_TYPE.TEC1_SW:
                     p.SetParams.TECParams[0].WorkType = data.data[0] == (byte)WorkType.ON ? WorkType.ON : WorkType.OFF;
                     break;
-                case DEV_GET_CMD_TYPE.TEC2_SW: paramsGet = PLDParamsFromGet.TEC2_SW;
+                case DEV_GET_CMD_TYPE.TEC2_SW:
                     p.SetParams.TECParams[1].WorkType = data.data[0] == (byte)WorkType.ON ? WorkType.ON : WorkType.OFF;
                     break;
-                case DEV_GET_CMD_TYPE.TEC3_SW: paramsGet = PLDParamsFromGet.TEC3_SW;
+                case DEV_GET_CMD_TYPE.TEC3_SW:
                     p.SetParams.TECParams[2].WorkType = data.data[0] == (byte)WorkType.ON ? WorkType.ON : WorkType.OFF;
                     break;
                 case DEV_GET_CMD_TYPE.TEC4_SW:
-                    paramsGet = PLDParamsFromGet.TEC4_SW; 
                     p.SetParams.TECParams[3].WorkType = data.data[0] == (byte)WorkType.ON ? WorkType.ON : WorkType.OFF;
                     break;
-                case DEV_GET_CMD_TYPE.TEC1_PARA: paramsGet = PLDParamsFromGet.TEC1_PARA;idx = 0; goto TECParam;
-                case DEV_GET_CMD_TYPE.TEC2_PARA: paramsGet = PLDParamsFromGet.TEC2_PARA; idx = 1; goto TECParam;
-                case DEV_GET_CMD_TYPE.TEC3_PARA: paramsGet = PLDParamsFromGet.TEC3_PARA; idx = 2; goto TECParam;
+                case DEV_GET_CMD_TYPE.TEC1_PARA: idx = 0; goto TECParam;
+                case DEV_GET_CMD_TYPE.TEC2_PARA: idx = 1; goto TECParam;
+                case DEV_GET_CMD_TYPE.TEC3_PARA: idx = 2; goto TECParam;
                 case DEV_GET_CMD_TYPE.TEC4_PARA:
-                    paramsGet = PLDParamsFromGet.TEC4_PARA; idx = 3; goto TECParam; 
+                    idx = 3; goto TECParam;
                 TECParam:
                     {
-                        p.SetParams.TECParams[idx].Temp  = BitConverter.ToInt16(data.data, 0) / 10.0f;
+                        p.SetParams.TECParams[idx].Temp = BitConverter.ToInt16(data.data, 0) / 10.0f;
                         p.SetParams.TECParams[idx].Vol = BitConverter.ToInt16(data.data, 2) / 10.0f;
                     }
                     break;
                 case DEV_GET_CMD_TYPE.PULSE_PARA:
                     {
-                        paramsGet = PLDParamsFromGet.PULSE_PARA;
+
                         p.SetParams.PulseParams.Num = BitConverter.ToUInt16(data.data, 0);
                         for (int i = 0; i < 11; i++)
                         {
@@ -890,100 +929,78 @@ namespace wpfApp.Common.CtrlProtocol
                     }
                     break;
                 case DEV_GET_CMD_TYPE.LD1_M_Cur:
-                    paramsGet = PLDParamsFromGet.LD1_M_Cur;
                     p.MeasureParams.LDParams[0].Curr = data.ToUFloat;
                     break;
                 case DEV_GET_CMD_TYPE.LD2_M_Cur:
-                    paramsGet = PLDParamsFromGet.LD2_M_Cur;
                     p.MeasureParams.LDParams[1].Curr = data.ToUFloat;
                     break;
                 case DEV_GET_CMD_TYPE.L1_M_V:
-                    paramsGet = PLDParamsFromGet.L1_M_V;
                     p.MeasureParams.LDParams[0].Vol = data.ToUFloat;
                     break;
                 case DEV_GET_CMD_TYPE.L2_M_V:
-                    paramsGet = PLDParamsFromGet.L2_M_V;
                     p.MeasureParams.LDParams[1].Vol = data.ToUFloat;
                     break;
                 case DEV_GET_CMD_TYPE.PWR_TEMP:
-                    paramsGet = PLDParamsFromGet.PWR_TEMP;
                     p.MeasureParams.OtherInfos.PwrTemp = data.ToSFloat;
-                   
+
                     break;
                 case DEV_GET_CMD_TYPE.OUT_PD:
-                    paramsGet = PLDParamsFromGet.OUT_PD;
                     p.MeasureParams.PDParams.Power = data.ToUFloat;
-                    
+
                     break;
                 case DEV_GET_CMD_TYPE.OUT_TEMP:
-                    paramsGet = PLDParamsFromGet.OUT_TEMP;
                     p.MeasureParams.PDParams.Temp = data.ToSFloat;
                     break;
                 case DEV_GET_CMD_TYPE.TEC1_M_TEMP:
-                    paramsGet = PLDParamsFromGet.TEC1_M_TEMP;
                     p.MeasureParams.TECParams[0].Temp = data.ToSFloat;
                     break;
                 case DEV_GET_CMD_TYPE.TEC1_M_PW:
-                    paramsGet = PLDParamsFromGet.TEC1_M_PW;
                     p.MeasureParams.TECParams[0].Power = data.ToSFloat;
                     break;
                 case DEV_GET_CMD_TYPE.TEC2_M_TEMP:
-                    paramsGet = PLDParamsFromGet.TEC2_M_TEMP;
-                    p.MeasureParams.TECParams[1].Temp= data.ToSFloat;
+                    p.MeasureParams.TECParams[1].Temp = data.ToSFloat;
                     break;
                 case DEV_GET_CMD_TYPE.TEC2_M_PW:
-                    paramsGet = PLDParamsFromGet.TEC2_M_PW;
                     p.MeasureParams.TECParams[1].Power = data.ToSFloat;
                     break;
                 case DEV_GET_CMD_TYPE.TEC3_M_TEMP:
-                    paramsGet = PLDParamsFromGet.TEC3_M_TEMP;
                     p.MeasureParams.TECParams[2].Temp = data.ToSFloat;
                     break;
                 case DEV_GET_CMD_TYPE.TEC3_M_PW:
-                    paramsGet = PLDParamsFromGet.TEC3_M_PW;
                     p.MeasureParams.TECParams[2].Power = data.ToSFloat;
                     break;
                 case DEV_GET_CMD_TYPE.TEC4_M_TEMP:
-                    paramsGet = PLDParamsFromGet.TEC4_M_TEMP;
                     p.MeasureParams.TECParams[3].Temp = data.ToSFloat;
                     break;
                 case DEV_GET_CMD_TYPE.TEC4_M_PW:
-                    paramsGet = PLDParamsFromGet.TEC4_M_PW;
                     p.MeasureParams.TECParams[3].Power = data.ToSFloat;
                     break;
                 case DEV_GET_CMD_TYPE.TEC1_M_Cur:
-                    paramsGet = PLDParamsFromGet.TEC1_M_Cur;
                     p.MeasureParams.TECParams[0].Curr = data.ToSFloat;
                     break;
                 case DEV_GET_CMD_TYPE.TEC2_M_Cur:
-                    paramsGet = PLDParamsFromGet.TEC2_M_Cur;
                     p.MeasureParams.TECParams[1].Curr = data.ToSFloat;
                     break;
                 case DEV_GET_CMD_TYPE.TEC3_M_Cur:
-                    paramsGet = PLDParamsFromGet.TEC3_M_Cur;
                     p.MeasureParams.TECParams[2].Curr = data.ToSFloat;
                     break;
                 case DEV_GET_CMD_TYPE.TEC4_M_Cur:
-                    paramsGet = PLDParamsFromGet.TEC4_M_Cur;
                     p.MeasureParams.TECParams[3].Curr = data.ToSFloat;
                     break;
 
-
                 case DEV_GET_CMD_TYPE.WRK_STA:
-                    paramsGet = PLDParamsFromGet.WRK_STA;
-                    p.MeasureParams.Status = (uint)(data.data[0]<<0| data.data[1] << 8|data.data[2] << 16 | data.data[3] << 24);
+                    p.MeasureParams.Status = (uint)(data.data[0] << 0 | data.data[1] << 8 | data.data[2] << 16 | data.data[3] << 24);
                     break;
                 case DEV_GET_CMD_TYPE.ALL_SET:
                     break;
                 case DEV_GET_CMD_TYPE.ALL_M:
                     {
-                        paramsGet = PLDParamsFromGet.ALL_M;
-                        p.MeasureParams.LDParams[0].Curr= BitConverter.ToInt16(data.data, 0) / 10.0f;
+                        p.MeasureParams.LDParams[0].Curr = BitConverter.ToInt16(data.data, 0) / 10.0f;
                         p.MeasureParams.LDParams[1].Curr = BitConverter.ToInt16(data.data, 2) / 10.0f;
                         p.MeasureParams.LDParams[0].Vol = BitConverter.ToInt16(data.data, 4) / 10.0f;
                         p.MeasureParams.LDParams[1].Vol = BitConverter.ToInt16(data.data, 6) / 10.0f;
                         p.MeasureParams.OtherInfos.PwrTemp = BitConverter.ToInt16(data.data, 8) / 10.0f;
-                        p.MeasureParams.PDParams.Power= BitConverter.ToInt16(data.data, 10) / 10.0f;
+                        p.MeasureParams.PDParams.Power = BitConverter.ToInt16(data.data, 10) / 10.0f;
                         p.MeasureParams.PDParams.Temp = BitConverter.ToInt16(data.data, 12) / 10.0f;
                         for (int i = 0; i < 4; i++)
                         {
@@ -993,64 +1010,56 @@ namespace wpfApp.Common.CtrlProtocol
                         }
                         p.MeasureParams.OtherInfos.SysVol = BitConverter.ToUInt16(data.data, 38) / 10.0f;
                         p.MeasureParams.OtherInfos.SysCurr = BitConverter.ToUInt16(data.data, 40) / 10.0f;
-                        p.MeasureParams.Status = data.data[42]|(uint)data.data[43]<<8| (uint)data.data[44] << 16| (uint)data.data[45] << 24;
-                        p.MeasureParams.Version = "V"+ data.data[46]+"."+ data.data[47] + "."+ data.data[48] + "."+ data.data[49];
+                        p.MeasureParams.Status = data.data[42] | (uint)data.data[43] << 8 | (uint)data.data[44] << 16 | (uint)data.data[45] << 24;
+                        p.MeasureParams.Version = "V" + data.data[46] + "." + data.data[47] + "." + data.data[48] + "." + data.data[49];
                         p.time = data.time;
-                        
+
                     }
                     break;
                 case DEV_GET_CMD_TYPE.Upgrade:
-                    paramsGet = PLDParamsFromGet.Upgrade;
                     p.MeasureParams.UpgradeParams.CurrIdx = BitConverter.ToUInt16(data.data);
                     p.MeasureParams.UpgradeParams.Status = (UpgradeStatus)data.data[2];
-
                     break;
                 case DEV_GET_CMD_TYPE.PulseType:
-                    paramsGet = PLDParamsFromGet.PulseType;
-                    p.SetParams.PulseType= data.data[0] == (byte)PulseType.SPWM ? PulseType.SPWM : PulseType.NOR;
+                    p.SetParams.PulseType = data.data[0] == (byte)PulseType.SPWM ? PulseType.SPWM : PulseType.NOR;
                     break;
                 case DEV_GET_CMD_TYPE.LD1_Vol:
-                    paramsGet = PLDParamsFromGet.LD1_Vol;
                     p.SetParams.LDParams[0].Vol = data.ToUFloat;
                     break;
                 case DEV_GET_CMD_TYPE.LD2_Vol:
-                    paramsGet = PLDParamsFromGet.LD2_Vol;
                     p.SetParams.LDParams[1].Vol = data.ToUFloat;
                     break;
                 case DEV_GET_CMD_TYPE.LD1_HOC:
-                    paramsGet = PLDParamsFromGet.LD1_HOC;
                     p.SetParams.LDParams[0].HOC = data.ToUFloat;
                     break;
                 case DEV_GET_CMD_TYPE.LD2_HOC:
-                    paramsGet = PLDParamsFromGet.LD2_HOC;
                     p.SetParams.LDParams[1].HOC = data.ToUFloat;
                     break;
-                case DEV_GET_CMD_TYPE.LD1_SKB: paramsGet = PLDParamsFromGet.LD1_SKB;
+                case DEV_GET_CMD_TYPE.LD1_SKB:
                     p.SetParams.LDParams[0].CalibSet.K = BitConverter.ToInt16(data.data, 0) / 100.0f;
                     p.SetParams.LDParams[0].CalibSet.B = BitConverter.ToInt16(data.data, 2) / 100.0f;
                     break;
-                case DEV_GET_CMD_TYPE.LD2_SKB: paramsGet = PLDParamsFromGet.LD2_SKB;
+                case DEV_GET_CMD_TYPE.LD2_SKB:
                     p.SetParams.LDParams[1].CalibSet.K = BitConverter.ToInt16(data.data, 0) / 100.0f;
                     p.SetParams.LDParams[1].CalibSet.B = BitConverter.ToInt16(data.data, 2) / 100.0f;
                     break;
-                case DEV_GET_CMD_TYPE.LD1_MKB: paramsGet = PLDParamsFromGet.LD1_MKB;
+                case DEV_GET_CMD_TYPE.LD1_MKB:
                     p.SetParams.LDParams[0].CalibMeasure.K = BitConverter.ToInt16(data.data, 0) / 100.0f;
                     p.SetParams.LDParams[0].CalibMeasure.B = BitConverter.ToInt16(data.data, 2) / 100.0f;
                     break;
-                case DEV_GET_CMD_TYPE.LD2_MKB: paramsGet = PLDParamsFromGet.LD2_MKB;
+                case DEV_GET_CMD_TYPE.LD2_MKB:
                     p.SetParams.LDParams[1].CalibMeasure.K = BitConverter.ToInt16(data.data, 0) / 100.0f;
                     p.SetParams.LDParams[1].CalibMeasure.B = BitConverter.ToInt16(data.data, 2) / 100.0f;
                     break;
                 case DEV_GET_CMD_TYPE.PD_MKB:
-                    paramsGet = PLDParamsFromGet.PD_MKB;
-                    p.SetParams.CalibPD.K= BitConverter.ToInt16(data.data, 0) / 100.0f;
+                    p.SetParams.CalibPD.K = BitConverter.ToInt16(data.data, 0) / 100.0f;
                     p.SetParams.CalibPD.B = BitConverter.ToInt16(data.data, 2) / 100.0f;
                     break;
-                case DEV_GET_CMD_TYPE.TEC1_PID: paramsGet = PLDParamsFromGet.TEC1_PID; idx = 0; goto PID;
-                case DEV_GET_CMD_TYPE.TEC2_PID: paramsGet = PLDParamsFromGet.TEC2_PID; idx = 1; goto PID;
-                case DEV_GET_CMD_TYPE.TEC3_PID: paramsGet = PLDParamsFromGet.TEC3_PID; idx = 2; goto PID;
+                case DEV_GET_CMD_TYPE.TEC1_PID: idx = 0; goto PID;
+                case DEV_GET_CMD_TYPE.TEC2_PID: idx = 1; goto PID;
+                case DEV_GET_CMD_TYPE.TEC3_PID: idx = 2; goto PID;
                 case DEV_GET_CMD_TYPE.TEC4_PID:
-                    paramsGet = PLDParamsFromGet.TEC4_PID; idx = 3; goto PID;
+                    idx = 3; goto PID;
                 PID:
                     {
                         p.SetParams.TECParams[idx].PID.P = BitConverter.ToInt16(data.data, 0) / 100.0f;
@@ -1060,7 +1069,7 @@ namespace wpfApp.Common.CtrlProtocol
                     break;
                 case DEV_GET_CMD_TYPE.S_LCM:
                     {
-                        paramsGet = PLDParamsFromGet.S_LCM;
+
                         p.SetParams.LCMParams.IsPowerOn = data.data[0] == (byte)WorkType.ON ? WorkType.ON : WorkType.OFF;
                         p.SetParams.LCMParams.IsIsMotorWork = data.data[1] == (byte)WorkType.ON ? WorkType.ON : WorkType.OFF;
                         p.SetParams.LCMParams.MotorSpeed = BitConverter.ToUInt16(data.data, 2);
@@ -1071,22 +1080,19 @@ namespace wpfApp.Common.CtrlProtocol
                     break;
                 case DEV_GET_CMD_TYPE.M_LCM:
                     {
-                        paramsGet = PLDParamsFromGet.M_LCM;                       
                         p.MeasureParams.LCMParams.IsIsMotorWork = data.data[0] == (byte)WorkType.ON ? WorkType.ON : WorkType.OFF;
                         p.MeasureParams.LCMParams.MotorSpeed = BitConverter.ToUInt16(data.data, 1);
                         p.MeasureParams.LCMParams.Vol = BitConverter.ToUInt16(data.data, 3) / 10.0f;
                         p.MeasureParams.LCMParams.Curr = data.data[6] / 10.0f;
                         p.MeasureParams.LCMParams.Temp = BitConverter.ToInt16(data.data, 6) / 10.0f;
                         p.MeasureParams.LCMParams.Power = data.data[8];
-                    }                    
+                    }
                     break;
                 case DEV_GET_CMD_TYPE.SaveParam:
-                    paramsGet = PLDParamsFromGet.SaveParam;
                     p.MeasureParams.ParamSaveStatus = data.data[0] == 1 ? true : false;
                     break;
-             
+
                 case DEV_GET_CMD_TYPE.BootMode:
-                    paramsGet = PLDParamsFromGet.BootMode;
                     p.MeasureParams.BootMode = (BootMode)data.data[0];
                     break;
                 default:
@@ -1133,9 +1139,9 @@ namespace wpfApp.Common.CtrlProtocol
                     int dataLen = receiveBufferTemp[i + 5];
                     int packetLen = dataLen + 9;
 
-                    if (remain_cnt>= packetLen&&
+                    if (remain_cnt >= packetLen &&
                         BitConverter.ToUInt16(receiveBufferTemp.ToArray(), i + dataLen + 7) == CMD_TAIL &&
-                        receiveBufferTemp[i + dataLen + 6] == SumCRC(receiveBufferTemp.Skip(i+6).Take(dataLen).ToArray(), dataLen)
+                        receiveBufferTemp[i + dataLen + 6] == SumCRC(receiveBufferTemp.Skip(i + 6).Take(dataLen).ToArray(), dataLen)
                         )
                     {
                         PLDRev revData = new PLDRev();
@@ -1146,7 +1152,7 @@ namespace wpfApp.Common.CtrlProtocol
                             revdatas.Add(revData);
                         }
                         i += packetLen - 1;
-                        take_data_cnt = i+1;
+                        take_data_cnt = i + 1;
                     }
                 }
 
@@ -1315,112 +1321,101 @@ namespace wpfApp.Common.CtrlProtocol
         {
             List<byte> frame = new List<byte>();
             List<byte> databytes = new List<byte>();
-
             if (paramsSet as PLDParamsToSet? == null)
             {
                 return frame;
             }
             byte cmd = 0;
             var a = (PLDParamsToSet)paramsSet;
-           
+            if (setMap.TryGetValue(a, out var mappedSetCmd))
+            {
+                cmd = (byte)mappedSetCmd;
+            }
+            else
+            {
+                // No mapping found -> cannot form a valid frame for this PLDParamsToSet
+                return new List<byte>();
+            }
+
+
             PLDParams p;
-            if (data.Count()>0 && data[0] is PLDParams)
+            if (data.Count() > 0 && data[0] is PLDParams)
             {
                 p = (PLDParams)data[0];
             }
             else
             {
-                 p = new PLDParams();
+                p = new PLDParams();
             }
-            
-            
+
+
             switch (a)
             {
                 case PLDParamsToSet.LD1_S_Cur:
-                    cmd = (byte)DEV_SET_CMD_TYPE.LD1_S_Cur;
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.LDParams[0].Curr));
                     break;
                 case PLDParamsToSet.LD2_S_Cur:
-                    cmd = (byte)DEV_SET_CMD_TYPE.LD2_S_Cur;
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.LDParams[1].Curr));
                     break;
                 case PLDParamsToSet.DFLT_V:
-                    cmd = (byte)DEV_SET_CMD_TYPE.DFLT_V;
                     break;
                 case PLDParamsToSet.INTER_TRG_FREQ:
-                    cmd = (byte)DEV_SET_CMD_TYPE.INTER_TRG_FREQ;
-                    databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.PulseParams.Freq,1));
+                    databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.PulseParams.Freq, 1));
                     break;
                 case PLDParamsToSet.PULSE_WIDTH:
-                    cmd = (byte)DEV_SET_CMD_TYPE.PULSE_WIDTH;
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.PulseParams.Width, 1));
                     break;
                 case PLDParamsToSet.Q_DELAY:
-                    cmd = (byte)DEV_SET_CMD_TYPE.Q_DELAY;
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.TQParams.Delay, 1));
                     break;
                 case PLDParamsToSet.TRG_TYPE:
-                    cmd = (byte)DEV_SET_CMD_TYPE.TRG_TYPE;
                     databytes.Add((byte)p.SetParams.TrigType);
                     break;
                 case PLDParamsToSet.PulseType:
-                    cmd = (byte)DEV_SET_CMD_TYPE.PulseType;
                     databytes.Add((byte)p.SetParams.PulseType);
                     break;
                 case PLDParamsToSet.LD1_SW:
-                    cmd = (byte)DEV_SET_CMD_TYPE.LD1_SW;
                     databytes.Add((byte)p.SetParams.LDParams[0].WorkType);
                     break;
                 case PLDParamsToSet.LD2_SW:
-                    cmd = (byte)DEV_SET_CMD_TYPE.LD2_SW;
                     databytes.Add((byte)p.SetParams.LDParams[1].WorkType);
                     break;
                 case PLDParamsToSet.Q_SW:
-                    cmd = (byte)DEV_SET_CMD_TYPE.Q_SW;
                     databytes.Add((byte)p.SetParams.TQParams.WorkType);
                     break;
                 case PLDParamsToSet.TEC1_SW:
-                    cmd = (byte)DEV_SET_CMD_TYPE.TEC1_SW;
                     databytes.Add((byte)p.SetParams.TECParams[0].WorkType);
                     break;
                 case PLDParamsToSet.TEC2_SW:
-                    cmd = (byte)DEV_SET_CMD_TYPE.TEC2_SW;
                     databytes.Add((byte)p.SetParams.TECParams[1].WorkType);
                     break;
                 case PLDParamsToSet.TEC3_SW:
-                    cmd = (byte)DEV_SET_CMD_TYPE.TEC3_SW;
                     databytes.Add((byte)p.SetParams.TECParams[2].WorkType);
                     break;
                 case PLDParamsToSet.TEC4_SW:
-                    cmd = (byte)DEV_SET_CMD_TYPE.TEC4_SW;
                     databytes.Add((byte)p.SetParams.TECParams[3].WorkType);
                     break;
                 case PLDParamsToSet.TEC1_PARA:
-                    cmd = (byte)DEV_SET_CMD_TYPE.TEC1_PARA;
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.TECParams[0].Temp));
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.TECParams[0].Vol));
                     databytes.AddRange(BitConverter.GetBytes(p.SetParams.TECParams[0].Mode));
                     break;
                 case PLDParamsToSet.TEC2_PARA:
-                    cmd = (byte)DEV_SET_CMD_TYPE.TEC2_PARA;
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.TECParams[1].Temp));
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.TECParams[1].Vol));
                     databytes.AddRange(BitConverter.GetBytes(p.SetParams.TECParams[1].Mode));
                     break;
                 case PLDParamsToSet.TEC3_PARA:
-                    cmd = (byte)DEV_SET_CMD_TYPE.TEC3_PARA;
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.TECParams[2].Temp));
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.TECParams[2].Vol));
                     databytes.AddRange(BitConverter.GetBytes(p.SetParams.TECParams[2].Mode));
                     break;
                 case PLDParamsToSet.TEC4_PARA:
-                    cmd = (byte)DEV_SET_CMD_TYPE.TEC4_PARA;
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.TECParams[3].Temp));
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.TECParams[3].Vol));
                     databytes.AddRange(BitConverter.GetBytes(p.SetParams.TECParams[3].Mode));
                     break;
                 case PLDParamsToSet.PULSE_PARA:
-                    cmd = (byte)DEV_SET_CMD_TYPE.PULSE_PARA;
                     databytes.AddRange(BitConverter.GetBytes(p.SetParams.PulseParams.Num));
                     for (int i = 0; i < 11; i++)
                     {
@@ -1428,96 +1423,77 @@ namespace wpfApp.Common.CtrlProtocol
                     }
                     break;
                 case PLDParamsToSet.Upgrade:
-                    cmd = (byte)DEV_SET_CMD_TYPE.Upgrade;
                     databytes.AddRange(BitConverter.GetBytes(p.SetParams.UpgradeParams.CurrIdx));
                     databytes.AddRange(BitConverter.GetBytes(p.SetParams.UpgradeParams.TotalPaketNum));
                     databytes.AddRange(p.SetParams.UpgradeParams.Data);
                     break;
                 case PLDParamsToSet.LD1_Vol:
-                    cmd = (byte)DEV_SET_CMD_TYPE.LD1_Vol;
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.LDParams[0].Vol));
                     break;
                 case PLDParamsToSet.LD2_Vol:
-                    cmd = (byte)DEV_SET_CMD_TYPE.LD2_Vol;
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.LDParams[1].Vol));
                     break;
                 case PLDParamsToSet.LD1_HOC:
-                    cmd = (byte)DEV_SET_CMD_TYPE.LD1_HOC;
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.LDParams[0].HOC));
                     break;
                 case PLDParamsToSet.LD2_HOC:
-                    cmd = (byte)DEV_SET_CMD_TYPE.LD2_HOC;
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.LDParams[1].HOC));
                     break;
                 case PLDParamsToSet.LD1_SKB:
-                    cmd = (byte)DEV_SET_CMD_TYPE.LD1_SKB;
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.LDParams[0].CalibSet.K, 100));
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.LDParams[0].CalibSet.B, 100));
                     break;
                 case PLDParamsToSet.LD2_SKB:
-                    cmd = (byte)DEV_SET_CMD_TYPE.LD2_SKB;
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.LDParams[1].CalibSet.K, 100));
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.LDParams[1].CalibSet.B, 100));
                     break;
                 case PLDParamsToSet.LD1_MKB:
-                    cmd = (byte)DEV_SET_CMD_TYPE.LD1_MKB;
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.LDParams[0].CalibMeasure.K, 100));
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.LDParams[0].CalibMeasure.B, 100));
                     break;
                 case PLDParamsToSet.LD2_MKB:
-                    cmd = (byte)DEV_SET_CMD_TYPE.LD2_MKB;
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.LDParams[1].CalibMeasure.K, 100));
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.LDParams[1].CalibMeasure.B, 100));
                     break;
                 case PLDParamsToSet.PD_MKB:
-                    cmd = (byte)DEV_SET_CMD_TYPE.PD_MKB;
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.CalibPD.K, 100));
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.CalibPD.B, 100));
                     break;
-                case PLDParamsToSet.TEC1_PID:                    
-                    cmd = (byte)DEV_SET_CMD_TYPE.TEC1_PID;
+                case PLDParamsToSet.TEC1_PID:
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.TECParams[0].PID.P, 100));
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.TECParams[0].PID.I, 100));
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.TECParams[0].PID.D, 100));
                     break;
                 case PLDParamsToSet.TEC2_PID:
-                    cmd = (byte)DEV_SET_CMD_TYPE.TEC2_PID;
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.TECParams[1].PID.P, 100));
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.TECParams[1].PID.I, 100));
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.TECParams[1].PID.D, 100));
                     break;
                 case PLDParamsToSet.TEC3_PID:
-                    cmd = (byte)DEV_SET_CMD_TYPE.TEC3_PID;
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.TECParams[2].PID.P, 100));
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.TECParams[2].PID.I, 100));
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.TECParams[2].PID.D, 100));
                     break;
                 case PLDParamsToSet.TEC4_PID:
-                    cmd = (byte)DEV_SET_CMD_TYPE.TEC4_PID;
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.TECParams[3].PID.P, 100));
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.TECParams[3].PID.I, 100));
                     databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.TECParams[3].PID.D, 100));
                     break;
                 case PLDParamsToSet.LCM:
-                    cmd = (byte)DEV_SET_CMD_TYPE.LCM;
                     databytes.Add((byte)p.SetParams.LCMParams.IsPowerOn);
                     databytes.Add((byte)p.SetParams.LCMParams.IsIsMotorWork);
                     databytes.AddRange(BitConverter.GetBytes(p.SetParams.LCMParams.MotorSpeed));
                     databytes.Add((byte)p.SetParams.LCMParams.FanSpeed);
-                   // databytes.Add(p.SetParams.LCMParams.FanSpeed);
+                    // databytes.Add(p.SetParams.LCMParams.FanSpeed);
                     databytes.Add(p.SetParams.LCMParams.PwrLimit);
                     break;
                 case PLDParamsToSet.SaveParam:
-                    cmd = (byte)DEV_SET_CMD_TYPE.SaveParam;
                     break;
                 case PLDParamsToSet.ClearErr:
-                    cmd = (byte)DEV_SET_CMD_TYPE.ClearErr;
                     break;
                 case PLDParamsToSet.SetVersion:
-                    cmd = (byte)DEV_SET_CMD_TYPE.SetVersion;
                     break;
                 case PLDParamsToSet.BootMode:
-                    cmd = (byte)DEV_SET_CMD_TYPE.BootMode;
                     databytes.Add((byte)p.SetParams.BootMode);
                     break;
                 default:
@@ -1545,185 +1521,20 @@ namespace wpfApp.Common.CtrlProtocol
         public List<byte> CreateQueryFrame(object paramsQuery)
         {
             List<byte> frame = new List<byte>();
-            if (paramsQuery as PLDParamsToQuery? ==null)
+            if (paramsQuery as PLDParamsToQuery? == null)
             {
                 return frame;
             }
             var a = (PLDParamsToQuery)paramsQuery;
             byte cmd = 0;
-            switch (a)
+            if (queryMap.TryGetValue(a, out var mappedQueryCmd))
             {
-                case PLDParamsToQuery.Cur:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.Cur;
-                    break;
-                case PLDParamsToQuery.DFLT_V:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.DFLT_V;
-                    break;
-                case PLDParamsToQuery.INTER_TRG_FREQ:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.INTER_TRG_FREQ;
-                    break;
-                case PLDParamsToQuery.PULSE_WIDTH:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.PULSE_WIDTH;
-                    break;
-                case PLDParamsToQuery.Q_DELAY:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.Q_DELAY;
-                    break;
-                case PLDParamsToQuery.TRG_TYPE:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.TRG_TYPE;
-                    break;
-                case PLDParamsToQuery.PulseType:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.PulseType;
-                    break;
-                case PLDParamsToQuery.LD1_S_Cur:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.LD1_S_Cur;
-                    break;
-                case PLDParamsToQuery.LD2_S_Cur:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.LD2_S_Cur;
-                    break;
-                case PLDParamsToQuery.Q_SW:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.Q_SW;
-                    break;
-                case PLDParamsToQuery.TEC1_SW:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.TEC1_SW;
-                    break;
-                case PLDParamsToQuery.TEC2_SW:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.TEC2_SW;
-                    break;
-                case PLDParamsToQuery.TEC3_SW:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.TEC3_SW;
-                    break;
-                case PLDParamsToQuery.TEC4_SW:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.TEC4_SW;
-                    break;
-                case PLDParamsToQuery.TEC1_PARA:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.TEC1_PARA;
-                    break;
-                case PLDParamsToQuery.TEC2_PARA:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.TEC2_PARA;
-                    break;
-                case PLDParamsToQuery.TEC3_PARA:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.TEC3_PARA;
-                    break;
-                case PLDParamsToQuery.TEC4_PARA:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.TEC4_PARA;
-                    break;
-                case PLDParamsToQuery.PULSE_PARA:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.PULSE_PARA;
-                    break;
-                case PLDParamsToQuery.LD1_M_Cur:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.LD1_M_Cur;
-                    break;
-                case PLDParamsToQuery.LD2_M_Cur:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.LD2_M_Cur;
-                    break;
-                case PLDParamsToQuery.L1_M_V:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.L1_M_V;
-                    break;
-                case PLDParamsToQuery.L2_M_V:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.L2_M_V;
-                    break;
-                case PLDParamsToQuery.PWR_TEMP:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.PWR_TEMP;
-                    break;
-                case PLDParamsToQuery.OUT_PD:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.OUT_PD;
-                    break;
-                case PLDParamsToQuery.OUT_TEMP:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.OUT_TEMP;
-                    break;
-                case PLDParamsToQuery.TEC1_M_TEMP:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.TEC1_M_TEMP;
-                    break;
-                case PLDParamsToQuery.TEC1_M_PW:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.TEC1_M_PW;
-                    break;
-                case PLDParamsToQuery.TEC2_M_TEMP:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.TEC2_M_TEMP;
-                    break;
-                case PLDParamsToQuery.TEC2_M_PW:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.TEC2_M_PW;
-                    break;
-                case PLDParamsToQuery.TEC3_M_TEMP:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.TEC3_M_TEMP;
-                    break;
-                case PLDParamsToQuery.TEC3_M_PW:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.TEC3_M_PW;
-                    break;
-                case PLDParamsToQuery.TEC4_M_TEMP:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.TEC4_M_TEMP;
-                    break;
-                case PLDParamsToQuery.TEC4_M_PW:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.TEC4_M_PW;
-                    break;
-                case PLDParamsToQuery.WRK_STA:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.WRK_STA;
-                    break;
-                case PLDParamsToQuery.ALL_SET:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.ALL_SET;
-                    break;
-                case PLDParamsToQuery.ALL_M:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.ALL_M;
-                    break;
-                case PLDParamsToQuery.LD1_SW:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.LD1_SW;
-                    break;
-                case PLDParamsToQuery.LD2_SW:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.LD2_SW;
-                    break;
-                case PLDParamsToQuery.LD1_Vol:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.LD1_Vol;
-                    break;
-                case PLDParamsToQuery.LD2_Vol:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.LD2_Vol;
-                    break;
-                case PLDParamsToQuery.LD1_HOC:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.LD1_HOC;
-                    break;
-                case PLDParamsToQuery.LD2_HOC:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.LD2_HOC;
-                    break;
-                case PLDParamsToQuery.LD1_SKB:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.LD1_SKB;
-                    break;
-                case PLDParamsToQuery.LD2_SKB:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.LD2_SKB;
-                    break;
-                case PLDParamsToQuery.LD1_MKB:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.LD1_MKB;
-                    break;
-                case PLDParamsToQuery.LD2_MKB:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.LD2_MKB;
-                    break;
-                case PLDParamsToQuery.PD_MKB:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.PD_MKB;
-                    break;
-                case PLDParamsToQuery.TEC1_PID:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.TEC1_PID;
-                    break;
-                case PLDParamsToQuery.TEC2_PID:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.TEC2_PID;
-                    break;
-                case PLDParamsToQuery.TEC3_PID:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.TEC3_PID;
-                    break;
-                case PLDParamsToQuery.TEC4_PID:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.TEC4_PID;
-                    break;
-                case PLDParamsToQuery.S_LCM:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.S_LCM;
-                    break;
-                case PLDParamsToQuery.M_LCM:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.M_LCM;
-                    break;
-                case PLDParamsToQuery.Upgrade:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.Upgrade;
-                    break;
-               
-                case PLDParamsToQuery.BootMode:
-                    cmd = (byte)DEV_QUERY_CMD_TYPE.BootMode;
-                    break;
-                default:
-                    break;
+                cmd = (byte)mappedQueryCmd;
+            }
+            else
+            {
+                // No mapping -> cannot form a valid query frame
+                return new List<byte>();
             }
             frame.Add(CMD_HEAD & 0xff);
             frame.Add(CMD_HEAD >> 8);
