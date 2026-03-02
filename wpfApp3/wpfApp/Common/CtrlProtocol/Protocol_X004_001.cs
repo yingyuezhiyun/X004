@@ -243,11 +243,37 @@ namespace wpfApp.Common.CtrlProtocol
         }
 
 
+        [Flags]
+        public enum StatusFlags2 : uint
+        {
+            PWR_OT = 1 << 0,       // 电源过热
+            PWR_ERR = 1 << 1,       // 电路故障
+            LD1_UC = 1 << 2,       // LD1驱动欠压
+            LD1_OC = 1 << 3,       // LD1驱动过压
+            EPPROM_ERR = 1 << 4,       // 参数存储错误
+            NTC1_ERR = 1 << 5,       // 热敏电阻1异常
+            NTC2_ERR = 1 << 6,       // 热敏电阻2异常
+            Remain1 = 1 << 7,       // 
+            TEC1_SW = 1 << 8,      // TEC1 开关 1：开启; 0：关闭
+            TEC2_SW = 1 << 9,      // TEC2 开关 1：开启; 0：关闭
+            Q_SW = 1 << 10,      // 调Q 开关 1：开启; 0：关闭
+            LD1_SW = 1 << 11,      // LD1 开关 1：开启; 0：关闭
+            TRQ_Type = 1 << 12,      // 触发状态 1：外触发; 0：内触发
+            NTC3_ERR = 1 << 13,       // 热敏电阻3异常
+            NTC4_ERR = 1 << 14,      // 热敏电阻4异常
+            LD2_UC = 1 << 15,       // LD2驱动欠压
+            LD2_OC = 1 << 16,       // LD2驱动过压
+            TEC3_SW = 1 << 17,      // TEC3 开关 1：开启; 0：关闭
+            TEC4_SW = 1 << 18,      // TEC4 开关 1：开启; 0：关闭    
+            LD2_SW = 1 << 19,      // LD2 开关 1：开启; 0：关闭       
+            LCM_Fan = 1 << 20,      // LCM风扇 
+            LCM_MotorEn = 1 << 21,      // LCM电机开关 
+        }
 
 
 
 
-
+        //todo 状态位定义
         [Flags]
         public enum StatusFlags : uint
         {
@@ -286,6 +312,7 @@ namespace wpfApp.Common.CtrlProtocol
         public class Status
         {
             public StatusFlags statusFlags;
+            public StatusFlags2 statusFlags2;
             public string Name;
         }
         static public Status[] ErrStatus =
@@ -309,6 +336,22 @@ namespace wpfApp.Common.CtrlProtocol
             new Status() { Name= "TEC4过温 ",statusFlags=StatusFlags.TEC4_OT },
 
 
+            new Status() { Name= "参数存储错误 ",statusFlags=StatusFlags.EPPROM_ERR },
+            new Status() { Name= "电源过热 ",statusFlags=StatusFlags.PWR_OT },
+            new Status() { Name= "电路故障 ",statusFlags=StatusFlags.PWR_ERR },
+        };
+
+        static public Status[] ErrStatus2 =
+        {
+
+            new Status() { Name= "LD1驱动欠流 ",statusFlags=StatusFlags.LD1_UC },
+            new Status() { Name= "LD1驱动过流 ",statusFlags=StatusFlags.LD1_OC },
+            new Status() { Name= "LD2驱动欠流 ",statusFlags=StatusFlags.LD2_UC },
+            new Status() { Name= "LD2驱动过流 ",statusFlags=StatusFlags.LD2_OC },
+            new Status() { Name= "热敏电阻1异常 ",statusFlags=StatusFlags.NTC1_ERR },
+            new Status() { Name= "热敏电阻2异常 ",statusFlags=StatusFlags.NTC2_ERR },
+            new Status() { Name= "热敏电阻3异常 ",statusFlags=StatusFlags.NTC3_ERR },
+            new Status() { Name= "热敏电阻4异常 ",statusFlags=StatusFlags.NTC4_ERR },
             new Status() { Name= "参数存储错误 ",statusFlags=StatusFlags.EPPROM_ERR },
             new Status() { Name= "电源过热 ",statusFlags=StatusFlags.PWR_OT },
             new Status() { Name= "电路故障 ",statusFlags=StatusFlags.PWR_ERR },

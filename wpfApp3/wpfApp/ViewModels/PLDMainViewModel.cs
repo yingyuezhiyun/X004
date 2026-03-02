@@ -38,11 +38,12 @@ namespace wpfApp.ViewModels
             {
                 DevPortName = PortName.First();
             }
-            List<byte> bytes = new List<byte>() { 00, 0x1b, 0xff, 0x00, 0xdd, 0x1b, 0x00, 0xff,0x00,0x00,0x00,0x00 };
-            var tt = CRC32_Uint32(bytes.ToArray());
+            // List<byte> bytes = new List<byte>() { 00, 0x1b, 0xff, 0x00, 0xdd, 0x1b, 0x00, 0xff,0x00,0x00,0x00,0x00 };
+            // var tt = CRC32_Uint32(bytes.ToArray());
 
             ExecuteCommand = new DelegateCommand<string>(Execute);
-            protocolManager.SetProtocol(new Protocol_X004_001());
+            // protocolManager.SetProtocol(new Protocol_X004_001());
+            protocolManager.SetProtocol(new Protocol_X004_002());
             protocolManager.SetCallback(serialPortDataCallBack);
             DeviceSerialPort.DataReceived += serialPortDataReceived;
             setParam = pLDParams.SetParams;
@@ -697,14 +698,14 @@ namespace wpfApp.ViewModels
                     Tile = "液冷测量参数:",
                     Icon = "AlphaYBox",
                     Params = new List<Param>() {
-                       LCMParams.Vol,LCMParams.Curr,LCMParams.Power,LCMParams.MotorSpeed,LCMParams.Temp }
+                       /* LCMParams.Vol,LCMParams.Curr,LCMParams.Power,LCMParams.MotorSpeed, */LCMParams.Temp }
                 });
                 MeasureParamsShowList.Add(new MeasureParamInfo()
                 {
                     Tile = "其他信息:",
                     Icon = "AlphaQBox",
                     Params = new List<Param>() {
-                       OtherInfos.PwrTemp ,OtherInfos.SysCurr,OtherInfos.SysVol}
+                       OtherInfos.PwrTemp /* ,OtherInfos.SysCurr,OtherInfos.SysVol */}
                 });
             }
         }

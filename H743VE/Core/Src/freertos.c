@@ -287,8 +287,8 @@ void StartTask03(void *argument)
 #ifdef BEBUG_UART
     parse_command();
 #else
-    parse_and_execute_command(&uart1_para, exec_commands_list1);
-    parse_and_execute_command(&uart2_para, exec_commands_list2);
+    parse_and_execute_command(&uart2_para, exec_commands_list1);
+    parse_and_execute_command(&uart1_para, exec_commands_list2);
     // pc_parse_and_execute_command();
 #endif // BEBUG_UART
 

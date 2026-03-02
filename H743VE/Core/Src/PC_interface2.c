@@ -229,7 +229,6 @@ static void get_all_set_param(UART_HandleTypeDef *huart, uint8_t cmd)
         int16_t TEC2_V;      // TEC2限压设定值 单位0.1V
         Pulse_param_packet_t Pulse_para;
         uint16_t LD2_Cur; // 单位 0.1A
-
         int16_t TEC3_Temp; // TEC3温度设定值 单位0.1℃
         int16_t TEC3_V;    // TEC3限压设定值 单位0.1V
         int16_t TEC4_Temp; // TEC4温度设定值 单位0.1℃

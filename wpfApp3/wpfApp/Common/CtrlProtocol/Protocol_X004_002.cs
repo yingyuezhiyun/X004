@@ -8,7 +8,7 @@ using static wpfApp.Common.CtrlProtocol.PLDParams;
 
 namespace wpfApp.Common.CtrlProtocol
 {
-    public class Protocol_X004_002
+    public class Protocol_X004_002: ICommunicationProtocol
     {
 
         public Protocol_X004_002()
@@ -294,7 +294,6 @@ namespace wpfApp.Common.CtrlProtocol
                     break;
                 case DEV_GET_CMD_TYPE.PULSE_PARA:
                     {
-
                         p.SetParams.PulseParams.Num = BitConverter.ToUInt16(data.data, 0);
                         for (int i = 0; i < 11; i++)
                         {
@@ -316,11 +315,9 @@ namespace wpfApp.Common.CtrlProtocol
                     break;
                 case DEV_GET_CMD_TYPE.PWR_TEMP:
                     p.MeasureParams.OtherInfos.PwrTemp = data.ToSFloat;
-
                     break;
                 case DEV_GET_CMD_TYPE.OUT_PD:
                     p.MeasureParams.PDParams.Power = data.ToUFloat;
-
                     break;
                 case DEV_GET_CMD_TYPE.OUT_TEMP:
                     p.MeasureParams.PDParams.Temp = data.ToSFloat;
@@ -348,34 +345,36 @@ namespace wpfApp.Common.CtrlProtocol
                     break;
                 case DEV_GET_CMD_TYPE.TEC4_M_PW:
                     p.MeasureParams.TECParams[3].Power = data.ToSFloat;
-                    break;
-              
+                    break;              
                 case DEV_GET_CMD_TYPE.WRK_STA:
                     p.MeasureParams.Status = (uint)(data.data[0] << 0 | data.data[1] << 8 | data.data[2] << 16 | data.data[3] << 24);
                     break;
                 case DEV_GET_CMD_TYPE.ALL_SET:
+                    {
+                        
+                    }
                     break;
                 case DEV_GET_CMD_TYPE.ALL_M:
                     {
                         p.MeasureParams.LDParams[0].Curr = BitConverter.ToInt16(data.data, 0) / 10.0f;
-                        p.MeasureParams.LDParams[1].Curr = BitConverter.ToInt16(data.data, 2) / 10.0f;
-                        p.MeasureParams.LDParams[0].Vol = BitConverter.ToInt16(data.data, 4) / 10.0f;
-                        p.MeasureParams.LDParams[1].Vol = BitConverter.ToInt16(data.data, 6) / 10.0f;
-                        p.MeasureParams.OtherInfos.PwrTemp = BitConverter.ToInt16(data.data, 8) / 10.0f;
-                        p.MeasureParams.PDParams.Power = BitConverter.ToInt16(data.data, 10) / 10.0f;
-                        p.MeasureParams.PDParams.Temp = BitConverter.ToInt16(data.data, 12) / 10.0f;
-                        for (int i = 0; i < 4; i++)
-                        {
-                            p.MeasureParams.TECParams[i].Temp = BitConverter.ToInt16(data.data, 14 + 6 * i) / 10.0f;
-                            p.MeasureParams.TECParams[i].Power = BitConverter.ToInt16(data.data, 16 + 6 * i) / 10.0f;
-                            p.MeasureParams.TECParams[i].Curr = BitConverter.ToInt16(data.data, 18 + 6 * i) / 10.0f;
-                        }
-                        p.MeasureParams.OtherInfos.SysVol = BitConverter.ToUInt16(data.data, 38) / 10.0f;
-                        p.MeasureParams.OtherInfos.SysCurr = BitConverter.ToUInt16(data.data, 40) / 10.0f;
-                        p.MeasureParams.Status = data.data[42] | (uint)data.data[43] << 8 | (uint)data.data[44] << 16 | (uint)data.data[45] << 24;
-                        p.MeasureParams.Version = "V" + data.data[46] + "." + data.data[47] + "." + data.data[48] + "." + data.data[49];
+                        p.MeasureParams.LDParams[0].Vol = BitConverter.ToInt16(data.data, 2) / 10.0f;
+                        p.MeasureParams.OtherInfos.PwrTemp = BitConverter.ToInt16(data.data, 4) / 10.0f;
+                        p.MeasureParams.PDParams.Power = BitConverter.ToInt16(data.data, 6) / 10.0f;
+                        p.MeasureParams.PDParams.Temp = BitConverter.ToInt16(data.data, 8) / 10.0f;
+                        p.MeasureParams.TECParams[0].Temp = BitConverter.ToInt16(data.data, 10) / 10.0f;
+                        p.MeasureParams.TECParams[0].Power = BitConverter.ToInt16(data.data, 12) / 10.0f;
+                        p.MeasureParams.TECParams[1].Temp = BitConverter.ToInt16(data.data, 14) / 10.0f;
+                        p.MeasureParams.TECParams[1].Power = BitConverter.ToInt16(data.data, 16) / 10.0f;
+                        p.MeasureParams.Status = data.data[18] | (uint)data.data[19] << 8 | (uint)data.data[20] << 16 ;
+                        p.MeasureParams.Version = "V" + data.data[21] + "." + data.data[22] + "." + data.data[23] + "." + data.data[24];                      
+                        p.MeasureParams.LDParams[1].Curr = BitConverter.ToInt16(data.data, 25) / 10.0f;                        
+                        p.MeasureParams.LDParams[1].Vol = BitConverter.ToInt16(data.data, 27) / 10.0f;
+                        p.MeasureParams.TECParams[2].Temp = BitConverter.ToInt16(data.data, 29) / 10.0f;
+                        p.MeasureParams.TECParams[2].Power = BitConverter.ToInt16(data.data, 31) / 10.0f;
+                        p.MeasureParams.TECParams[3].Temp = BitConverter.ToInt16(data.data, 33) / 10.0f;
+                        p.MeasureParams.TECParams[3].Power = BitConverter.ToInt16(data.data, 35) / 10.0f;
+                        p.MeasureParams.LCMParams.Temp = BitConverter.ToUInt16(data.data, 37) / 10.0f;                       
                         p.time = data.time;
-
                     }
                     break;
                 case DEV_GET_CMD_TYPE.Upgrade:
@@ -543,22 +542,22 @@ namespace wpfApp.Common.CtrlProtocol
                 case PLDParamsToSet.TEC1_PARA:
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.TECParams[0].Temp));
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.TECParams[0].Vol));
-                    databytes.AddRange(BitConverter.GetBytes(p.SetParams.TECParams[0].Mode));
+                    // databytes.AddRange(BitConverter.GetBytes(p.SetParams.TECParams[0].Mode));
                     break;
                 case PLDParamsToSet.TEC2_PARA:
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.TECParams[1].Temp));
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.TECParams[1].Vol));
-                    databytes.AddRange(BitConverter.GetBytes(p.SetParams.TECParams[1].Mode));
+                    // databytes.AddRange(BitConverter.GetBytes(p.SetParams.TECParams[1].Mode));
                     break;
                 case PLDParamsToSet.TEC3_PARA:
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.TECParams[2].Temp));
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.TECParams[2].Vol));
-                    databytes.AddRange(BitConverter.GetBytes(p.SetParams.TECParams[2].Mode));
+                    // databytes.AddRange(BitConverter.GetBytes(p.SetParams.TECParams[2].Mode));
                     break;
                 case PLDParamsToSet.TEC4_PARA:
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.TECParams[3].Temp));
                     databytes.AddRange(ConvertFloatToByte<short>(p.SetParams.TECParams[3].Vol));
-                    databytes.AddRange(BitConverter.GetBytes(p.SetParams.TECParams[3].Mode));
+                    // databytes.AddRange(BitConverter.GetBytes(p.SetParams.TECParams[3].Mode));
                     break;
                 case PLDParamsToSet.PULSE_PARA:
                     databytes.AddRange(BitConverter.GetBytes(p.SetParams.PulseParams.Num));

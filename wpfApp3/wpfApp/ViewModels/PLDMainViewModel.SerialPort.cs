@@ -128,6 +128,77 @@ namespace wpfApp.ViewModels
         bool isIgnoreBitErr = false;
         async void  UpdateStatus(UInt32 p)
         {
+
+            string status = "";
+            foreach (var item in PLDParams.ErrStatus2)
+            {
+                if ((p & (UInt32)item.statusFlags2) != 0)
+                {
+                    status += item.Name;
+                }
+            }
+            if (status == "")
+            {
+                status = "正常";
+            }
+            else if (!isIgnoreBitErr)
+            {
+                await Application.Current.Dispatcher.Invoke(async () =>
+                {
+                    var dialogResult = await dialogHostService.Question("运行错误", "\r\n设备状态异常，已经停止运行!\r\n" + "错误内容：" + status, msgType: MsgType.YesIgnoreRetry);
+                    //if (dialogResult.Result != Prism.Services.Dialogs.ButtonResult.OK) return;
+                    if (dialogResult.Result == Prism.Dialogs.ButtonResult.Retry)
+                    {
+                        DevClearErr();
+                        return;
+                    }
+                    else if (dialogResult.Result == Prism.Dialogs.ButtonResult.Yes)
+                    {
+                        DevClose();
+                    }
+                    else if (dialogResult.Result == Prism.Dialogs.ButtonResult.Ignore)
+                    {
+                        isIgnoreBitErr = true;
+                    }
+                });
+            }
+            MeasureParams.StatusInfo.BITStatus.Value = status;
+
+            bool sw_on = false;
+            sw_on = (p & (UInt32)PLDParams.StatusFlags2.TEC1_SW) != 0;
+            UpdateTEC_SW(0, sw_on);
+            sw_on = (p & (UInt32)PLDParams.StatusFlags2.TEC2_SW) != 0;
+            UpdateTEC_SW(1, sw_on);
+            sw_on = (p & (UInt32)PLDParams.StatusFlags2.TEC3_SW) != 0;
+            UpdateTEC_SW(2, sw_on);
+            sw_on = (p & (UInt32)PLDParams.StatusFlags2.TEC4_SW) != 0;
+            UpdateTEC_SW(3, sw_on);
+
+            bool LDWork = false;
+            sw_on = (p & (UInt32)PLDParams.StatusFlags2.LD1_SW) != 0;
+            UpdateLD_SW(0, sw_on);
+            LDWork |= sw_on;
+            sw_on = (p & (UInt32)PLDParams.StatusFlags2.LD2_SW) != 0;
+            UpdateLD_SW(1, sw_on);
+            LDWork |= sw_on;
+            LDCtrlEn = !LDWork;
+
+            sw_on = (p & (UInt32)PLDParams.StatusFlags2.Q_SW) != 0;
+            UpdateTQ_SW(sw_on);
+
+            sw_on = (p & (UInt32)PLDParams.StatusFlags2.TRQ_Type) != 0;
+            UpdateTrigType(!sw_on);
+
+            sw_on = (p & (UInt32)PLDParams.StatusFlags2.LCM_Fan) != 0;
+            MeasureParams.StatusInfo.FanStatus.Value = sw_on ?  "开" : "关";
+
+            sw_on = (p & (UInt32)PLDParams.StatusFlags2.LCM_MotorEn) != 0;
+            MeasureParams.StatusInfo.PumpStatus.Value = sw_on ?  "开" : "关";
+
+            // sw_on = (p & (UInt32)PLDParams.StatusFlags2.Pulse_Type) != 0;
+            // UpdatePulseType(!sw_on);
+
+            #if false
             string status = "";
             foreach (var item in PLDParams.ErrStatus)
             {
@@ -190,6 +261,8 @@ namespace wpfApp.ViewModels
 
             sw_on = (p & (UInt32)PLDParams.StatusFlags.Pulse_Type) != 0;
             UpdatePulseType(!sw_on);
+            #endif
+
         }
 
         void UpdateTEC_SW(int idx, bool sw_on)
@@ -461,6 +534,10 @@ namespace wpfApp.ViewModels
                         }
                         MeasureParams.LDParams[0].Temp.Value = MeasureParams.TECParams[0].Temp.Value;
                         MeasureParams.LDParams[1].Temp.Value = MeasureParams.TECParams[1].Temp.Value;
+
+                        //add
+                        MeasureParams.LCMParams.Temp.Value = p1.MeasureParams.LCMParams.Temp.ToString("F1");
+
                         UpdateStatus(p1.MeasureParams.Status);
                         Update.Version = p1.MeasureParams.Version;
                         bool IsSave = false;
@@ -481,7 +558,7 @@ namespace wpfApp.ViewModels
                         }
                         if (IsSave)
                         {
-                            saveDataFile(p1);
+                            // saveDataFile(p1);
                         }
 
                         // publish chart update event with ordered data list matching PLDChartViewModel SigThemes
