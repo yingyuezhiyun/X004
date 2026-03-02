@@ -99,8 +99,8 @@ enum
     P_G_TEC4_SW = 0x96,     /* 查询TEC4开关 */
     P_S_TEC3_PARA = 0x9A,   /* 设置第3路TEC 工作温度、限压、模式 设置TEC1参数，共2个参数，每个参数2个字节：1、工作温度（150～650，代表15.0℃～65.0℃）2、限压 */
     P_S_TEC4_PARA = 0x9B,   /* 设置第4路TEC 工作温度、限压、模式 设置TEC1参数，共2个参数，每个参数2个字节：1、工作温度（150～650，代表15.0℃～65.0℃）2、限压 */
-    P_G_TEC3_PARA = 0xB7,   /* 查询第3路TEC：温度、限压、模式设定值 */
-    P_G_TEC4_PARA = 0xB8,   /* 查询第4路TEC：温度、限压、模式设定值 */
+    P_G_TEC3_PARA = 0xB7,   /* 查询第3路TEC：温度、限压设定值 */
+    P_G_TEC4_PARA = 0xB8,   /* 查询第4路TEC：温度、限压设定值 */
     P_G_LD2_M_Cur = 0xBA,   /* 查询LD电流检测值通道2 */
     P_G_LD2_M_V = 0xBB,     /* 查询负载电压检测值通道2 */
     P_G_TEC3_M_TEMP = 0xBF, /* 查询第3路检测温度检测值 */
@@ -155,7 +155,7 @@ enum
     M_TEC3_M_PW = 0xB3,   /* 查询第3路TEC输出功率检测值 */
     M_TEC4_M_TEMP = 0xE4, /* 查询第4路检测温度检测值 */
     M_TEC4_M_PW = 0xE5,   /* 查询第4路TEC输出功率检测值 */
-    M_BOOT_MODE = 0xE6,   /* BOOT模式 反馈 */
+    M_BOOT_MODE = 0xEC,   /* BOOT模式 反馈 */
     M_PulseType = 0xE7,   /* 查询脉冲类型 0x55：变频 0xAA：定频;  */
 };
 
