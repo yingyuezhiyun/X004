@@ -15,6 +15,7 @@
 
 #define FLASH_PRAGMA_HEAD 0xaaaa
 
+#define NULL_ADDR (0xFFFFFFFF)
 
 // 偏移128kb
 // #define USR_INTER_FLASH_ADDR (FLASH_BANK2_BASE + 0x40000)
@@ -39,7 +40,6 @@ const uint8_t para_flash_area[12];
     uint16_t datasize; // 数据长度
 } Flash_info;
 #pragma pack()
-
 
 uint32_t Next_Cfg_Address = CFG_ADDR;
 uint32_t Cur_Cfg_Address = CFG_ADDR;
@@ -194,8 +194,6 @@ End:
     return reslt;
 }
 
-
-
 void FLASH_ReadData(uint32_t ReadAddr, uint8_t *data, uint32_t Size)
 {
     uint32_t i;
@@ -215,7 +213,6 @@ uint32_t FLASH_ReadWord(uint32_t faddr)
 {
     return *(__IO uint32_t *)faddr;
 }
-
 
 int8_t read_data(uint32_t ReadAddr, uint8_t *data, uint32_t Size)
 {
@@ -262,10 +259,9 @@ uint16_t read_all_data(uint32_t ReadAddr, uint8_t *data)
     return flash_info->datasize;
 }
 
-
 void Flash_Ini(uint32_t addr)
 {
-    uint16_t Next_Index = 0,Cur_Index=0;
+    uint16_t Next_Index = 0, Cur_Index = 0, find = 0;
     while (1)
     {
         uint32_t temp = FLASH_ReadWord(addr + Next_Index * 32);
@@ -273,28 +269,38 @@ void Flash_Ini(uint32_t addr)
         flash_info = &temp;
         if (flash_info->header == FLASH_PRAGMA_HEAD) //
         {
-            Cur_Index=Next_Index;
+            find = 1;
+            Cur_Index = Next_Index;
             Next_Index += ceil((sizeof(Flash_info) + flash_info->datasize) / 32.0);
-        }       
+        }
         else
         {
             break;
         }
     }
-    Cur_Cfg_Address = addr + Cur_Index * 32;
-    Next_Cfg_Address = addr + Next_Index * 32;
-    if (Next_Cfg_Address >= CFG_ADDR + sizeof(para_flash_area))
+    if (find == 1)
     {
+        Cur_Cfg_Address = addr + Cur_Index * 32;
+        Next_Cfg_Address = addr + Next_Index * 32;
+        if (Next_Cfg_Address >= (CFG_ADDR + sizeof(para_flash_area)))
+        {
+            Next_Cfg_Address = CFG_ADDR;
+        }
+    }
+    else
+    {
+        Cur_Cfg_Address = NULL_ADDR;
         Next_Cfg_Address = CFG_ADDR;
     }
 }
 
-
-
 void read_cfg(void)
 {
-    Flash_Ini(CFG_ADDR);    
-    read_data_non_check_size(Cur_Cfg_Address, &mem_cfg, sizeof(mem_cfg)); 
+    Flash_Ini(CFG_ADDR);
+    if (Cur_Cfg_Address != NULL_ADDR)
+    {
+        read_data_non_check_size(Cur_Cfg_Address, &mem_cfg, sizeof(mem_cfg));
+    }
 }
 
 void write_cfg(void)

@@ -14,6 +14,9 @@
 #endif
 
 #define FLASH_PRAGMA_HEAD 0xaaaa
+
+#define NULL_ADDR (0xFFFFFFFF)
+
 // 偏移128kb
 // #define USR_INTER_FLASH_ADDR (FLASH_BANK2_BASE + 0x40000)
 
@@ -143,8 +146,6 @@ HAL_StatusTypeDef FLASH_Erase(uint32_t _ulFlashAddr)
     return HAL_FLASHEx_Erase(&FLASH_Init, &PageError);
 }
 
-
-
 int FLASH_Write(uint32_t Addr, uint8_t *Data, uint16_t Size)
 {
     __set_PRIMASK(1);
@@ -154,7 +155,7 @@ int FLASH_Write(uint32_t Addr, uint8_t *Data, uint16_t Size)
     if (HAL_FLASH_Unlock() != HAL_OK)
     // if(HAL_FLASHEx_Unlock_Bank2()!= HAL_OK)
     {
-         __set_PRIMASK(0);
+        __set_PRIMASK(0);
         reslt = -1;
         goto End;
     }
@@ -162,7 +163,7 @@ int FLASH_Write(uint32_t Addr, uint8_t *Data, uint16_t Size)
     {
         if (FLASH_Erase(Addr) != HAL_OK)
         {
-            HAL_FLASH_Lock(); 
+            HAL_FLASH_Lock();
             __set_PRIMASK(0);
             reslt = -1;
             goto End;
@@ -194,7 +195,6 @@ End:
     return reslt;
 }
 
-
 void FLASH_ReadData(uint32_t ReadAddr, uint8_t *data, uint32_t Size)
 {
     uint32_t i;
@@ -209,10 +209,6 @@ void FLASH_ReadData(uint32_t ReadAddr, uint8_t *data, uint32_t Size)
         *data++ = *(uint8_t *)ReadAddr++;
     }
 }
-
-
-
-
 
 uint32_t FLASH_ReadWord(uint32_t faddr)
 {
@@ -266,7 +262,7 @@ uint16_t read_all_data(uint32_t ReadAddr, uint8_t *data)
 
 void Flash_Ini(uint32_t addr)
 {
-    uint16_t Next_Index = 0,Cur_Index=0;
+    uint16_t Next_Index = 0, Cur_Index = 0, find = 0;
     while (1)
     {
         uint32_t temp = FLASH_ReadWord(addr + Next_Index * 32);
@@ -274,26 +270,38 @@ void Flash_Ini(uint32_t addr)
         flash_info = &temp;
         if (flash_info->header == FLASH_PRAGMA_HEAD) //
         {
-            Cur_Index=Next_Index;
+            find = 1;
+            Cur_Index = Next_Index;
             Next_Index += ceil((sizeof(Flash_info) + flash_info->datasize) / 32.0);
-        }       
+        }
         else
         {
             break;
         }
     }
-    Cur_Cfg_Address = addr + Cur_Index * 32;
-    Next_Cfg_Address = addr + Next_Index * 32;
-    if (Next_Cfg_Address >= CFG_ADDR + sizeof(para_flash_area))
+    if (find == 1)
     {
+        Cur_Cfg_Address = addr + Cur_Index * 32;
+        Next_Cfg_Address = addr + Next_Index * 32;
+        if (Next_Cfg_Address >= (CFG_ADDR + sizeof(para_flash_area)))
+        {
+            Next_Cfg_Address = CFG_ADDR;
+        }
+    }
+    else
+    {
+        Cur_Cfg_Address = NULL_ADDR;
         Next_Cfg_Address = CFG_ADDR;
     }
 }
 
 void read_cfg(void)
 {
-    Flash_Ini(CFG_ADDR);    
-    read_data_non_check_size(Cur_Cfg_Address, &mem_cfg, sizeof(mem_cfg)); 
+    Flash_Ini(CFG_ADDR);
+    if (Cur_Cfg_Address != NULL_ADDR)
+    {
+        read_data_non_check_size(Cur_Cfg_Address, &mem_cfg, sizeof(mem_cfg));
+    }
 }
 
 void write_cfg(void)
