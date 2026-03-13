@@ -18,7 +18,7 @@ enum
 enum
 {
     M_UPGRADE = 0xD0,   /* 反馈在线程序升级状态 */
-    M_BOOT_MODE = 0xE6, /* 处于BOOT模式 反馈 */
+    M_BOOT_MODE = 0xEC, /* 处于BOOT模式 反馈 */
 };
 
 static void ack_upgrade_status(UART_HandleTypeDef *huart)

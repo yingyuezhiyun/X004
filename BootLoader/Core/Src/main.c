@@ -143,6 +143,7 @@ int main(void)
 
   upgrade_ini();
   Enable_UART1_Receive();
+  Enable_UART2_Receive();
   // uint32_t ttxx = 0x00ff1b00;
   // uint32_t crc_ttxx = HAL_CRC_Calculate(&hcrc, &ttxx, 1);
   // info_printf("crc(0x00ff1b00) = 0x%x\r\n",crc_ttxx);
@@ -156,8 +157,8 @@ int main(void)
   while (1)
   {
 
-    parse_and_execute_command(&uart1_para, exec_commands_list1);
-    parse_and_execute_command(&uart2_para, exec_commands_list2);
+    parse_and_execute_command(&uart1_para, exec_commands_list2);
+    parse_and_execute_command(&uart2_para, exec_commands_list1);
     Delay_ms(1);
     // crc_test_func();
   

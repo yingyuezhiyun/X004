@@ -52,7 +52,7 @@ namespace wpfApp.ViewModels
         }
 
 
-        private string _title = "双通道脉冲激光驱动器V1.0";
+        private string _title = "双通道脉冲激光驱动器V1.0-K";
 
         public string Title
         {

@@ -193,7 +193,7 @@
                         <Border Margin="5,15,5,5" Style="{StaticResource HorizontalDividerBorder}" />
                         <UniformGrid
                             Margin="0,10,0,20"
-                            Columns="2"
+                            Columns="1"
                             IsEnabled="{Binding DeviceIsOpen}">
                             <Button
                                 Height="25"
@@ -215,12 +215,7 @@
                                     </Style>
                                 </Button.Style>
                             </Button>
-                            <Button
-                                Height="25"
-                                Margin="5,0,5,0"
-                                Command="{Binding ExecuteCommand}"
-                                CommandParameter="参数固化"
-                                Content="参数固化" />
+
                         </UniformGrid>
                     </StackPanel>
 
@@ -986,9 +981,9 @@
                         </ScrollViewer>
                     </TabItem>
 
-                  
 
-                    
+
+
 
 
                     <TabItem Width="40" Height="auto">

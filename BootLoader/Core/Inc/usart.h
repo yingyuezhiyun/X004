@@ -48,6 +48,7 @@ void uart1_printf(char *format, ...);
 void info_printf(char *format, ...);
 int CheckUart1Ready();
 void Enable_UART1_Receive();
+void Enable_UART2_Receive();
 void Disable_UART1_Receive();
 
 /* USER CODE END Prototypes */

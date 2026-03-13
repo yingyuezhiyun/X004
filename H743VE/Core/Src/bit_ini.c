@@ -231,9 +231,9 @@ void DefaultParams()
         set_param.tec[i].sw = WORK_OFF;
         set_param.tec[i].MaxVol = 195;
         set_param.tec[i].Temp = 200;
-        set_param.tec[i].PID.Kp = 0.5;
-        set_param.tec[i].PID.Ki = 0.1;
-        set_param.tec[i].PID.Kd = 0;
+        set_param.tec[i].PID.Kp = 38;
+        set_param.tec[i].PID.Ki = 30;
+        set_param.tec[i].PID.Kd = 20;
     }
 
     set_param.TRG_Type = TRG_INTER;
@@ -248,27 +248,69 @@ void DefaultParams()
         set_param.Pulse_para.Interval[i] = 250;
     }
     set_param.LCM.Fan = WORK_OFF;
+    set_param.LCM.MotorSpeed = 30000;
+    set_param.LCM.PwrLimit = 150;
 }
 
+void RangeParams()
+{
+    for (size_t i = 0; i < 2; i++)
+    {
+        // if (set_param.ld[i].sw != WORK_ON)
+        // {
+        set_param.ld[i].sw = WORK_OFF;
+        // }
+    }
+    for (size_t i = 0; i < 4; i++)
+    {
+        if (set_param.tec[i].sw != WORK_ON)
+        {
+            set_param.tec[i].sw = WORK_OFF;
+        }
+        if (set_param.tec[i].Temp < TEC_SET_MIN_TEMP)
+        {
+            set_param.tec[i].Temp = TEC_SET_MIN_TEMP;
+        }
+        else if (set_param.tec[i].Temp > TEC_SET_MAX_TEMP)
+        {
+            set_param.tec[i].Temp = TEC_SET_MAX_TEMP;
+        }
+        set_param.tec[i].PID.Resolution = 0.0004f;
+    }
+    if (set_param.Pulse_para.Num > 11)
+    {
+        set_param.Pulse_para.Num = 11;
+    }
+    set_param.Pulse_para.Nor_Freq = 1000;
+
+
+}
 
 void DefaultStatus()
 {
     memset(&Work_Status, 0, sizeof(Work_Status));
     for (size_t i = 0; i < 4; i++)
     {
-       set_param.tec[i].ErrStatus.value = 0;
+        set_param.tec[i].ErrStatus.value = 0;
     }
     for (size_t i = 0; i < 2; i++)
     {
-         set_param.ld[i].ErrStatus.value = 0;
+        set_param.ld[i].ErrStatus.value = 0;
     }
-    
-    
+}
+
+void DefaultRunningFlag()
+{
+    running_flag.ld_flags[0].value = 0;
+    running_flag.ld_flags[1].value = 0;
+    running_flag.pulse_flags.value = 0;
+    running_flag.lcm_auto = 1;
 }
 
 uint8_t bit_init()
 {
 
+    DefaultParams();
     uint8_t result = 1;
     uint8_t read_result = readPara();
     Disable_LD1_EXIT_DET;
@@ -285,30 +327,15 @@ uint8_t bit_init()
     }
     if (read_result == IIC_Check_Fail)
     {
-        DefaultParams();
         Work_Status.EPPROM_ERR = 1;
         result = 0;
     }
     else if (read_result == IIC_Check_OK_With_Empty)
     {
-        DefaultParams();
         savePara();
     }
-    for (size_t i = 0; i < 2; i++)
-    {
-        // if (set_param.ld[i].sw != WORK_ON)
-        // {
-            set_param.ld[i].sw = WORK_OFF;
-        // }
-    }
-    for (size_t i = 0; i < 4; i++)
-    {
-        if (set_param.tec[i].sw != WORK_ON)
-        {
-            set_param.tec[i].sw = WORK_OFF;
-        }
-        set_param.tec[i].PID.Resolution = 0.0004f; 
-    }
+    RangeParams();
+
     // todo
     SET_LD_MAX_Curr(LD_CH_1, set_param.ld[0].HOC / 10.0);
     SET_LD_MAX_Curr(LD_CH_2, set_param.ld[1].HOC / 10.0);
@@ -338,10 +365,7 @@ uint8_t bit_init()
     Heat_Ini();
 
     // todo
-    running_flag.ld_flags[0].value = 0;
-    running_flag.ld_flags[1].value = 0;
-    running_flag.pulse_flags.value = 0;
-    running_flag.lcm_auto = 1;
+    DefaultRunningFlag();
 
     return result;
 }

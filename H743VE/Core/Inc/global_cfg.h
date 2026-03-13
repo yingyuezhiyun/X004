@@ -24,7 +24,6 @@ APP2:		0x80E0000		128k
 #define APP2_ADDR (FLASH_BANK1_BASE + 0x80000)
 #define CFG_ADDR (FLASH_BANK1_BASE + 0xE0000)
 
-
 #define INFO_PRINT (1)
 
 #define Delay_ms(x) osDelay(x)
@@ -93,16 +92,15 @@ typedef enum
 
 typedef struct
 {
-    
+
     uint32_t bootloader_address;
     uint32_t app_address;
     uint32_t cfg_address;
-    pending_state_t pending_state;    
+    pending_state_t pending_state;
     fw_header_t app_hdr;
-  
+
 } mem_cfg_t;
 extern mem_cfg_t mem_cfg;
-
 
 #pragma pack(1)
 
@@ -131,14 +129,14 @@ enum
 // PID控制器结构体
 typedef struct
 {
-    float Kp;         // 比例增益
-    float Ki;         // 积分增益
-    float Kd;         // 微分增益
-    float prev_error; // 上一次误差
+    float Kp;              // 比例增益
+    float Ki;              // 积分增益
+    float Kd;              // 微分增益
+    float prev_error;      // 上一次误差
     float prev_prev_error; // 上上次误差（用于增量式PID）
-    float integral;   // 积分累积
-    float div;        // 偏差值
-    float Resolution; // 分辨率
+    float integral;        // 积分累积
+    float div;             // 偏差值
+    float Resolution;      // 分辨率
 } PID_Controller;
 
 typedef struct
@@ -226,10 +224,10 @@ typedef struct
 
 typedef struct
 {
-    float Temp;  // 温度 0.1℃
+    float Temp;   // 温度 0.1℃
     float Temp_f; // 经过一阶 IIR 滤波的温度值（单位同 Temp，浮点 ℃）
-    float Cur;   // 单位 0.1A
-    float Power; // 输出功率 0.1W
+    float Cur;    // 单位 0.1A
+    float Power;  // 输出功率 0.1W
 } tec_measureparam_t;
 
 typedef struct
@@ -307,7 +305,7 @@ typedef struct
     Pulse_param_t Pulse_para; // 脉冲参数
     cali_coef_t PD_calib;     //
     S_LCM_t LCM;              // 液冷模块控制
-    uint8_t HardWareTest;     // 硬件测试模式   
+    uint8_t HardWareTest;     // 硬件测试模式
 } set_param_t;
 
 typedef struct

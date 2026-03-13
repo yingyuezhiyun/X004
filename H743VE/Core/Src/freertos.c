@@ -200,6 +200,7 @@ void StartDefaultTask(void *argument)
   bit_init();
   upgrade_ini();
   Enable_UART1_Receive();
+  Enable_UART2_Receive();
   StartCMDThread();
 
 

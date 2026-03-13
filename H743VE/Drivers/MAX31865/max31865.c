@@ -78,7 +78,7 @@ void MAX31865_WriteByte(uint8_t sel, uint8_t reg, uint8_t data)
     HAL_SPI_Transmit(&hspi4, pData, 2, MAX31865_TIMEOUT_MS);
     MAX31865_CS(sel, 1);
 }
-float PT_ref[4]={3900,3900,3900,3900};
+float PT_ref[4]={4000,4000,4000,4000};
 float calib_temp(uint16_t data,uint8_t sel)
 {
     float Rt;

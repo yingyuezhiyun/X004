@@ -661,28 +661,28 @@ namespace wpfApp.ViewModels
                     Tile = "TEC1测量参数:",
                     Icon = "AlphaTBox",
                     Params = new List<Param>() {
-                        TECParams[0].Temp,TECParams[0].Curr,TECParams[0].Power }
+                        TECParams[0].Temp,/*TECParams[0].Curr,*/TECParams[0].Power }
                 });
                 MeasureParamsShowList.Add(new MeasureParamInfo()
                 {
                     Tile = "TEC2测量参数:",
                     Icon = "AlphaTBox",
                     Params = new List<Param>() {
-                        TECParams[1].Temp,TECParams[1].Curr,TECParams[1].Power }
+                        TECParams[1].Temp,/*TECParams[1].Curr,*/TECParams[1].Power }
                 });
                 MeasureParamsShowList.Add(new MeasureParamInfo()
                 {
                     Tile = "TEC3测量参数:",
                     Icon = "AlphaTBox",
                     Params = new List<Param>() {
-                        TECParams[2].Temp,TECParams[2].Curr,TECParams[2].Power }
+                        TECParams[2].Temp,/*TECParams[2].Curr,*/TECParams[2].Power }
                 });
                 MeasureParamsShowList.Add(new MeasureParamInfo()
                 {
                     Tile = "TEC4测量参数:",
                     Icon = "AlphaTBox",
                     Params = new List<Param>() {
-                        TECParams[3].Temp,TECParams[3].Curr,TECParams[3].Power }
+                        TECParams[3].Temp,/*TECParams[3].Curr,*/TECParams[3].Power }
                 });
 
                 MeasureParamsShowList.Add(new MeasureParamInfo()
