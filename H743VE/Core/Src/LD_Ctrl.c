@@ -157,8 +157,8 @@ void SET_LD_SW(uint8_t ch, uint8_t sw)
         }
         ld_start_delay[ch].pending = 0;
 #else
+        LD_POWER_OFF(ch);
         LD_SW_OFF(ch);
-        LD_SW_ON(ch);
         // SET_LD_Curr_Bias(ch, 0);
         running_flag.ld_flags[ch].content.is_en = 0;
         running_flag.ld_flags[ch].content.is_pwr_en = 0;

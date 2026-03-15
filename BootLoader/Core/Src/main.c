@@ -139,6 +139,9 @@ int main(void)
   mem_cfg_init();
   mem_cfg_show();
   info_printf("Check App...\r\n");
+  // HAL_FLASH_Unlock();
+  // FLASH_Erase(mem_cfg.app_address);
+  // HAL_FLASH_Lock();
   Check_Jump_to_APP();
 
   upgrade_ini();

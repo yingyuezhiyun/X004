@@ -1,10 +1,12 @@
 #ifndef __FLASH_H__
 #define __FLASH_H__
 
+#include "stdint.h"
 
 void read_cfg(void);
 void write_cfg(void);
-
+int FLASH_Write(uint32_t Addr, uint8_t *Data, uint16_t Size);
+// HAL_StatusTypeDef FLASH_Erase(uint32_t _ulFlashAddr);
 
 /* Base address of the Flash sectors Bank 1 */
 #ifndef ADDR_FLASH_SECTOR_0_BANK1

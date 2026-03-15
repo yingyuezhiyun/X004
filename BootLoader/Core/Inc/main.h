@@ -59,7 +59,7 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 
 /* USER CODE BEGIN Private defines */
-
+HAL_StatusTypeDef FLASH_Erase(uint32_t _ulFlashAddr);
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

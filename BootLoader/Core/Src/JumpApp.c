@@ -90,6 +90,16 @@ uint8_t check_app(uint32_t app_addr)
 {
     uint8_t result = 1;
     // 1) basic vector table validity
+    uint32_t *vt = (uint32_t *)app_addr;
+    if (vt == NULL)
+    {
+        return 0;
+    }
+    vt = (uint32_t *)(app_addr + 4);
+    if (vt == NULL)
+    {
+        return 0;
+    }
     uint32_t sp = *(volatile uint32_t *)app_addr;
     uint32_t reset = *(volatile uint32_t *)(app_addr + 4);
     if (((sp & 0x2FFE0000) != 0x24000000) || (reset == 0xFFFFFFFFU))
@@ -136,6 +146,11 @@ void Check_Jump_to_APP()
         info_printf("Boot-up upgrade in progress. Stay in bootloader.\r\n");
         return;
     }
+    if (mem_cfg.pending_state == PSTATE_FAILED)
+    {
+        return; // failed, stay in bootloader
+    }
+    
     
 #ifdef BOOT_DEBUG_SKIP_CFG_CHECK
     info_printf("Checking apps (header/CRC disabled)\r\n");

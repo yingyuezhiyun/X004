@@ -132,6 +132,7 @@ HAL_StatusTypeDef FLASH_Erase(uint32_t _ulFlashAddr)
     FLASH_Init.TypeErase = FLASH_TYPEERASE_SECTORS;
     FLASH_Init.Sector = GetSector(_ulFlashAddr);
     FLASH_Init.NbSectors = 1;
+    FLASH_Init.VoltageRange = FLASH_VOLTAGE_RANGE_1;
     if (_ulFlashAddr >= ADDR_FLASH_SECTOR_0_BANK2)
     {
         FLASH_Init.Banks = FLASH_BANK_2;
@@ -154,7 +155,7 @@ int FLASH_Write(uint32_t Addr, uint8_t *Data, uint16_t Size)
     if (HAL_FLASH_Unlock() != HAL_OK)
     // if(HAL_FLASHEx_Unlock_Bank2()!= HAL_OK)
     {
-        __set_PRIMASK(0);
+        // __set_PRIMASK(0);
         reslt = -1;
         goto End;
     }
@@ -162,8 +163,8 @@ int FLASH_Write(uint32_t Addr, uint8_t *Data, uint16_t Size)
     {
         if (FLASH_Erase(Addr) != HAL_OK)
         {
-            HAL_FLASH_Lock();
-            __set_PRIMASK(0);
+            // HAL_FLASH_Lock();
+            // __set_PRIMASK(0);
             reslt = -1;
             goto End;
         }
@@ -187,7 +188,7 @@ End:
     if (HAL_FLASH_Lock() != HAL_OK)
     // if (HAL_FLASHEx_Lock_Bank2() != HAL_OK)
     {
-        __set_PRIMASK(0);
+        // __set_PRIMASK(0);
         reslt = -3;
     }
     __set_PRIMASK(0);
