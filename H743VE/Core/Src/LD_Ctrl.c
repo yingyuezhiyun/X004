@@ -19,6 +19,8 @@
 #define UNDER_CURR_TIMEOUT (20 * 1000)
 #define UNDER_CURR_THRESHOLD (0.95)
 
+// #define LD_SW_OFF_DELAY
+
 typedef struct
 {
     uint8_t idx;
@@ -89,6 +91,7 @@ void SET_LD_SW(uint8_t ch, uint8_t sw)
             return;
         }
     }
+#ifdef LD_SW_OFF_DELAY
     else
     {
         if (ld_start_delay[ch].pending_off)
@@ -104,6 +107,7 @@ void SET_LD_SW(uint8_t ch, uint8_t sw)
             return;
         }
     }
+#endif // LD_SW_OFF_DELAY
     if (state)
     {
         // 立即打开电源使能
@@ -129,7 +133,7 @@ void SET_LD_SW(uint8_t ch, uint8_t sw)
     }
     else
     {
-
+#ifdef LD_SW_OFF_DELAY
         // 立即关闭负载开关
         LD_POWER_OFF(ch);
         SET_LD_Curr_Bias(ch, 0);
@@ -152,6 +156,14 @@ void SET_LD_SW(uint8_t ch, uint8_t sw)
             }
         }
         ld_start_delay[ch].pending = 0;
+#else
+        LD_SW_OFF(ch);
+        LD_SW_ON(ch);
+        // SET_LD_Curr_Bias(ch, 0);
+        running_flag.ld_flags[ch].content.is_en = 0;
+        running_flag.ld_flags[ch].content.is_pwr_en = 0;
+        ld_start_delay[ch].pending = 0;
+#endif // LD_SW_OFF_DELAY
     }
 }
 
