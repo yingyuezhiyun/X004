@@ -282,6 +282,10 @@ void RangeParams()
         set_param.Pulse_para.Num = 11;
     }
     set_param.Pulse_para.Nor_Freq = 1000;
+    if(set_param.TRG_Type == TRG_OUT)
+    {
+        set_param.Pulse_Type = PULSE_SPWM;
+    }
 
 
 }

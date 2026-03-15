@@ -50,6 +50,22 @@ typedef struct
 
 static ld_start_delay_t ld_start_delay[2];
 
+void SET_LD_Curr_Bias(uint8_t ch, float curr)
+{
+    uint16_t dac_bias = curr * DAC_MAX_VAULE / DAC_REF_V * 0.003 * 50;
+    switch (ch)
+    {
+    case LD_CH_1:
+        SET_LD1_BIAS_DAC(dac_bias);
+        break;
+    case LD_CH_2:
+        SET_LD2_BIAS_DAC(dac_bias);
+        break;
+    default:
+        break;
+    }
+}
+
 void SET_LD_SW(uint8_t ch, uint8_t sw)
 {
 
@@ -116,6 +132,7 @@ void SET_LD_SW(uint8_t ch, uint8_t sw)
 
         // 立即关闭负载开关
         LD_POWER_OFF(ch);
+        SET_LD_Curr_Bias(ch, 0);
         running_flag.ld_flags[ch].content.is_pwr_en = 0;
         // 如果已经处于 OFF 状态，说明延迟已完成或设备已关闭
         if (!IS_LD_SW_ON(ch))
@@ -267,16 +284,16 @@ void SET_LD_MAX_Curr(uint8_t ch, float curr)
 /// @param curr
 void SET_LD_Curr(uint8_t ch, float curr)
 {
-    uint16_t dac = 0;
-    uint16_t dac_bias = 0;
+    uint16_t dac = 0;    
     curr = curr * set_param.ld[ch].calib_set.k + set_param.ld[ch].calib_set.b;
     if (curr <= 0)
     {
         curr = 0;
+        SET_LD_Curr_Bias(ch, 0);
     }
     else
     {
-        dac_bias = 0.01 * DAC_MAX_VAULE / DAC_REF_V * 0.003 * 50;
+        SET_LD_Curr_Bias(ch, 0.01);        
     }
     
     // dac = curr * DAC_MAX_VAULE / 0.003 / 50 / DAC_REF_V;
@@ -285,11 +302,9 @@ void SET_LD_Curr(uint8_t ch, float curr)
     {
     case LD_CH_1:
         SET_CUR1_DAC(dac);
-        SET_LD1_BIAS_DAC(dac_bias);
         break;
     case LD_CH_2:
         SET_CUR2_DAC(dac);
-        SET_LD2_BIAS_DAC(dac_bias);
         break;
     default:
         break;
