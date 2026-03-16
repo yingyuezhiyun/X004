@@ -10,7 +10,7 @@ char Version[] = "X004_001";
 
 uint64_t BuildTime = 202509112205;
 
-char Version2[] = {0, 0, 0, 3};//V0.0.0.2
+char Version2[] = {0, 0, 0, 4};//V0.0.0.4
 
 uint8_t sum_crc(uint8_t *data, uint8_t len)
 {
@@ -39,34 +39,7 @@ int CheckUartReady(UART_HandleTypeDef *huart)
     return 1;
 }
 
-void uart_send(UART_HandleTypeDef *huart, uint8_t cmd, void *data, uint8_t dataLen)
-{
-    static uint8_t UartTxBuff[MAX_SIZE];//共用一个发送缓存 极端情况下可能会资源冲突
-    min_cmd_t *s = UartTxBuff;
-    s->head = CMD_HEAD;
-    s->sendID = MCU_ID;
-    s->revID = PC_ID;
-    s->cmd = cmd;
-    s->len = dataLen;
-    if (dataLen > 0)
-    {
-        memcpy((UartTxBuff + 6), data, dataLen);
-    }
-    UartTxBuff[6 + dataLen] = sum_crc(data, dataLen);
-    UartTxBuff[6 + dataLen + 1] = CMD_TAIL & 0xff;
-    UartTxBuff[6 + dataLen + 2] = CMD_TAIL >> 8;
-    uint8_t length = dataLen + sizeof(min_cmd_t);
-    // HAL_UART_Transmit(&huart1, UartTxBuff, length, 0xfff);
-    HAL_UART_Transmit_DMA(huart, UartTxBuff, length);
-}
 
-void send_ack(UART_HandleTypeDef *huart, uint8_t cmd, void *data, uint8_t dataLen)
-{
-    if (CheckUartReady(huart))
-    {
-        uart_send(huart, cmd, data, dataLen);
-    }
-}
 
 void parse_and_execute_command(uart_para_t *uart_para, CommandFunction exec_commands)
 {
@@ -161,7 +134,7 @@ void set_pulse_param(uint8_t *data)
     CalcPulse_SPWMParam();
 }
 
-void get_pulse_param(UART_HandleTypeDef *huart, uint8_t cmd)
+Pulse_param_packet_t get_pulse_param()
 {
     Pulse_param_packet_t p;
     set_param_t *data = &set_param;
@@ -170,9 +143,8 @@ void get_pulse_param(UART_HandleTypeDef *huart, uint8_t cmd)
     {
         p.Interval[i] = data->Pulse_para.Interval[i];
     }
-    PC_ACK(cmd, p);
+    return p;
 }
-
 
 void set_pulse_type(uint8_t data)
 {
@@ -204,8 +176,3 @@ void set_TRG_type(uint8_t data)
     }
 }
 
-void get_boot_mode(UART_HandleTypeDef *huart, uint8_t cmd)
-{
-    uint8_t status = get_bootmode();
-    PC_ACK(cmd, status);
-}

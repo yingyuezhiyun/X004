@@ -66,7 +66,6 @@ typedef void (*CommandFunction)(UART_HandleTypeDef *huart, uint8_t cmd, uint8_t 
 void parse_and_execute_command(uart_para_t *uart_para, CommandFunction exec_commands);
 
 
-void get_boot_mode(UART_HandleTypeDef *huart, uint8_t cmd);
 
 
 extern char Version2[];

@@ -69,10 +69,9 @@ void set_pulse_width(uint16_t width);
 void set_Q_delay(uint16_t delay);
 void set_nor_freq(uint16_t freq);
 void set_pulse_param(uint8_t *data);
-void get_pulse_param(UART_HandleTypeDef *huart, uint8_t cmd);
+Pulse_param_packet_t get_pulse_param();
 void set_pulse_type(uint8_t data);
 void set_TRG_type(uint8_t data);
-void get_boot_mode(UART_HandleTypeDef *huart, uint8_t cmd);
 
 
 extern char Version2[];

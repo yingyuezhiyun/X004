@@ -57,7 +57,11 @@ void upgrade(uint8_t *data, uint16_t len)
         isLastPacket = (upgrade_ctl.toltal_packet_num == upgrade_ctl.cur_idx);
         upgrade_ctl.flag = FLAG_OTA_RUNNING;
     }
-    else if (upgrade_ctl.toltal_packet_num != p->toltal_packet_num || upgrade_ctl.check_idx + 1 != p->cur_idx || update_len % 32)
+    else if (upgrade_ctl.check_idx + 1 < p->cur_idx)
+    {
+        return; // 重复包
+    }
+    else if (upgrade_ctl.toltal_packet_num != p->toltal_packet_num || /* upgrade_ctl.check_idx + 1 != p->cur_idx || */ update_len % 32)
     {
         if (isLastPacket)
         {
@@ -115,8 +119,8 @@ void upgrade(uint8_t *data, uint16_t len)
             // NVIC_SystemReset(); // 重启进入 bootloader 检查升级结果
             upgrade_ctl.flag = FLAG_OTA_LAST_DONE;
             upgrade_ctl.cur_address = upgrade_ctl.start_address;
-            upgrade_ctl.check_idx = 0;
-            upgrade_ctl.cur_idx = 1;
+            // upgrade_ctl.check_idx = 0;
+            // upgrade_ctl.cur_idx = 1;
             upgrade_ctl.toltal_packet_num = 0;
             // crc_test = HAL_CRC_Calculate(&hcrc, (uint32_t *)(upgrade_ctl.cur_address), (upgrade_ctl.hdr->fw_size+3)/4);
         }

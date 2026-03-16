@@ -189,6 +189,36 @@ void update_status()
     // sizeof(Work_Status2);
 }
 
+static void uart_send(UART_HandleTypeDef *huart, uint8_t cmd, void *data, uint8_t dataLen)
+{
+    static uint8_t UartTxBuff[MAX_SIZE];//共用一个发送缓存 极端情况下可能会资源冲突
+    min_cmd_t *s = UartTxBuff;
+    s->head = CMD_HEAD;
+    s->sendID = MCU_ID;
+    s->revID = PC_ID;
+    s->cmd = cmd;
+    s->len = dataLen;
+    if (dataLen > 0)
+    {
+        memcpy((UartTxBuff + 6), data, dataLen);
+    }
+    UartTxBuff[6 + dataLen] = sum_crc(data, dataLen);
+    UartTxBuff[6 + dataLen + 1] = CMD_TAIL & 0xff;
+    UartTxBuff[6 + dataLen + 2] = CMD_TAIL >> 8;
+    uint8_t length = dataLen + sizeof(min_cmd_t);
+    // HAL_UART_Transmit(&huart1, UartTxBuff, length, 0xfff);
+    HAL_UART_Transmit_DMA(huart, UartTxBuff, length);
+}
+
+static void send_ack(UART_HandleTypeDef *huart, uint8_t cmd, void *data, uint8_t dataLen)
+{
+    if (CheckUartReady(huart))
+    {
+        uart_send(huart, cmd, data, dataLen);
+    }
+}
+
+
 static void set_tec_param(uint8_t ch, uint8_t *data)
 {
     tec_packet_t *p = data;
@@ -210,6 +240,12 @@ static void get_tec_param(UART_HandleTypeDef *huart, uint8_t cmd, uint8_t ch)
     tec_setparam_t *tec = &set_param.tec[ch];
     p.Temp = tec->Temp;
     p.V = tec->MaxVol;
+    PC_ACK(cmd, p);
+}
+
+static void ack_pulse_param(UART_HandleTypeDef *huart, uint8_t cmd)
+{
+    Pulse_param_packet_t p = get_pulse_param();
     PC_ACK(cmd, p);
 }
 
@@ -315,7 +351,11 @@ void get_work_status(UART_HandleTypeDef *huart, uint8_t cmd)
     PC_ACK(cmd, Work_Status2);
 }
 
-
+static void ack_boot_mode(UART_HandleTypeDef *huart, uint8_t cmd)
+{
+    uint8_t mode = get_bootmode();
+    PC_ACK(cmd, mode);
+}
 
 void exec_commands_list2(UART_HandleTypeDef *huart, uint8_t cmd, uint8_t *data, size_t data_len)
 {
@@ -357,7 +397,7 @@ void exec_commands_list2(UART_HandleTypeDef *huart, uint8_t cmd, uint8_t *data, 
    case P_G_TEC2_PARA:              get_tec_param(huart, M_TEC2_PARA, 1);                                       break;
    case P_G_TEC3_PARA:              get_tec_param(huart, M_TEC3_PARA, 2);                                       break;
    case P_G_TEC4_PARA:              get_tec_param(huart, M_TEC4_PARA, 3);                                       break;
-   case P_G_PULSE_PARA:             get_pulse_param(huart, M_PULSE_PARA);                                       break;
+   case P_G_PULSE_PARA:             ack_pulse_param(huart, M_PULSE_PARA);                                       break;
    case P_G_LD1_M_Cur:              PC_ACK_UINT16(M_LD1_M_Cur, measure_param.ld[0].Cur * 10);                   break;
    case P_G_LD2_M_Cur:              PC_ACK_UINT16(M_LD2_M_Cur, measure_param.ld[1].Cur * 10);                   break;
    case P_G_LD1_M_V:                PC_ACK_UINT16(M_LD1_M_V, measure_param.ld[0].Vol * 10);                     break;
@@ -383,8 +423,8 @@ void exec_commands_list2(UART_HandleTypeDef *huart, uint8_t cmd, uint8_t *data, 
    case P_G_LD1_SW:                 PC_ACK(M_LD1_SW, set_param.ld[0].sw);                                       break;
    case P_G_LD2_SW:                 PC_ACK(M_LD2_SW, set_param.ld[1].sw);                                       break;
 
-   case P_S_BOOTMODE:               set_boot_bootmode(*(uint8_t *)data);get_boot_mode(huart, M_BOOT_MODE);      break;
-   case P_G_BOOTMODE:               get_boot_mode(huart, M_BOOT_MODE);                                          break;
+   case P_S_BOOTMODE:               set_boot_bootmode(*(uint8_t *)data);ack_boot_mode(huart, M_BOOT_MODE);      break;
+   case P_G_BOOTMODE:               ack_boot_mode(huart, M_BOOT_MODE);                                          break;
    default:
        break;
    }

@@ -770,7 +770,7 @@ namespace wpfApp.ViewModels
                     while (dataArr.Length - pos > 0)
                     {
                         Update.ButtonContent = $"升级中({setParam.UpgradeParams.CurrIdx}/{TotalPacketNum})...";
-                        UpdateLoading(Msg: $"升级中({setParam.UpgradeParams.CurrIdx}/{TotalPacketNum})...");
+                       
                         setParam.UpgradeParams.Data.Clear();
                         int curPacketLen = dataArr.Length - pos > maxPacketLen ? maxPacketLen : dataArr.Length - pos;
                         setParam.UpgradeParams.Data.AddRange(dataArr.Skip(pos).Take(curPacketLen));
@@ -786,26 +786,40 @@ namespace wpfApp.ViewModels
                         {
                             setParam.UpgradeParams.Data.InsertRange(0, BitConverter.GetBytes(CRC32_Uint32(dataArr)));
                             setParam.UpgradeParams.Data.InsertRange(0, BitConverter.GetBytes((UInt32)dataArr.Length));
+                            UpdateLoading(Msg: "擦除Flash中...");
                         }
-                       
-                        DevSetParam(PLDParamsToSet.Upgrade);
-                        Update.UpgradeStatus = PLDParams.UpgradeStatus.None;
-                        //Update.IsAccess = false;
-                        loop = 100;
-                        while ((Update.UpgradeStatus == PLDParams.UpgradeStatus.None || Update.UpgradeStatus == PLDParams.UpgradeStatus.RUNNING) &&
-                                 loop > 0)
+                        else
                         {
-                            DevQueryParam(PLDParamsToQuery.Upgrade);
-                            loop--;
-                            await Task.Delay(30);
+                            UpdateLoading(Msg: $"升级中({setParam.UpgradeParams.CurrIdx}/{TotalPacketNum})...");
                         }
+                        int retry = 2;
+                        do
+                        {
+                            DevSetParam(PLDParamsToSet.Upgrade);
+                            Update.UpgradeStatus = PLDParams.UpgradeStatus.None;
+                            //Update.IsAccess = false;
+                            loop = 100;
+                            while ((Update.UpgradeStatus == PLDParams.UpgradeStatus.None || Update.UpgradeStatus == PLDParams.UpgradeStatus.RUNNING) &&
+                                     loop > 0)
+                            {
+                                DevQueryParam(PLDParamsToQuery.Upgrade);
+                                loop--;
+                                await Task.Delay(30);
+                            }
+                            retry--;
+                        } while (retry > 0 && (Update.UpgradeStatus == PLDParams.UpgradeStatus.None || Update.UpgradeStatus == PLDParams.UpgradeStatus.RUNNING));
+
                         if (Update.UpgradeStatus != PLDParams.UpgradeStatus.CUR_DONE && Update.UpgradeStatus != PLDParams.UpgradeStatus.LAST_DONE)
                         {
                             goto Failed;
                         }
-                        setParam.UpgradeParams.CurrIdx = (UInt16)(Update.CurrIdx + 1);          
+                        setParam.UpgradeParams.CurrIdx = (UInt16)(Update.CurrIdx + 1);
                         //setParam.UpgradeParams.CurrIdx++;        
-                        pos += curPacketLen;
+                        pos = Update.CurrIdx * maxPacketLen;
+                    }
+                    if (setParam.UpgradeParams.CurrIdx < setParam.UpgradeParams.TotalPaketNum)
+                    {
+                        goto Failed;
                     }
                 }
                 

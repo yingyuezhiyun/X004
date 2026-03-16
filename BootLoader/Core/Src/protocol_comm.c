@@ -4,7 +4,7 @@
 #include "protocol_comm.h"
 #include "global_cfg.h"
 #include "usart.h"
-
+#include "upgrade.h"
 
 
 
@@ -36,34 +36,34 @@ int CheckUartReady(UART_HandleTypeDef *huart)
     return 1;
 }
 
-void uart_send(UART_HandleTypeDef *huart, uint8_t cmd, void *data, uint8_t dataLen)
-{
-    static uint8_t UartTxBuff[MAX_SIZE];//共用一个发送缓存 极端情况下可能会资源冲突
-    min_cmd_t *s = UartTxBuff;
-    s->head = CMD_HEAD;
-    s->sendID = MCU_ID;
-    s->revID = PC_ID;
-    s->cmd = cmd;
-    s->len = dataLen;
-    if (dataLen > 0)
-    {
-        memcpy((UartTxBuff + 6), data, dataLen);
-    }
-    UartTxBuff[6 + dataLen] = sum_crc(data, dataLen);
-    UartTxBuff[6 + dataLen + 1] = CMD_TAIL & 0xff;
-    UartTxBuff[6 + dataLen + 2] = CMD_TAIL >> 8;
-    uint8_t length = dataLen + sizeof(min_cmd_t);
-    // HAL_UART_Transmit(&huart1, UartTxBuff, length, 0xfff);
-    HAL_UART_Transmit_DMA(huart, UartTxBuff, length);
-}
+// void uart_send(UART_HandleTypeDef *huart, uint8_t cmd, void *data, uint8_t dataLen)
+// {
+//     static uint8_t UartTxBuff[MAX_SIZE];//共用一个发送缓存 极端情况下可能会资源冲突
+//     min_cmd_t *s = UartTxBuff;
+//     s->head = CMD_HEAD;
+//     s->sendID = MCU_ID;
+//     s->revID = PC_ID;
+//     s->cmd = cmd;
+//     s->len = dataLen;
+//     if (dataLen > 0)
+//     {
+//         memcpy((UartTxBuff + 6), data, dataLen);
+//     }
+//     UartTxBuff[6 + dataLen] = sum_crc(data, dataLen);
+//     UartTxBuff[6 + dataLen + 1] = CMD_TAIL & 0xff;
+//     UartTxBuff[6 + dataLen + 2] = CMD_TAIL >> 8;
+//     uint8_t length = dataLen + sizeof(min_cmd_t);
+//     // HAL_UART_Transmit(&huart1, UartTxBuff, length, 0xfff);
+//     HAL_UART_Transmit_DMA(huart, UartTxBuff, length);
+// }
 
-void send_ack(UART_HandleTypeDef *huart, uint8_t cmd, void *data, uint8_t dataLen)
-{
-    if (CheckUartReady(huart))
-    {
-        uart_send(huart, cmd, data, dataLen);
-    }
-}
+// void send_ack(UART_HandleTypeDef *huart, uint8_t cmd, void *data, uint8_t dataLen)
+// {
+//     if (CheckUartReady(huart))
+//     {
+//         uart_send(huart, cmd, data, dataLen);
+//     }
+// }
 
 void parse_and_execute_command(uart_para_t *uart_para, CommandFunction exec_commands)
 {
@@ -110,8 +110,3 @@ void parse_and_execute_command(uart_para_t *uart_para, CommandFunction exec_comm
 
 
 
-void get_boot_mode(UART_HandleTypeDef *huart, uint8_t cmd)
-{
-    uint8_t status = get_bootmode();
-    PC_ACK(cmd, status);
-}

@@ -21,11 +21,46 @@ enum
     M_BOOT_MODE = 0xEC, /* 处于BOOT模式 反馈 */
 };
 
+static void uart_send(UART_HandleTypeDef *huart, uint8_t cmd, void *data, uint8_t dataLen)
+{
+    static uint8_t UartTxBuff[MAX_SIZE];//共用一个发送缓存 极端情况下可能会资源冲突
+    min_cmd_t *s = UartTxBuff;
+    s->head = CMD_HEAD;
+    s->sendID = MCU_ID;
+    s->revID = PC_ID;
+    s->cmd = cmd;
+    s->len = dataLen;
+    if (dataLen > 0)
+    {
+        memcpy((UartTxBuff + 6), data, dataLen);
+    }
+    UartTxBuff[6 + dataLen] = sum_crc(data, dataLen);
+    UartTxBuff[6 + dataLen + 1] = CMD_TAIL & 0xff;
+    UartTxBuff[6 + dataLen + 2] = CMD_TAIL >> 8;
+    uint8_t length = dataLen + sizeof(min_cmd_t);
+    // HAL_UART_Transmit(&huart1, UartTxBuff, length, 0xfff);
+    HAL_UART_Transmit_DMA(huart, UartTxBuff, length);
+}
+
+static void send_ack(UART_HandleTypeDef *huart, uint8_t cmd, void *data, uint8_t dataLen)
+{
+    if (CheckUartReady(huart))
+    {
+        uart_send(huart, cmd, data, dataLen);
+    }
+}
+
 static void ack_upgrade_status(UART_HandleTypeDef *huart)
 {
     upgrade_status_t status;
     get_upgrade_status(&status);
     PC_ACK(M_UPGRADE, status);
+}
+
+static void ack_boot_mode(UART_HandleTypeDef *huart, uint8_t cmd)
+{
+    uint8_t mode = get_bootmode();
+    PC_ACK(cmd, mode);
 }
 
 void exec_commands_list2(UART_HandleTypeDef *huart, uint8_t cmd, uint8_t *data, size_t data_len)
@@ -35,8 +70,8 @@ void exec_commands_list2(UART_HandleTypeDef *huart, uint8_t cmd, uint8_t *data, 
         case P_S_UPGRADE:                upgrade(data, data_len);ack_upgrade_status(huart);                                                     break;
         // case P_G_UPGRADE:                ack_upgrade_status(huart);                                                       break;
         // case P_Clear_Err:                ClearErrs();                                                                break; 
-        case P_S_BOOTMODE:               set_boot_bootmode(*(uint8_t *)data);get_boot_mode(huart,M_BOOT_MODE);                        break;
-        case P_G_BOOTMODE:               get_boot_mode(huart,M_BOOT_MODE);                                                            break;
-        default:                         get_boot_mode(huart,M_BOOT_MODE);                                                           break;
+        case P_S_BOOTMODE:               set_boot_bootmode(*(uint8_t *)data);ack_boot_mode(huart, M_BOOT_MODE);                        break;
+        case P_G_BOOTMODE:               ack_boot_mode(huart, M_BOOT_MODE);                                                            break;
+        default:                         ack_boot_mode(huart, M_BOOT_MODE);                                                           break;
     }
 }

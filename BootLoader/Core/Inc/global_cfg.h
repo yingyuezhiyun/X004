@@ -74,7 +74,7 @@ extern mem_cfg_t mem_cfg;
 #define INFO_PRINT (1)
 
 // 跳过 CFG 校验
-#define BOOT_DEBUG_SKIP_CFG_CHECK
+//#define BOOT_DEBUG_SKIP_CFG_CHECK
 
 
 enum

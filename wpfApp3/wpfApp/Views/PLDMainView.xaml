@@ -1162,13 +1162,13 @@
 
                             <Border Margin="5,15,5,5" Style="{StaticResource HorizontalDividerBorder}" />
 
-                            <Button
+                            <!--<Button
                                 Height="25"
                                 Margin="5,5,5,5"
                                 Command="{Binding ExecuteCommand}"
                                 CommandParameter="清空错误"
                                 Content="清空错误"
-                                Cursor="Hand" />
+                                Cursor="Hand" />-->
 
                         </StackPanel>
 

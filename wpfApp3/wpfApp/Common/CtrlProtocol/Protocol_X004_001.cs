@@ -344,17 +344,17 @@ namespace wpfApp.Common.CtrlProtocol
         static public Status[] ErrStatus2 =
         {
 
-            new Status() { Name= "LD1驱动欠流 ",statusFlags=StatusFlags.LD1_UC },
-            new Status() { Name= "LD1驱动过流 ",statusFlags=StatusFlags.LD1_OC },
-            new Status() { Name= "LD2驱动欠流 ",statusFlags=StatusFlags.LD2_UC },
-            new Status() { Name= "LD2驱动过流 ",statusFlags=StatusFlags.LD2_OC },
-            new Status() { Name= "热敏电阻1异常 ",statusFlags=StatusFlags.NTC1_ERR },
-            new Status() { Name= "热敏电阻2异常 ",statusFlags=StatusFlags.NTC2_ERR },
-            new Status() { Name= "热敏电阻3异常 ",statusFlags=StatusFlags.NTC3_ERR },
-            new Status() { Name= "热敏电阻4异常 ",statusFlags=StatusFlags.NTC4_ERR },
-            new Status() { Name= "参数存储错误 ",statusFlags=StatusFlags.EPPROM_ERR },
-            new Status() { Name= "电源过热 ",statusFlags=StatusFlags.PWR_OT },
-            new Status() { Name= "电路故障 ",statusFlags=StatusFlags.PWR_ERR },
+            new Status() { Name= "LD1驱动欠流 ",statusFlags2=StatusFlags2.LD1_UC },
+            new Status() { Name= "LD1驱动过流 ",statusFlags2=StatusFlags2.LD1_OC },
+            new Status() { Name= "LD2驱动欠流 ",statusFlags2=StatusFlags2.LD2_UC },
+            new Status() { Name= "LD2驱动过流 ",statusFlags2=StatusFlags2.LD2_OC },
+            new Status() { Name= "热敏电阻1异常 ",statusFlags2=StatusFlags2.NTC1_ERR },
+            new Status() { Name= "热敏电阻2异常 ",statusFlags2=StatusFlags2.NTC2_ERR },
+            new Status() { Name= "热敏电阻3异常 ",statusFlags2=StatusFlags2.NTC3_ERR },
+            new Status() { Name= "热敏电阻4异常 ",statusFlags2=StatusFlags2.NTC4_ERR },
+            new Status() { Name= "参数存储错误 ",statusFlags2=StatusFlags2.EPPROM_ERR },
+            new Status() { Name= "电源过热 ",statusFlags2=StatusFlags2.PWR_OT },
+            new Status() { Name= "电路故障 ",statusFlags2=StatusFlags2.PWR_ERR },
         };
 
         Status[] RunningStatus =

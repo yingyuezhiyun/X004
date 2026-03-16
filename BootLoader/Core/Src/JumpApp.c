@@ -146,15 +146,14 @@ void Check_Jump_to_APP()
         info_printf("Boot-up upgrade in progress. Stay in bootloader.\r\n");
         return;
     }
+
+#ifdef BOOT_DEBUG_SKIP_CFG_CHECK
+    info_printf("Checking apps (header/CRC disabled)\r\n");
+#else
     if (mem_cfg.pending_state == PSTATE_FAILED)
     {
         return; // failed, stay in bootloader
     }
-    
-    
-#ifdef BOOT_DEBUG_SKIP_CFG_CHECK
-    info_printf("Checking apps (header/CRC disabled)\r\n");
-#else
     info_printf("Checking apps (header/CRC enabled)\r\n");
 #endif
     // if entered APP_CHECK (bootloader started watchdog and jumped
