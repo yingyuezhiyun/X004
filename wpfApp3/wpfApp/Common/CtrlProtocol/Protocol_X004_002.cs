@@ -156,6 +156,7 @@ namespace wpfApp.Common.CtrlProtocol
             TEC4_PARA = 0x9B,          /* 第4路TEC：温度、限压、模式设定值 */
             BootMode = 0xE3,       /*BOOT模式*/
             PulseType = 0xE8,/* 设置设置脉冲类型 */
+            ClearErr = 0xEA, /* 清除错误 */
 
         }
 

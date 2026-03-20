@@ -72,6 +72,6 @@ void set_pulse_param(uint8_t *data);
 Pulse_param_packet_t get_pulse_param();
 void set_pulse_type(uint8_t data);
 void set_TRG_type(uint8_t data);
-
+void ClearErrs();
 
 extern char Version2[];

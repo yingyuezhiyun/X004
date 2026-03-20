@@ -338,7 +338,10 @@ namespace wpfApp.ViewModels
         private bool isBootModeDetect = true;
         async void UpdateBootMode(PLDParams.BootMode bootMode)
         {
-            MeasureParams.StatusInfo.BITStatus.Value = "BOOT模式";
+            if (bootMode == BootMode.Boot)
+            {
+                MeasureParams.StatusInfo.BITStatus.Value = "BOOT模式";
+            }            
             Update.BootMode = bootMode;
             if (isBootModeDetect &&bootMode== BootMode.Boot)
             {
