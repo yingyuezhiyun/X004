@@ -195,29 +195,37 @@ void delay_nop(uint16_t nop)
         __nop();
     }
 }
-
+#define OC_CNT_MAX (5)
 /// @brief
 /// @param GPIO_Pin
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
+    uint8_t cnt = 1;
     if (GPIO_Pin == LD_OC_IN1_Pin)
     {
-        delay_nop(24);//100ns
-        if (HAL_GPIO_ReadPin(LD_OC_IN1_GPIO_Port, LD_OC_IN1_Pin) == GPIO_PIN_RESET)
+        do
         {
-            return;
-        } 
+            delay_nop(24); // 100ns
+            if (HAL_GPIO_ReadPin(LD_OC_IN1_GPIO_Port, LD_OC_IN1_Pin) == GPIO_PIN_RESET)
+            {
+                return;
+            }
+        } while (cnt++ < OC_CNT_MAX);
+
         SET_LD_SW_OFF(LD_CH_1);
         SET_LD_Curr(LD_CH_1, 0);
         LD_OC_funexec(LD_CH_1);
     }
     if (GPIO_Pin == LD_OC_IN2_Pin)
     {
-        delay_nop(24);//100ns
-        if (HAL_GPIO_ReadPin(LD_OC_IN2_GPIO_Port, LD_OC_IN2_Pin) == GPIO_PIN_RESET)
+        do
         {
-            return;
-        } 
+            delay_nop(24); // 100ns
+            if (HAL_GPIO_ReadPin(LD_OC_IN2_GPIO_Port, LD_OC_IN2_Pin) == GPIO_PIN_RESET)
+            {
+                return;
+            }
+        } while (cnt++ < OC_CNT_MAX);
         SET_LD_SW_OFF(LD_CH_2);
         SET_LD_Curr(LD_CH_2, 0);
         LD_OC_funexec(LD_CH_2);
