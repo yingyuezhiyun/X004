@@ -176,3 +176,15 @@ void set_TRG_type(uint8_t data)
     }
 }
 
+void ClearErrs()
+{
+    set_param.ld[0].ErrStatus.value = 0;
+    set_param.ld[1].ErrStatus.value = 0;
+    for (size_t i = 0; i < 4; i++)
+    {
+        set_param.tec[i].ErrStatus.value = 0;
+    }
+    memset(&Work_Status,0,sizeof(Work_Status));
+    upgrade_ini();
+}
+

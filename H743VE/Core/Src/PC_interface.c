@@ -464,17 +464,7 @@ void set_LCM_param(uint8_t *data)
     pump_setting(&pump_set_param);
 }
 
-void ClearErrs()
-{
-    set_param.ld[0].ErrStatus.value = 0;
-    set_param.ld[1].ErrStatus.value = 0;
-    for (size_t i = 0; i < 4; i++)
-    {
-        set_param.tec[i].ErrStatus.value = 0;
-    }
-    memset(&Work_Status,0,sizeof(Work_Status));
-    upgrade_ini();
-}
+
 
 void save_param(UART_HandleTypeDef *huart,uint8_t cmd)
 {

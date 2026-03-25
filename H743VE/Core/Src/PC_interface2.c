@@ -114,6 +114,7 @@ enum
     P_G_Q_SW = 0xE7,        /* 查询Q脉冲开关 */
     P_S_PulseType = 0xE8,   /* 设置脉冲类型  0x55：变频 0xAA：定频; */
     P_G_PulseType = 0xE9,   /* 查询脉冲类型 */
+    P_Clear_Err = 0xEA,     /* 清空错误 */
 };
 
 enum
@@ -425,6 +426,7 @@ void exec_commands_list2(UART_HandleTypeDef *huart, uint8_t cmd, uint8_t *data, 
 
    case P_S_BOOTMODE:               set_boot_bootmode(*(uint8_t *)data);ack_boot_mode(huart, M_BOOT_MODE);      break;
    case P_G_BOOTMODE:               ack_boot_mode(huart, M_BOOT_MODE);                                          break;
+   case P_Clear_Err:                ClearErrs();                                                                break;
    default:
        break;
    }
