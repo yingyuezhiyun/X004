@@ -361,8 +361,8 @@ uint8_t bit_init()
     // 自检完成后再启动控制线程
     StartCtrlThread();
 
-    Enable_LD1_EXIT_DET;
-    Enable_LD2_EXIT_DET;
+    // Enable_LD1_EXIT_DET;
+    // Enable_LD2_EXIT_DET;
     Enable_TRG_IN_DET;
 
     HAL_TIM_Base_Start(&htim3);

@@ -183,6 +183,17 @@ void LD_OC_funexec(uint8_t ch)
     set_param.ld[ch].Cur = 0;
 }
 
+void LD_OC_ADC_Check(uint8_t ch, uint16_t adc_value)
+{
+    float curr = adc_value * 2.5 / 65535 / 0.003 / 50;
+    if (curr > set_param.ld[ch].HOC / 10.0)
+    {
+        SET_LD_SW_OFF(ch);
+        SET_LD_Curr(ch, 0);
+        LD_OC_funexec(ch);
+    }
+}
+
 void Clear_LD_TRG_IN_Params()
 {
     memset(&LD_TRG_IN_param, 0, sizeof(LD_TRG_IN_param));

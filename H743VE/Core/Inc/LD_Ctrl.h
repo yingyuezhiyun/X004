@@ -31,6 +31,9 @@ extern uint8_t status_deley_check(status_check_t *status_check, uint32_t time_ou
 extern void Clear_LD_TRG_IN_Params();
 
 extern void SET_LD_SW_OFF(uint8_t ch);
+
+extern void LD_OC_ADC_Check(uint8_t ch, uint16_t adc_value);
+
 #define LD_MAX_CUR (16.66)
 
 

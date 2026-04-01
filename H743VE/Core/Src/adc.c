@@ -23,6 +23,7 @@
 /* USER CODE BEGIN 0 */
 #include "adc_filt.h"
 #include "global_cfg.h"
+#include "LD_Ctrl.h"
 
 #define ADC1_CH_NUM (4)
 #define ADC2_CH_NUM (8)
@@ -637,6 +638,8 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
       {
         adc_write_data_to_buff(&adc_cb[j], ADC1_Raw_Value[ADC1_CH_NUM * i + j]);
       }
+      LD_OC_ADC_Check(0, ADC1_Raw_Value[0]);
+      LD_OC_ADC_Check(0, ADC1_Raw_Value[2]);
     }
   }
   if (hadc->Instance == ADC2)
