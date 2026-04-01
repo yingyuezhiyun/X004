@@ -173,7 +173,7 @@ void Error_Handler(void);
 
 #define START_FAN HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_RESET)
 
-#define MCU_PW_LOCK HAL_GPIO_WritePin(MCU_LOCK_GPIO_Port, MCU_LOCK_Pin, GPIO_PIN_RESET)
+#define MCU_PW_LOCK HAL_GPIO_WritePin(MCU_LOCK_GPIO_Port, MCU_LOCK_Pin, GPIO_PIN_SET)
 
 /* USER CODE END Private defines */
 
