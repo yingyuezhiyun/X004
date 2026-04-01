@@ -632,15 +632,18 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
 {
   if (hadc->Instance == ADC1)
   {
+    int ld1_cur_tmp = 0, ld2_cur_tmp = 0;
     for (size_t i = 0; i < ADC_BUFFER_SIZE; i++)
     {
       for (size_t j = 0; j < ADC1_CH_NUM; j++)
       {
         adc_write_data_to_buff(&adc_cb[j], ADC1_Raw_Value[ADC1_CH_NUM * i + j]);
       }
-      LD_OC_ADC_Check(0, ADC1_Raw_Value[0]);
-      LD_OC_ADC_Check(0, ADC1_Raw_Value[2]);
+      ld1_cur_tmp += ADC1_Raw_Value[ADC1_CH_NUM * i + 0];
+      ld2_cur_tmp += ADC1_Raw_Value[ADC1_CH_NUM * i + 2];
     }
+    LD_OC_ADC_Check(0, ld1_cur_tmp / ADC_BUFFER_SIZE);
+    LD_OC_ADC_Check(1, ld2_cur_tmp / ADC_BUFFER_SIZE);
   }
   if (hadc->Instance == ADC2)
   {

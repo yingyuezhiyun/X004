@@ -186,6 +186,7 @@ void LD_OC_funexec(uint8_t ch)
 void LD_OC_ADC_Check(uint8_t ch, uint16_t adc_value)
 {
     float curr = adc_value * 2.5 / 65535 / 0.003 / 50;
+    curr = curr * set_param.ld[ch].calib_measure.k + set_param.ld[ch].calib_measure.b;
     if (curr > set_param.ld[ch].HOC / 10.0)
     {
         SET_LD_SW_OFF(ch);
@@ -212,6 +213,7 @@ void delay_nop(uint16_t nop)
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
     uint8_t cnt = 1;
+#if 0
     if (GPIO_Pin == LD_OC_IN1_Pin)
     {
         do
@@ -241,7 +243,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
         SET_LD_Curr(LD_CH_2, 0);
         LD_OC_funexec(LD_CH_2);
     }
-
+#endif
     if (GPIO_Pin == LD_TRG_IN_Pin && set_param.TRG_Type == TRG_OUT)
     {
         delay_nop(1000);//4.1us
