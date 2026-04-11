@@ -10,7 +10,7 @@ char Version[] = "X004_001";
 
 uint64_t BuildTime = 202509112205;
 
-char Version2[] = {0, 0, 0, 6};//V0.0.0.6
+char Version2[] = {0, 0, 0, 7};//V0.0.0.7
 
 uint8_t sum_crc(uint8_t *data, uint8_t len)
 {
@@ -168,11 +168,13 @@ void set_TRG_type(uint8_t data)
     if (data == TRG_INTER)
     {
         set_param.TRG_Type = data;
+        Disable_TRG_IN_DET;
     }
     else if (data == TRG_OUT)
     {
         set_param.Pulse_Type = PULSE_SPWM;
         set_param.TRG_Type = data;
+        Enable_TRG_IN_DET;
     }
 }
 

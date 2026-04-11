@@ -363,7 +363,10 @@ uint8_t bit_init()
 
     // Enable_LD1_EXIT_DET;
     // Enable_LD2_EXIT_DET;
-    Enable_TRG_IN_DET;
+    if (set_param.TRG_Type == TRG_OUT)
+    {
+        Enable_TRG_IN_DET;
+    }
 
     HAL_TIM_Base_Start(&htim3);
     Heat_Ini();
