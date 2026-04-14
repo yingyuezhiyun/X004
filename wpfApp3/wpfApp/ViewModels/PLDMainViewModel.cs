@@ -756,6 +756,15 @@ namespace wpfApp.ViewModels
                     set { _IsWork = value; RaisePropertyChanged(); }
                 }
 
+                private int swSelected=0;
+
+                public int SwSelected
+                {
+                    get { return swSelected; }
+                    set { swSelected = value; RaisePropertyChanged(); }
+                }
+
+
                 private string _temp = "20.0";
                 /// <summary>
                 /// LD温度
@@ -833,6 +842,14 @@ namespace wpfApp.ViewModels
                 {
                     get { return _IsWork; }
                     set { _IsWork = value; RaisePropertyChanged(); }
+                }
+
+                private int swSelected = 0;
+
+                public int SwSelected
+                {
+                    get { return swSelected; }
+                    set { swSelected = value; RaisePropertyChanged(); }
                 }
 
                 private string _temp = "20.0";

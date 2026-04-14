@@ -132,6 +132,8 @@ namespace wpfApp.Common.CtrlProtocol
             Q_SW = 0xE7,        /* Q开关 */
             PulseType = 0xE9, /* 查询脉冲模式 */
             Upgrade = 0x76,/* 查询升级程序状态 */
+
+            ALL_PARA = 0xED, /* 查询所有参数 包括设置参数和检测参数 */
         }
         private enum DEV_SET_CMD_TYPE
         {
@@ -157,6 +159,9 @@ namespace wpfApp.Common.CtrlProtocol
             BootMode = 0xE3,       /*BOOT模式*/
             PulseType = 0xE8,/* 设置设置脉冲类型 */
             ClearErr = 0xEA, /* 清除错误 */
+
+            ALL_TEC_SW = 0xEB,  /* 设置所有TEC开关  */
+            All_LD_PARA = 0xEC, /* 设置所有LD参数 包括电流设定值和开关 */
 
         }
 
@@ -200,7 +205,7 @@ namespace wpfApp.Common.CtrlProtocol
             TEC4_M_PW = 0xE5,          /* 第4路TEC输出功率检测值 */
             BootMode = 0xEC,/*BOOT模式*/
             PulseType = 0xE7,/* 频率触发模式 */
-
+            ALL_PARA = 0xED,    /* 查询所有参数 包括设置参数和检测参数 */
 
         }
         // Helper mapping methods: try to map between PLD enums and device enums by name.
@@ -375,6 +380,47 @@ namespace wpfApp.Common.CtrlProtocol
                         p.MeasureParams.TECParams[3].Temp = BitConverter.ToInt16(data.data, 33) / 10.0f;
                         p.MeasureParams.TECParams[3].Power = BitConverter.ToInt16(data.data, 35) / 10.0f;
                         p.MeasureParams.LCMParams.Temp = BitConverter.ToUInt16(data.data, 37) / 10.0f;                       
+                        p.time = data.time;
+                    }
+                    break;
+                case DEV_GET_CMD_TYPE.ALL_PARA:
+                    {
+                        p.SetParams.LDParams[0].Curr = BitConverter.ToInt16(data.data, 0) / 10.0f;
+                        p.SetParams.PulseParams.Width = BitConverter.ToUInt16(data.data, 2);
+                        p.SetParams.TQParams.Delay = BitConverter.ToUInt16(data.data, 4);
+                        p.SetParams.TECParams[0].Temp = BitConverter.ToInt16(data.data, 6) / 10.0f;
+                        p.SetParams.TECParams[0].Vol = BitConverter.ToInt16(data.data, 8) / 10.0f;
+                        p.SetParams.TECParams[1].Temp = BitConverter.ToInt16(data.data, 10) / 10.0f;
+                        p.SetParams.TECParams[1].Vol = BitConverter.ToInt16(data.data, 12) / 10.0f;
+                        p.SetParams.PulseParams.Num = BitConverter.ToUInt16(data.data, 14);
+                        for (int i = 0; i < 11; i++)
+                        {
+                            p.SetParams.PulseParams.Interval[i] = BitConverter.ToUInt16(data.data, 16 + 2 * i);
+                        }
+                        p.SetParams.LDParams[1].Curr = BitConverter.ToInt16(data.data, 38) / 10.0f;
+                        p.SetParams.TECParams[2].Temp = BitConverter.ToInt16(data.data, 40) / 10.0f;
+                        p.SetParams.TECParams[2].Vol = BitConverter.ToInt16(data.data, 42) / 10.0f;
+                        p.SetParams.TECParams[3].Temp = BitConverter.ToInt16(data.data, 44) / 10.0f;
+                        p.SetParams.TECParams[3].Vol = BitConverter.ToInt16(data.data, 46) / 10.0f;
+
+                        p.MeasureParams.LDParams[0].Curr = BitConverter.ToInt16(data.data, 48) / 10.0f;
+                        p.MeasureParams.LDParams[0].Vol = BitConverter.ToInt16(data.data, 50) / 10.0f;
+                        p.MeasureParams.OtherInfos.PwrTemp = BitConverter.ToInt16(data.data, 52) / 10.0f;
+                        p.MeasureParams.PDParams.Power = BitConverter.ToInt16(data.data, 54) / 10.0f;
+                        p.MeasureParams.PDParams.Temp = BitConverter.ToInt16(data.data, 56) / 10.0f;
+                        p.MeasureParams.TECParams[0].Temp = BitConverter.ToInt16(data.data, 58) / 10.0f;
+                        p.MeasureParams.TECParams[0].Power = BitConverter.ToInt16(data.data, 60) / 10.0f;
+                        p.MeasureParams.TECParams[1].Temp = BitConverter.ToInt16(data.data, 62) / 10.0f;
+                        p.MeasureParams.TECParams[1].Power = BitConverter.ToInt16(data.data, 64) / 10.0f;
+                        p.MeasureParams.Status = data.data[66] | (uint)data.data[67] << 8 | (uint)data.data[68] << 16;
+                        p.MeasureParams.Version = "V" + data.data[69] + "." + data.data[70] + "." + data.data[71] + "." + data.data[72];
+                        p.MeasureParams.LDParams[1].Curr = BitConverter.ToInt16(data.data, 73) / 10.0f;
+                        p.MeasureParams.LDParams[1].Vol = BitConverter.ToInt16(data.data, 75) / 10.0f;
+                        p.MeasureParams.TECParams[2].Temp = BitConverter.ToInt16(data.data, 77) / 10.0f;
+                        p.MeasureParams.TECParams[2].Power = BitConverter.ToInt16(data.data, 79) / 10.0f;
+                        p.MeasureParams.TECParams[3].Temp = BitConverter.ToInt16(data.data, 81) / 10.0f;
+                        p.MeasureParams.TECParams[3].Power = BitConverter.ToInt16(data.data, 83) / 10.0f;
+                        p.MeasureParams.LCMParams.Temp = BitConverter.ToUInt16(data.data, 85) / 10.0f;
                         p.time = data.time;
                     }
                     break;
@@ -631,6 +677,18 @@ namespace wpfApp.Common.CtrlProtocol
                     databytes.Add((byte)p.SetParams.LCMParams.FanSpeed);
                     // databytes.Add(p.SetParams.LCMParams.FanSpeed);
                     databytes.Add(p.SetParams.LCMParams.PwrLimit);
+                    break;
+                case PLDParamsToSet.All_LD_PARA:
+                    databytes.Add((byte)p.SetParams.LDParams[0].WorkType);
+                    databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.LDParams[0].Curr));
+                    databytes.Add((byte)p.SetParams.LDParams[1].WorkType);
+                    databytes.AddRange(ConvertFloatToByte<ushort>(p.SetParams.LDParams[1].Curr));
+                    break;
+                case PLDParamsToSet.ALL_TEC_SW:
+                    databytes.Add((byte)p.SetParams.TECParams[0].WorkType);
+                    databytes.Add((byte)p.SetParams.TECParams[1].WorkType);
+                    databytes.Add((byte)p.SetParams.TECParams[2].WorkType);
+                    databytes.Add((byte)p.SetParams.TECParams[3].WorkType);
                     break;
                 case PLDParamsToSet.SaveParam:
                     break;

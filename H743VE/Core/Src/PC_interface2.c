@@ -55,6 +55,50 @@ typedef struct
 
 Work_Status2_t Work_Status2;
 
+#pragma pack(1)
+typedef struct
+{
+    uint16_t LD1_Cur;
+    uint16_t LD1_V;
+    int16_t PWR_Temp;
+    uint16_t OUT_PD;
+    int16_t OUT_TEMP;
+    int16_t TEC1_Temp;
+    int16_t TEC1_Power;
+    int16_t TEC2_Temp;
+    int16_t TEC2_Power;
+    Work_Status2_t Work_Status;
+    char Version[4];
+    uint16_t LD2_Cur;
+    uint16_t LD2_V;
+    int16_t TEC3_Temp;
+    int16_t TEC3_Power;
+    int16_t TEC4_Temp;
+    int16_t TEC4_Power;
+    int16_t LCM_Temp;
+} measure_packet_t;
+#pragma unpack()
+
+#pragma pack(1)
+typedef struct
+{
+    uint16_t LD1_Cur;    // 单位 0.1A
+    uint16_t PulseWidth; // 脉冲宽度 单位us
+    uint16_t Q_DELAY;    // 调Q延时 单位us
+    int16_t TEC1_Temp;   // TEC1温度设定值 单位0.1℃
+    int16_t TEC1_V;      // TEC1限压设定值 单位0.1V
+    int16_t TEC2_Temp;   // TEC2温度设定值 单位0.1℃
+    int16_t TEC2_V;      // TEC2限压设定值 单位0.1V
+    Pulse_param_packet_t Pulse_para;
+    uint16_t LD2_Cur;  // 单位 0.1A
+    int16_t TEC3_Temp; // TEC3温度设定值 单位0.1℃
+    int16_t TEC3_V;    // TEC3限压设定值 单位0.1V
+    int16_t TEC4_Temp; // TEC4温度设定值 单位0.1℃
+    int16_t TEC4_V;    // TEC4限压设定值 单位0.1V
+
+} set_packet_t;
+#pragma unpack()
+
 enum
 {
     P_S_LD1_S_Cur = 0x30,   /* 设置电流通道1 10～150代表1.0A～15.0A */
@@ -115,6 +159,9 @@ enum
     P_S_PulseType = 0xE8,   /* 设置脉冲类型  0x55：变频 0xAA：定频; */
     P_G_PulseType = 0xE9,   /* 查询脉冲类型 */
     P_Clear_Err = 0xEA,     /* 清空错误 */
+    P_S_ALL_TEC_SW = 0xEB,  /* 设置所有TEC开关  */
+    P_S_ALL_LD_PARA = 0xEC, /* 设置所有LD参数 包括电流设定值和开关 */
+    P_G_ALL_PARA = 0xED,    /* 查询所有参数 包括设置参数和检测参数 */
 };
 
 enum
@@ -158,6 +205,7 @@ enum
     M_TEC4_M_PW = 0xE5,   /* 查询第4路TEC输出功率检测值 */
     M_BOOT_MODE = 0xEC,   /* BOOT模式 反馈 */
     M_PulseType = 0xE7,   /* 查询脉冲类型 0x55：变频 0xAA：定频;  */
+    M_ALL_PARA = 0xED,    /* 查询所有参数 包括设置参数和检测参数 */
 };
 
 
@@ -235,6 +283,42 @@ static void set_tec_param(uint8_t ch, uint8_t *data)
     }
 }
 
+static void set_all_tec_sw(uint8_t *data)
+{
+    for (size_t i = 0; i < 4; i++)
+    {
+        uint8_t sw = data[i];
+        if (sw == 0x55 || sw == 0xAA)
+        {
+            if (sw == WORK_ON && set_param.tec[i].sw == WORK_OFF)
+            {
+                TEC_RestStatus(i);
+            }
+            set_param.tec[i].sw = sw;
+        }
+    }
+}
+
+static void set_all_ld_para(uint8_t *data)
+{
+    typedef struct
+    {
+        uint8_t sw;   // 开关 0x55:关；0xAA：开
+        uint16_t Cur; // 电流设定值 单位 0.1A
+    } all_ld_packet_t;
+    all_ld_packet_t *p = (all_ld_packet_t *)data;
+    for (size_t i = 0; i < 2; i++)
+    {
+        uint8_t sw = p[i].sw;
+        uint16_t Cur = p[i].Cur;
+        if (sw == 0x55 || sw == 0xAA)
+        {
+            set_param.ld[i].sw = sw;
+        }
+        set_param.ld[i].Cur = Cur;
+    }
+}
+
 static void get_tec_param(UART_HandleTypeDef *huart, uint8_t cmd, uint8_t ch)
 {
     tec_packet_t p;
@@ -254,25 +338,7 @@ static void get_all_set_param(UART_HandleTypeDef *huart, uint8_t cmd)
 {
 
     set_param_t *data = &set_param;
-#pragma pack(1)
-    struct
-    {
-        uint16_t LD1_Cur;    // 单位 0.1A
-        uint16_t PulseWidth; // 脉冲宽度 单位us
-        uint16_t Q_DELAY;    // 调Q延时 单位us
-        int16_t TEC1_Temp;   // TEC1温度设定值 单位0.1℃
-        int16_t TEC1_V;      // TEC1限压设定值 单位0.1V
-        int16_t TEC2_Temp;   // TEC2温度设定值 单位0.1℃
-        int16_t TEC2_V;      // TEC2限压设定值 单位0.1V
-        Pulse_param_packet_t Pulse_para;
-        uint16_t LD2_Cur; // 单位 0.1A
-        int16_t TEC3_Temp; // TEC3温度设定值 单位0.1℃
-        int16_t TEC3_V;    // TEC3限压设定值 单位0.1V
-        int16_t TEC4_Temp; // TEC4温度设定值 单位0.1℃
-        int16_t TEC4_V;    // TEC4限压设定值 单位0.1V
-
-    } p;
-#pragma unpack()
+    set_packet_t p;
     p.LD1_Cur = data->ld[0].Cur;
     p.LD2_Cur = data->ld[1].Cur;
     p.PulseWidth = data->Pulse_para.Width;
@@ -290,35 +356,14 @@ static void get_all_set_param(UART_HandleTypeDef *huart, uint8_t cmd)
     {
         p.Pulse_para.Interval[i] = data->Pulse_para.Interval[i];
     }
+    //  sizeof(p);
     PC_ACK(cmd, p);
 }
 
 static void get_all_measure_param(UART_HandleTypeDef *huart, uint8_t cmd)
 {
     measure_param_t *data = &measure_param;
-#pragma pack(1)
-    struct
-    {
-        uint16_t LD1_Cur;
-        uint16_t LD1_V;
-        int16_t PWR_Temp;
-        uint16_t OUT_PD;
-        int16_t OUT_TEMP;
-        int16_t TEC1_Temp;
-        int16_t TEC1_Power;
-        int16_t TEC2_Temp;
-        int16_t TEC2_Power;
-        Work_Status2_t Work_Status;
-        char Version[4];
-        uint16_t LD2_Cur;
-        uint16_t LD2_V;
-        int16_t TEC3_Temp;
-        int16_t TEC3_Power;
-        int16_t TEC4_Temp;
-        int16_t TEC4_Power;
-        int16_t LCM_Temp;
-    } p;
-#pragma unpack()
+    measure_packet_t p;
     p.LD1_Cur = round(data->ld[0].Cur * 10);
     p.LD2_Cur = round(data->ld[1].Cur * 10);
     p.LD1_V = round(data->ld[0].Vol * 10);
@@ -341,7 +386,61 @@ static void get_all_measure_param(UART_HandleTypeDef *huart, uint8_t cmd)
     {
         p.Version[i] = Version2[i];
     }
-    p.LCM_Temp = measure_param.LCM.Temp;
+    p.LCM_Temp = data->LCM.Temp;
+    // sizeof(p);
+    PC_ACK(cmd, p);
+}
+
+static void get_all_para(UART_HandleTypeDef *huart, uint8_t cmd)
+{
+    typedef struct
+    {
+        set_packet_t set;
+        measure_packet_t measure;
+    } all_para_packet_t;
+    all_para_packet_t p;
+    set_param_t *set = &set_param;
+    p.set.LD1_Cur = set->ld[0].Cur;
+    p.set.LD2_Cur = set->ld[1].Cur;
+    p.set.PulseWidth = set->Pulse_para.Width;
+    p.set.Q_DELAY = set->T_Q.delay;
+    p.set.TEC1_Temp = set->tec[0].Temp;
+    p.set.TEC1_V = set->tec[0].MaxVol;
+    p.set.TEC2_Temp = set->tec[1].Temp;
+    p.set.TEC2_V = set->tec[1].MaxVol;
+    p.set.TEC3_Temp = set->tec[2].Temp;
+    p.set.TEC3_V = set->tec[2].MaxVol;
+    p.set.TEC4_Temp = set->tec[3].Temp;
+    p.set.TEC4_V = set->tec[3].MaxVol;
+    p.set.Pulse_para.Num = set->Pulse_para.Num;
+    for (size_t i = 0; i < p.set.Pulse_para.Num; i++)
+    {
+        p.set.Pulse_para.Interval[i] = set->Pulse_para.Interval[i];
+    }
+    measure_param_t *data = &measure_param;
+    p.measure.LD1_Cur = round(data->ld[0].Cur * 10);
+    p.measure.LD2_Cur = round(data->ld[1].Cur * 10);
+    p.measure.LD1_V = round(data->ld[0].Vol * 10);
+    p.measure.LD2_V = round(data->ld[1].Vol * 10);
+    p.measure.PWR_Temp = round(data->PWR_Temp * 10);
+    p.measure.OUT_PD = round(data->out.PD * 10);
+    p.measure.OUT_TEMP = round(data->out.Temp * 10);
+    p.measure.TEC1_Temp = round(data->tec[0].Temp * 10);
+    p.measure.TEC1_Power = round(data->tec[0].Power * 10);
+    p.measure.TEC2_Temp = round(data->tec[1].Temp * 10);
+    p.measure.TEC2_Power = round(data->tec[1].Power * 10);
+    p.measure.TEC3_Temp = round(data->tec[2].Temp * 10);
+    p.measure.TEC3_Power = round(data->tec[2].Power * 10);
+    p.measure.TEC4_Temp = round(data->tec[3].Temp * 10);
+    p.measure.TEC4_Power = round(data->tec[3].Power * 10);
+    p.measure.LCM_Temp = round(data->LCM.Temp * 10);
+    update_status();
+    p.measure.Work_Status = Work_Status2;
+    for (size_t i = 0; i < 4; i++)
+    {
+        p.measure.Version[i] = Version2[i];
+    }
+    p.measure.LCM_Temp = data->LCM.Temp;
     // sizeof(p);
     PC_ACK(cmd, p);
 }
@@ -427,6 +526,9 @@ void exec_commands_list2(UART_HandleTypeDef *huart, uint8_t cmd, uint8_t *data, 
    case P_S_BOOTMODE:               set_boot_bootmode(*(uint8_t *)data);ack_boot_mode(huart, M_BOOT_MODE);      break;
    case P_G_BOOTMODE:               ack_boot_mode(huart, M_BOOT_MODE);                                          break;
    case P_Clear_Err:                ClearErrs();                                                                break;
+   case P_S_ALL_TEC_SW:             set_all_tec_sw(data);                                          break;
+   case P_S_ALL_LD_PARA:            set_all_ld_para(data);                                       break;
+   case P_G_ALL_PARA:               get_all_para(huart, M_ALL_PARA);                                          break;
    default:
        break;
    }

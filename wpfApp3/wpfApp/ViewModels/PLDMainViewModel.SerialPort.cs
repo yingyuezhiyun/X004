@@ -126,7 +126,7 @@ namespace wpfApp.ViewModels
         }
 
         bool isIgnoreBitErr = false;
-        async void  UpdateStatus(UInt32 p)
+        async void UpdateStatus(UInt32 p)
         {
 
             string status = "";
@@ -190,15 +190,15 @@ namespace wpfApp.ViewModels
             UpdateTrigType(!sw_on);
 
             sw_on = (p & (UInt32)PLDParams.StatusFlags2.LCM_Fan) != 0;
-            MeasureParams.StatusInfo.FanStatus.Value = sw_on ?  "开" : "关";
+            MeasureParams.StatusInfo.FanStatus.Value = sw_on ? "开" : "关";
 
             sw_on = (p & (UInt32)PLDParams.StatusFlags2.LCM_MotorEn) != 0;
-            MeasureParams.StatusInfo.PumpStatus.Value = sw_on ?  "开" : "关";
+            MeasureParams.StatusInfo.PumpStatus.Value = sw_on ? "开" : "关";
 
             // sw_on = (p & (UInt32)PLDParams.StatusFlags2.Pulse_Type) != 0;
             // UpdatePulseType(!sw_on);
 
-            #if false
+#if false
             string status = "";
             foreach (var item in PLDParams.ErrStatus)
             {
@@ -261,7 +261,7 @@ namespace wpfApp.ViewModels
 
             sw_on = (p & (UInt32)PLDParams.StatusFlags.Pulse_Type) != 0;
             UpdatePulseType(!sw_on);
-            #endif
+#endif
 
         }
 
@@ -341,9 +341,9 @@ namespace wpfApp.ViewModels
             if (bootMode == BootMode.Boot)
             {
                 MeasureParams.StatusInfo.BITStatus.Value = "BOOT模式";
-            }            
+            }
             Update.BootMode = bootMode;
-            if (isBootModeDetect &&bootMode== BootMode.Boot)
+            if (isBootModeDetect && bootMode == BootMode.Boot)
             {
                 isBootModeDetect = false;
                 Application.Current.Dispatcher.Invoke(() => aggregator.SendMessage("当前处于BOOT模式，仅可用于程序升级！", "Main", Type: MessageModel.MessageType.Warning, TimeSpan: 4.0));
@@ -351,7 +351,7 @@ namespace wpfApp.ViewModels
             }
         }
 
-    
+
 
 
         void serialPortDataCallBack(object paramsSet, object data)
@@ -365,7 +365,7 @@ namespace wpfApp.ViewModels
             if (MeasureParams.StatusInfo.ConnectStatus.Value != "已连接")
             {
                 MeasureParams.StatusInfo.ConnectStatus.Value = "已连接";
-            }            
+            }
             var a = (PLDParams.PLDParamsFromGet)paramsSet;
 
             var p1 = data as PLDParams;
@@ -399,7 +399,7 @@ namespace wpfApp.ViewModels
                     break;
                 case PLDParams.PLDParamsFromGet.PulseType:
                     UpdatePulseType(p1.SetParams.PulseType == PLDParams.PulseType.SPWM);
-                 
+
                     break;
                 case PLDParams.PLDParamsFromGet.LD1_SW:
                     UpdateLD_SW(0, p1.SetParams.LDParams[0].WorkType == PLDParams.WorkType.ON);
@@ -408,10 +408,10 @@ namespace wpfApp.ViewModels
                     UpdateLD_SW(1, p1.SetParams.LDParams[1].WorkType == PLDParams.WorkType.ON);
                     break;
                 case PLDParams.PLDParamsFromGet.Q_SW:
-                    UpdateTQ_SW(p1.SetParams.TQParams.WorkType == PLDParams.WorkType.ON);                   
+                    UpdateTQ_SW(p1.SetParams.TQParams.WorkType == PLDParams.WorkType.ON);
                     break;
                 case PLDParams.PLDParamsFromGet.TEC1_SW:
-                        UpdateTEC_SW(0, p1.SetParams.TECParams[0].WorkType == PLDParams.WorkType.ON);
+                    UpdateTEC_SW(0, p1.SetParams.TECParams[0].WorkType == PLDParams.WorkType.ON);
                     break;
                 case PLDParams.PLDParamsFromGet.TEC2_SW:
                     UpdateTEC_SW(1, p1.SetParams.TECParams[1].WorkType == PLDParams.WorkType.ON);
@@ -424,19 +424,19 @@ namespace wpfApp.ViewModels
                     break;
                 case PLDParams.PLDParamsFromGet.TEC1_PARA:
                     {
-                        
-                            SettingParamsToShow.TECParams[0].Vol = p1.SetParams.TECParams[0].Vol.ToString("F1");
-                            SettingParamsToShow.TECParams[0].Temp = p1.SetParams.TECParams[0].Temp.ToString("F1");
-                            SettingParamsToShow.LDParams[0].Temp = p1.SetParams.TECParams[0].Temp.ToString("F1");
+
+                        SettingParamsToShow.TECParams[0].Vol = p1.SetParams.TECParams[0].Vol.ToString("F1");
+                        SettingParamsToShow.TECParams[0].Temp = p1.SetParams.TECParams[0].Temp.ToString("F1");
+                        SettingParamsToShow.LDParams[0].Temp = p1.SetParams.TECParams[0].Temp.ToString("F1");
                         setParam.TECParams[0].Vol = p1.SetParams.TECParams[0].Vol;
                     }
                     break;
                 case PLDParams.PLDParamsFromGet.TEC2_PARA:
                     {
-                        
-                            SettingParamsToShow.TECParams[1].Vol = p1.SetParams.TECParams[1].Vol.ToString("F1");
-                            SettingParamsToShow.TECParams[1].Temp = p1.SetParams.TECParams[1].Temp.ToString("F1");
-                            SettingParamsToShow.LDParams[1].Temp = p1.SetParams.TECParams[1].Temp.ToString("F1");
+
+                        SettingParamsToShow.TECParams[1].Vol = p1.SetParams.TECParams[1].Vol.ToString("F1");
+                        SettingParamsToShow.TECParams[1].Temp = p1.SetParams.TECParams[1].Temp.ToString("F1");
+                        SettingParamsToShow.LDParams[1].Temp = p1.SetParams.TECParams[1].Temp.ToString("F1");
                         setParam.TECParams[1].Vol = p1.SetParams.TECParams[1].Vol;
                     }
                     break;
@@ -515,7 +515,7 @@ namespace wpfApp.ViewModels
                     UpdateStatus(p1.MeasureParams.Status);
                     break;
                 case PLDParams.PLDParamsFromGet.ALL_SET:
-                    
+
                     break;
                 case PLDParams.PLDParamsFromGet.ALL_M:
                     {
@@ -607,8 +607,121 @@ namespace wpfApp.ViewModels
 
                     }
                     break;
+                case PLDParams.PLDParamsFromGet.ALL_PARA:
+                    {
+                        UpdatePulseType(p1.SetParams.PulseType == PLDParams.PulseType.SPWM);
+                        UpdateTrigType(p1.SetParams.TrigType == PLDParams.TrigType.INTER);
+                        SettingParamsToShow.TQParams.Delay = p1.SetParams.TQParams.Delay.ToString();
+                        SettingParamsToShow.PulseParams.Width = p1.SetParams.PulseParams.Width.ToString();
+                        UpdateTQ_SW(p1.SetParams.TQParams.WorkType == PLDParams.WorkType.ON);
+                        for (int i = 0; i < 2; i++)
+                        {
+                            UpdateLD_SW(i, p1.SetParams.LDParams[i].WorkType == PLDParams.WorkType.ON);
+                            SettingParamsToShow.LDParams[i].Curr = p1.SetParams.LDParams[i].Curr.ToString("F1");
+                            SettingParamsToShow.LDParams[i].Temp = p1.SetParams.TECParams[i].Temp.ToString("F1");                        
+                        }
+                        for (int i = 0; i < 4; i++)
+                        {
+                            UpdateTEC_SW(i, p1.SetParams.TECParams[i].WorkType == PLDParams.WorkType.ON);
+                            SettingParamsToShow.TECParams[i].Vol = p1.SetParams.TECParams[i].Vol.ToString("F1");
+                            SettingParamsToShow.TECParams[i].Temp = p1.SetParams.TECParams[i].Temp.ToString("F1");
+                            setParam.TECParams[i].Vol = p1.SetParams.TECParams[i].Vol;
+                        }
+                        SettingParamsToShow.PulseParams.Num = p1.SetParams.PulseParams.Num.ToString();
+                        for (int i = 0; i < 11; i++)
+                        {
+                            SettingParamsToShow.PulseParams.Interval[i].Value = p1.SetParams.PulseParams.Interval[i].ToString();
+                        }
+
+                        MeasureParams.LDParams[0].Curr.Value = p1.MeasureParams.LDParams[0].Curr.ToString("F1");
+                        MeasureParams.LDParams[1].Curr.Value = p1.MeasureParams.LDParams[1].Curr.ToString("F1");
+                        MeasureParams.LDParams[0].Vol.Value = p1.MeasureParams.LDParams[0].Vol.ToString("F1");
+                        MeasureParams.LDParams[1].Vol.Value = p1.MeasureParams.LDParams[1].Vol.ToString("F1");
+                        MeasureParams.OtherInfos.PwrTemp.Value = p1.MeasureParams.OtherInfos.PwrTemp.ToString("F1");
+                        MeasureParams.OtherInfos.SysCurr.Value = p1.MeasureParams.OtherInfos.SysCurr.ToString("F1");
+                        MeasureParams.OtherInfos.SysVol.Value = p1.MeasureParams.OtherInfos.SysVol.ToString("F1");
+                        MeasureParams.PDParams.Power.Value = p1.MeasureParams.PDParams.Power.ToString("F1");
+                        MeasureParams.PDParams.Temp.Value = p1.MeasureParams.PDParams.Temp.ToString("F1");
+                        for (int i = 0; i < 4; i++)
+                        {
+                            MeasureParams.TECParams[i].Temp.Value = p1.MeasureParams.TECParams[i].Temp.ToString("F1");
+                            MeasureParams.TECParams[i].Power.Value = p1.MeasureParams.TECParams[i].Power.ToString("F1");
+                            MeasureParams.TECParams[i].Curr.Value = p1.MeasureParams.TECParams[i].Curr.ToString("F1");
+                        }
+                        MeasureParams.LDParams[0].Temp.Value = MeasureParams.TECParams[0].Temp.Value;
+                        MeasureParams.LDParams[1].Temp.Value = MeasureParams.TECParams[1].Temp.Value;
+
+                        //add
+                        MeasureParams.LCMParams.Temp.Value = p1.MeasureParams.LCMParams.Temp.ToString("F1");
+
+                        UpdateStatus(p1.MeasureParams.Status);
+                        Update.Version = p1.MeasureParams.Version;
+                        bool IsSave = false;
+                        for (int i = 0; i < 2; i++)
+                        {
+
+                            if (SettingParamsToShow.LDParams[i].IsWork)
+                            {
+                                IsSave = true;
+                            }
+                        }
+                        for (int i = 0; i < 4; i++)
+                        {
+                            if (SettingParamsToShow.TECParams[i].IsWork)
+                            {
+                                IsSave = true;
+                            }
+                        }
+                        if (IsSave)
+                        {
+                            // saveDataFile(p1);
+                        }
+
+                        // publish chart update event with ordered data list matching PLDChartViewModel SigThemes
+                        try
+                        {
+                            var model = new PLDUpdateModel();
+                            model.Type = PLDUpdateType.MeasureData;
+                            var pl = new PLDMeasureData();
+                            pl.time = p1.time;
+                            pl.data_list = new List<double>() {
+                                p1.MeasureParams.LDParams[0].Curr, // LD1电流
+                                p1.MeasureParams.LDParams[1].Curr, // LD2电流
+                                p1.MeasureParams.LDParams[0].Vol,  // LD1电压
+                                p1.MeasureParams.LDParams[1].Vol,  // LD2电压
+                                p1.MeasureParams.OtherInfos.PwrTemp, // 电源温度
+                                p1.MeasureParams.PDParams.Power, // PD出光功率
+                                p1.MeasureParams.PDParams.Temp,  // PD温度
+                                p1.MeasureParams.TECParams[0].Temp, // TEC1温度
+                                p1.MeasureParams.TECParams[0].Power, // TEC1功率
+                                p1.MeasureParams.TECParams[0].Curr, // TEC1电流
+                                p1.MeasureParams.TECParams[1].Temp, // TEC2温度
+                                p1.MeasureParams.TECParams[1].Power, // TEC2功率
+                                p1.MeasureParams.TECParams[1].Curr, // TEC2电流
+                                p1.MeasureParams.TECParams[2].Temp, // TEC3温度
+                                p1.MeasureParams.TECParams[2].Power, // TEC3功率
+                                p1.MeasureParams.TECParams[2].Curr, // TEC3电流
+                                p1.MeasureParams.TECParams[3].Temp, // TEC4温度
+                                p1.MeasureParams.TECParams[3].Power, // TEC4功率
+                                p1.MeasureParams.TECParams[3].Curr, // TEC4电流
+                                p1.MeasureParams.OtherInfos.SysVol, // 系统电压
+                                p1.MeasureParams.OtherInfos.SysCurr // 系统电流
+                            };
+                            model.plData = pl;
+                            Application.Current.Dispatcher.BeginInvoke(() =>
+                            {
+                                aggregator.GetEvent<PLDUpdateEvent>().Publish(model);
+                            });
+                        }
+                        catch (Exception)
+                        {
+                            // ignore publish exceptions
+                        }
+
+                    }
+                    break;
                 case PLDParams.PLDParamsFromGet.Upgrade:
-                    UpgradeStatus(p1.MeasureParams.UpgradeParams.Status, p1.MeasureParams.UpgradeParams.CurrIdx);                  
+                    UpgradeStatus(p1.MeasureParams.UpgradeParams.Status, p1.MeasureParams.UpgradeParams.CurrIdx);
                     break;
                 case PLDParams.PLDParamsFromGet.LD1_Vol:
                     SettingParamsToShow.LDParams[0].Vol = p1.SetParams.LDParams[0].Vol.ToString("F1");
@@ -686,28 +799,28 @@ namespace wpfApp.ViewModels
                     break;
                 case PLDParams.PLDParamsFromGet.M_LCM:
                     {
-                     
-                            MeasureParams.LCMParams.Vol.Value = p1.MeasureParams.LCMParams.Vol.ToString();
-                            MeasureParams.LCMParams.Curr.Value = p1.MeasureParams.LCMParams.Curr.ToString();
-                            MeasureParams.LCMParams.Power.Value = p1.MeasureParams.LCMParams.Power.ToString();
-                            MeasureParams.LCMParams.MotorSpeed.Value = p1.MeasureParams.LCMParams.MotorSpeed.ToString();
-                            MeasureParams.LCMParams.Temp.Value = p1.MeasureParams.LCMParams.Temp.ToString("F1");
-                        
+
+                        MeasureParams.LCMParams.Vol.Value = p1.MeasureParams.LCMParams.Vol.ToString();
+                        MeasureParams.LCMParams.Curr.Value = p1.MeasureParams.LCMParams.Curr.ToString();
+                        MeasureParams.LCMParams.Power.Value = p1.MeasureParams.LCMParams.Power.ToString();
+                        MeasureParams.LCMParams.MotorSpeed.Value = p1.MeasureParams.LCMParams.MotorSpeed.ToString();
+                        MeasureParams.LCMParams.Temp.Value = p1.MeasureParams.LCMParams.Temp.ToString("F1");
+
                     }
                     break;
                 case PLDParams.PLDParamsFromGet.SaveParam:
                     if (p1.MeasureParams.ParamSaveStatus)
                     {
-                        Application.Current.Dispatcher.Invoke(() => aggregator.SendMessage("参数保存成功!", "Main",Type: MessageModel.MessageType.Success, TimeSpan: 4.0));                       
+                        Application.Current.Dispatcher.Invoke(() => aggregator.SendMessage("参数保存成功!", "Main", Type: MessageModel.MessageType.Success, TimeSpan: 4.0));
                     }
                     else
                     {
                         Application.Current.Dispatcher.Invoke(() => aggregator.SendMessage("参数保存失败!", "Main", Type: MessageModel.MessageType.Error, TimeSpan: 4.0));
-          
+
                     }
                     break;
 
-          
+
 
 
                 default:
@@ -734,7 +847,7 @@ namespace wpfApp.ViewModels
             SendData(data);
         }
 
-        object sendlocker = new object();   
+        object sendlocker = new object();
         void SendData(List<byte> data)
         {
             if (data.Count == 0)
@@ -754,8 +867,8 @@ namespace wpfApp.ViewModels
                     }
             }
         }
-   
-    
-    
+
+
+
     }
 }

@@ -259,6 +259,32 @@ namespace wpfApp.ViewModels
             }
         }
 
+        void SetAllLD()
+        {
+            setParam.LDParams[0].WorkType = SettingParams.LDParams[0].SwSelected == 0 ? PLDParams.WorkType.OFF : PLDParams.WorkType.ON;
+            setParam.LDParams[1].WorkType = SettingParams.LDParams[1].SwSelected == 0 ? PLDParams.WorkType.OFF : PLDParams.WorkType.ON;
+            var p = ConvertStringFloat(SettingParams.LDParams[0].Curr);
+            if (p != null)
+            {
+                setParam.LDParams[0].Curr = (float)p;
+            }
+            var p2 = ConvertStringFloat(SettingParams.LDParams[1].Curr);
+            if (p2 != null)
+            {
+                setParam.LDParams[1].Curr = (float)p2;
+            }
+            DevSetParam(PLDParams.PLDParamsToSet.All_LD_PARA);
+        }
+
+        void SetAllTEC()
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                setParam.TECParams[i].WorkType = SettingParams.TECParams[i].SwSelected == 0 ? PLDParams.WorkType.OFF : PLDParams.WorkType.ON;
+            }
+            DevSetParam(PLDParams.PLDParamsToSet.ALL_TEC_SW);
+        }
+
 
         void DevSetTQDelay()
         {
@@ -980,7 +1006,8 @@ namespace wpfApp.ViewModels
                 case "打开升级文件目录": GoToSurce(obj); break;
                 case "清空错误": DevClearErr(); break;
                 case "升级": Upgrade(); break;
-
+                case "所有LD控制": SetAllLD(); break;
+                case "所有TEC控制": SetAllTEC(); break;
 
                 default: break;
             }

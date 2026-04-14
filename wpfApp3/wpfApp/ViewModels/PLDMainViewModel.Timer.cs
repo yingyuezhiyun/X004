@@ -23,7 +23,7 @@ namespace wpfApp.ViewModels
             bitTimer.AutoReset = true;
             bitTimer.Elapsed += (s, e) =>
             {
-                DevQueryParam((PLDParams.PLDParamsToQuery.ALL_M));
+                DevQueryParam((PLDParams.PLDParamsToQuery.ALL_PARA));
                 // DevQueryParam((PLDParams.PLDParamsToQuery.M_LCM));
             };
             bitTimer.Stop();

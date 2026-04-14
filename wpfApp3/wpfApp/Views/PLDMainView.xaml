@@ -833,6 +833,335 @@
                         </Grid>
 
                     </TabItem>
+
+                    <TabItem Width="40">
+                        <TabItem.Header>
+                            <TextBlock
+                                Margin="0"
+                                HorizontalAlignment="Center"
+                                RenderTransformOrigin=".5,.5"
+                                Text="快速控制">
+                                <TextBlock.LayoutTransform>
+                                    <RotateTransform Angle="90" />
+                                </TextBlock.LayoutTransform>
+                            </TextBlock>
+                        </TabItem.Header>
+                        <Grid Margin="0,10,10,0" HorizontalAlignment="Center">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                                <RowDefinition />
+
+                            </Grid.RowDefinitions>
+                            <DockPanel LastChildFill="False">
+                                <materialDesign:PackIcon
+                                    Width="20"
+                                    Height="20"
+                                    Margin="10,0,10,0"
+                                    VerticalAlignment="Center"
+                                    Foreground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                    Kind="CogSync" />
+
+                                <TextBlock
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    Foreground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                    Text="LD控制" />
+                            </DockPanel>
+
+
+                            <StackPanel
+                                Grid.Row="1"
+                                Margin="0"
+                                IsEnabled="{Binding DeviceIsOpen}">
+
+                                <StackPanel
+                                    Margin="5,10,0,0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Orientation="Horizontal">
+                                    <TextBlock
+                                        MinWidth="100"
+                                        VerticalAlignment="Center"
+                                        FontWeight="Bold"
+                                        Text="LD1电流" />
+                                    <TextBlock
+                                        MinWidth="50"
+                                        Margin="10,0,0,0"
+                                        VerticalAlignment="Center"
+                                        Text="{Binding SettingParamsToShow.LDParams[0].Curr}" />
+                                    <TextBox
+                                        Width="70"
+                                        Margin="10,0,0,0"
+                                        materialDesign:TextFieldAssist.SuffixText="A"
+                                        Text="{Binding SettingParams.LDParams[0].Curr}" />
+                                </StackPanel>
+                                <StackPanel
+                                    Margin="5,10,0,0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Orientation="Horizontal">
+                                    <TextBlock
+                                        MinWidth="100"
+                                        VerticalAlignment="Center"
+                                        FontWeight="Bold"
+                                        Text="LD1开关" />
+                                    <TextBlock
+                                        MinWidth="50"
+                                        Margin="10,0,0,0"
+                                        VerticalAlignment="Center">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Text" Value="关" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SettingParamsToShow.LDParams[0].IsWork}" Value="True">
+                                                        <Setter Property="Text" Value="开" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <ComboBox
+                                        Width="70"
+                                        Margin="5,0,0,0"
+                                        SelectedIndex="{Binding SettingParams.LDParams[0].SwSelected}">
+                                        <ComboBoxItem Content="关" />
+                                        <ComboBoxItem Content="开" />
+                                    </ComboBox>
+                                </StackPanel>
+
+                                <StackPanel
+                                    Margin="5,10,0,0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Orientation="Horizontal">
+                                    <TextBlock
+                                        MinWidth="100"
+                                        VerticalAlignment="Center"
+                                        FontWeight="Bold"
+                                        Text="LD2电流" />
+                                    <TextBlock
+                                        MinWidth="50"
+                                        Margin="10,0,0,0"
+                                        VerticalAlignment="Center"
+                                        Text="{Binding SettingParamsToShow.LDParams[1].Curr}" />
+                                    <TextBox
+                                        Width="70"
+                                        Margin="10,0,0,0"
+                                        materialDesign:TextFieldAssist.SuffixText="A"
+                                        Text="{Binding SettingParams.LDParams[1].Curr}" />
+                                </StackPanel>
+                                <StackPanel
+                                    Margin="5,10,0,0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Orientation="Horizontal">
+                                    <TextBlock
+                                        MinWidth="100"
+                                        VerticalAlignment="Center"
+                                        FontWeight="Bold"
+                                        Text="LD2开关" />
+                                    <TextBlock
+                                        MinWidth="50"
+                                        Margin="10,0,0,0"
+                                        VerticalAlignment="Center">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Text" Value="关" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SettingParamsToShow.LDParams[1].IsWork}" Value="True">
+                                                        <Setter Property="Text" Value="开" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <ComboBox
+                                        Width="70"
+                                        Margin="5,0,0,0"
+                                        SelectedIndex="{Binding SettingParams.LDParams[1].SwSelected}">
+                                        <ComboBoxItem Content="关" />
+                                        <ComboBoxItem Content="开" />
+                                    </ComboBox>
+                                </StackPanel>
+
+                                <Button
+                                    Height="25"
+                                    Margin="5,10,5,5"
+                                    Command="{Binding ExecuteCommand}"
+                                    CommandParameter="所有LD控制"
+                                    Content="设置"
+                                    Cursor="Hand" />
+                                <Border Margin="5,25,5,5" Style="{StaticResource HorizontalDividerBorder}" />
+
+                                <DockPanel LastChildFill="False">
+                                    <materialDesign:PackIcon
+                                        Width="20"
+                                        Height="20"
+                                        Margin="10,0,10,0"
+                                        VerticalAlignment="Center"
+                                        Foreground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                        Kind="CogSync" />
+
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        FontSize="16"
+                                        Foreground="{DynamicResource MaterialDesign.Brush.Primary}"
+                                        Text="TEC控制" />
+                                </DockPanel>
+
+                                <StackPanel
+                                    Margin="5,10,0,0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Orientation="Horizontal">
+                                    <TextBlock
+                                        MinWidth="100"
+                                        VerticalAlignment="Center"
+                                        FontWeight="Bold"
+                                        Text="TEC1开关" />
+                                    <TextBlock
+                                        MinWidth="50"
+                                        Margin="10,0,0,0"
+                                        VerticalAlignment="Center">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Text" Value="关" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SettingParamsToShow.TECParams[0].IsWork}" Value="True">
+                                                        <Setter Property="Text" Value="开" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <ComboBox
+                                        Width="70"
+                                        Margin="5,0,0,0"
+                                        SelectedIndex="{Binding SettingParams.TECParams[0].SwSelected}">
+                                        <ComboBoxItem Content="关" />
+                                        <ComboBoxItem Content="开" />
+                                    </ComboBox>
+                                </StackPanel>
+                                <StackPanel
+                                    Margin="5,10,0,0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Orientation="Horizontal">
+                                    <TextBlock
+                                        MinWidth="100"
+                                        VerticalAlignment="Center"
+                                        FontWeight="Bold"
+                                        Text="TEC2开关" />
+                                    <TextBlock
+                                        MinWidth="50"
+                                        Margin="10,0,0,0"
+                                        VerticalAlignment="Center">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Text" Value="关" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SettingParamsToShow.TECParams[1].IsWork}" Value="True">
+                                                        <Setter Property="Text" Value="开" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <ComboBox
+                                        Width="70"
+                                        Margin="5,0,0,0"
+                                        SelectedIndex="{Binding SettingParams.TECParams[1].SwSelected}">
+                                        <ComboBoxItem Content="关" />
+                                        <ComboBoxItem Content="开" />
+                                    </ComboBox>
+                                </StackPanel>
+                                <StackPanel
+                                    Margin="5,10,0,0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Orientation="Horizontal">
+                                    <TextBlock
+                                        MinWidth="100"
+                                        VerticalAlignment="Center"
+                                        FontWeight="Bold"
+                                        Text="TEC3开关" />
+                                    <TextBlock
+                                        MinWidth="50"
+                                        Margin="10,0,0,0"
+                                        VerticalAlignment="Center">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Text" Value="关" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SettingParamsToShow.TECParams[2].IsWork}" Value="True">
+                                                        <Setter Property="Text" Value="开" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <ComboBox
+                                        Width="70"
+                                        Margin="5,0,0,0"
+                                        SelectedIndex="{Binding SettingParams.TECParams[2].SwSelected}">
+                                        <ComboBoxItem Content="关" />
+                                        <ComboBoxItem Content="开" />
+                                    </ComboBox>
+                                </StackPanel>
+                                <StackPanel
+                                    Margin="5,10,0,0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Orientation="Horizontal">
+                                    <TextBlock
+                                        MinWidth="100"
+                                        VerticalAlignment="Center"
+                                        FontWeight="Bold"
+                                        Text="TEC4开关" />
+                                    <TextBlock
+                                        MinWidth="50"
+                                        Margin="10,0,0,0"
+                                        VerticalAlignment="Center">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Text" Value="关" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SettingParamsToShow.TECParams[3].IsWork}" Value="True">
+                                                        <Setter Property="Text" Value="开" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <ComboBox
+                                        Width="70"
+                                        Margin="5,0,0,0"
+                                        SelectedIndex="{Binding SettingParams.TECParams[3].SwSelected}">
+                                        <ComboBoxItem Content="关" />
+                                        <ComboBoxItem Content="开" />
+                                    </ComboBox>
+                                </StackPanel>
+
+                                <Button
+                                    Height="25"
+                                    Margin="5,10,5,5"
+                                    Command="{Binding ExecuteCommand}"
+                                    CommandParameter="所有TEC控制"
+                                    Content="设置"
+                                    Cursor="Hand" />
+                                <Border Margin="5,25,5,5" Style="{StaticResource HorizontalDividerBorder}" />
+
+
+
+                            </StackPanel>
+
+
+                        </Grid>
+
+                    </TabItem>
+
                     <TabItem Width="40" Height="auto">
                         <TabItem.Header>
                             <TextBlock

@@ -375,37 +375,37 @@ namespace wpfApp.Common.CtrlProtocol
         {
 
             None,
-            LD1_S_Cur = 0xA0,   /* 查询LD电流设定值通道1 */
-            LD2_S_Cur = 0xF0,   /* 查询LD电流设定值通道2 */
-            DFLT_V = 0xA1,      /* 查询初始电压设定值 */
+            LD1_S_Cur ,   /* 查询LD电流设定值通道1 */
+            LD2_S_Cur ,   /* 查询LD电流设定值通道2 */
+            DFLT_V ,      /* 查询初始电压设定值 */
             INTER_TRG_FREQ,     /* 查询内触发频率设定值 */
             PULSE_WIDTH,        /* 查询脉宽设定值 */
             Q_DELAY,            /* 查询调Ｑ延时设定值 */
             TRG_TYPE,           /* 查询触发模式 */
             LD1_SW,             /* LD1开关 */
-            LD2_SW = 0xF6,      /* LD2开关 */
-            Q_SW = 0xA7,        /* todo 查询Q脉冲设定值 */
+            LD2_SW ,      /* LD2开关 */
+            Q_SW ,        /* todo 查询Q脉冲设定值 */
             TEC1_SW,            /* 查询TEC1开关 */
             TEC2_SW,            /* 查询TEC2开关 */
-            TEC3_SW = 0xF8,     /* 查询TEC3开关 */
+            TEC3_SW ,     /* 查询TEC3开关 */
             TEC4_SW,            /* 查询TEC4开关 */
-            TEC1_PARA = 0xAA,   /* 查询第1路TEC：温度、限压、模式设定值 */
+            TEC1_PARA ,   /* 查询第1路TEC：温度、限压、模式设定值 */
             TEC2_PARA,          /* 查询第2路TEC：温度、限压、模式设定值 */
-            TEC3_PARA = 0xFA,   /* 查询第3路TEC：温度、限压、模式设定值 */
+            TEC3_PARA ,   /* 查询第3路TEC：温度、限压、模式设定值 */
             TEC4_PARA,          /* 查询第4路TEC：温度、限压、模式设定值 */
-            PULSE_PARA = 0xAC,  /* 查询子脉冲个数及脉冲间隔设定值 */
+            PULSE_PARA ,  /* 查询子脉冲个数及脉冲间隔设定值 */
             LD1_M_Cur,          /* 查询LD电流检测值通道1 */
-            LD2_M_Cur = 0xFD,   /* 查询LD电流检测值通道2 */
-            L1_M_V = 0xAE,      /* 查询负载电压检测值通道1 */
-            L2_M_V = 0xEE,      /* 查询负载电压检测值通道2 */
-            PWR_TEMP = 0xAF,    /* 查询电源温度检测值 */
-            OUT_PD = 0xC0,      /* 查询外部输入电平1（PD）检测值 */
+            LD2_M_Cur ,   /* 查询LD电流检测值通道2 */
+            L1_M_V ,      /* 查询负载电压检测值通道1 */
+            L2_M_V ,      /* 查询负载电压检测值通道2 */
+            PWR_TEMP ,    /* 查询电源温度检测值 */
+            OUT_PD ,      /* 查询外部输入电平1（PD）检测值 */
             OUT_TEMP,           /* 查询外部输入电平2（温度）检测值 */
             TEC1_M_TEMP,        /* 查询第1路检测温度检测值 */
             TEC1_M_PW,          /* 查询第1路TEC输出功率检测值 */
             TEC2_M_TEMP,        /* 查询第2路检测温度检测值 */
             TEC2_M_PW,          /* 查询第2路TEC输出功率检测值 */
-            TEC3_M_TEMP = 0x12, /* 查询第3路检测温度检测值 */
+            TEC3_M_TEMP , /* 查询第3路检测温度检测值 */
             TEC3_M_PW,          /* 查询第3路TEC输出功率检测值 */
             TEC4_M_TEMP,        /* 查询第4路检测温度检测值 */
             TEC4_M_PW,          /* 查询第4路TEC输出功率检测值 */
@@ -413,13 +413,13 @@ namespace wpfApp.Common.CtrlProtocol
             TEC2_M_Cur,         /* 查询第2路TEC输出电流检测值 */
             TEC3_M_Cur,         /* 查询第3路TEC输出电流检测值 */
             TEC4_M_Cur,         /* 查询第4路TEC输出电流检测值 */
-            WRK_STA = 0xC6,     /* 查询工作状态 */
+            WRK_STA ,     /* 查询工作状态 */
             ALL_SET,            /* 查询所有设定参数 */
-            ALL_M = 0xCF,       /* 查询所有检测参数 */
-            Upgrade = 0xD0,     /* 在线程序升级 */
+            ALL_M ,       /* 查询所有检测参数 */
+            Upgrade ,     /* 在线程序升级 */
 
             ////////////////////////////////////////////////
-            LD1_Vol = 0x20, /* 查询LD1电压值 206～338代表20.6V～33.8V */
+            LD1_Vol , /* 查询LD1电压值 206～338代表20.6V～33.8V */
             LD2_Vol,        /* 查询LD2电压值 206～338代表20.6V～33.8V */
             LD1_HOC,        /* 查询LD1硬件过流  10～150代表1.0A～15.0A*/
             LD2_HOC,        /* 查询LD1硬件过流  10～150代表1.0A～15.0A*/
@@ -437,38 +437,40 @@ namespace wpfApp.Common.CtrlProtocol
             SaveParam,/* 参数保存 */
             PulseType,/* 触发频率模式 */
             BootMode,/*BOOT模式*/
+
+            ALL_PARA,/* 查询所有参数 */
         }
 
 
         public enum PLDParamsToSet
         {
-            LD1_S_Cur = 0x30,  /* 电流通道1 10～150代表1.0A～15.0A */
-            LD2_S_Cur = 0x90,  /* 电流通道2 10～150代表1.0A～15.0A */
-            DFLT_V = 0x31,     /* 初始电压 20～45，代表20V～45V */
+            LD1_S_Cur ,  /* 电流通道1 10～150代表1.0A～15.0A */
+            LD2_S_Cur ,  /* 电流通道2 10～150代表1.0A～15.0A */
+            DFLT_V ,     /* 初始电压 20～45，代表20V～45V */
             INTER_TRG_FREQ,    /* 内触发频率 1Hz～1000Hz */
             PULSE_WIDTH,       /* 脉宽 200us～240us */
             Q_DELAY,           /* 调Ｑ延时 50us～300us */
             TRG_TYPE,          /* 触发模式 0x55内触发；0xAA外触发 */
             LD1_SW,            /* LD电流开关通道1 0x55:关LD电流；0xAA：开LD电流。上电默认关 */
-            LD2_SW = 0x96,     /* LD电流开关通道2 0x55:关LD电流；0xAA：开LD电流。上电默认关 */
-            Q_SW = 0x37,       /* Q脉冲开关 0x55:关Ｑ脉冲；0xAA：开Ｑ脉冲。上电默认开 */
+            LD2_SW ,     /* LD电流开关通道2 0x55:关LD电流；0xAA：开LD电流。上电默认关 */
+            Q_SW ,       /* Q脉冲开关 0x55:关Ｑ脉冲；0xAA：开Ｑ脉冲。上电默认开 */
             TEC1_SW,           /* TEC1开关 0x55：关TEC1；0xAA：开TEC1。上电默认开 */
             TEC2_SW,           /* TEC2开关 0x55：关TEC2；0xAA：开TEC2。上电默认开 */
-            TEC3_SW = 0x98,    /* TEC3开关 0x55：关TEC3；0xAA：开TEC3。上电默认开 */
+            TEC3_SW ,    /* TEC3开关 0x55：关TEC3；0xAA：开TEC3。上电默认开 */
             TEC4_SW,           /* TEC4开关 0x55：关TEC4；0xAA：开TEC4。上电默认开 */
-            TEC1_PARA = 0x3A,  /* 第1路TEC：工作温度、限压、模式 设置TEC1参数，共3个参数，每个参数2个字节：1、工作温度（150～650，代表15.0℃～65.0℃）2、限压3、模式 */
+            TEC1_PARA ,  /* 第1路TEC：工作温度、限压、模式 设置TEC1参数，共3个参数，每个参数2个字节：1、工作温度（150～650，代表15.0℃～65.0℃）2、限压3、模式 */
             TEC2_PARA,         /* 第2路TEC */
-            TEC3_PARA = 0x9A,  /* 第3路TEC */
+            TEC3_PARA ,  /* 第3路TEC */
             TEC4_PARA,         /* 第4路TEC */
-            PULSE_PARA = 0x3C, /* 子脉冲参数，共12个参数，每个参数2个字节：1、子脉冲个数（取值范围1~12）2~11、脉冲间隔1（取值范围240~660）*/
+            PULSE_PARA , /* 子脉冲参数，共12个参数，每个参数2个字节：1、子脉冲个数（取值范围1~12）2~11、脉冲间隔1（取值范围240~660）*/
 
 
-            Upgrade = 0x76,          /* 在线程序升级 */
+            Upgrade ,          /* 在线程序升级 */
 
             ////////////////////////////////////////////////
 
 
-            LD1_Vol = 0xC0, /* LD1电压值 206～338代表20.6V～33.8V */
+            LD1_Vol , /* LD1电压值 206～338代表20.6V～33.8V */
             LD2_Vol,        /* LD2电压值 206～338代表20.6V～33.8V */
             LD1_HOC,        /* LD1硬件过流  10～150代表1.0A～15.0A*/
             LD2_HOC,        /* LD1硬件过流  10～150代表1.0A～15.0A*/
@@ -487,6 +489,9 @@ namespace wpfApp.Common.CtrlProtocol
             ClearErr,/* 清空错误 */
             SetVersion,
             BootMode,/*进入BOOT模式*/
+
+            All_LD_PARA,/* 所有LD参数 */
+            ALL_TEC_SW,/* 所有TEC开关 */
         }
 
         public enum PLDParamsToQuery
@@ -555,6 +560,8 @@ namespace wpfApp.Common.CtrlProtocol
             ALL_M,          /* 所有检测参数 */
             PulseType,/* 触发频率模式 */
             Upgrade,
+
+            ALL_PARA,
 
         }
         public enum TrigType
