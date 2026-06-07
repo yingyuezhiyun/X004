@@ -82,7 +82,7 @@ float get_out_temp()
     float tmp = 0;
     uint16_t adc = calculate_moving_average(&adc_cb[9]);
     float V1 = (float)adc / INTER_ADC_MAX_VAULE * INTER_ADC_REF_V;
-    float R1 = 10 * 1000.0 * V1 / (INTER_ADC_REF_V - V1);
+    float R1 = 10 * 1000.0 * (INTER_ADC_REF_V - V1) / V1;
     float t1 = 1177692.5 / (1203.93713 + 298.15 * log(R1)) - 273.15;
     float B1 = -0.008224 * pow((t1 + 273.15), 2) + 7.1787 * t1 + 4452.5584; // pow(x,y),求x的y次方
     tmp = (B1 * 29815 / (B1 + 298.15 * log(R1) / log(exp(1)) - 2746.0629) - 27315) / 100.0;
