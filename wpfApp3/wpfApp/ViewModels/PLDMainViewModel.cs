@@ -525,13 +525,24 @@ namespace wpfApp.ViewModels
 
                 private Param _fanStatus = new Param() { Name = "风扇:", Value = "Nan" };
                 /// <summary>
-                /// 水泵状态
+                /// 风扇状态
                 /// </summary>
                 public Param FanStatus
                 {
                     get { return _fanStatus; }
                     set { _fanStatus = value; RaisePropertyChanged(); }
                 }
+
+                private Param _LCMStatus = new Param() { Name = "水泵故障码:", Value = "Nan" };
+                /// <summary>
+                /// 水泵故障码
+                /// </summary>
+                public Param LCMStatus
+                {
+                    get { return _LCMStatus; }
+                    set { _LCMStatus = value; RaisePropertyChanged(); }
+                }
+
 
                 private Param _bitStatus = new Param() { Name = "自检状态:", Value = "Nan" };
                 /// <summary>
@@ -633,9 +644,9 @@ namespace wpfApp.ViewModels
             public MeasureParam()
             {
 
-                StatusList = new List<Param>() { /*StatusInfo.Mode,StatusInfo.FreqType,*/ StatusInfo.LDStatus[0], StatusInfo.LDStatus[1],
+                StatusList = new List<Param>() { /*StatusInfo.Mode,*/StatusInfo.PulseType, StatusInfo.LDStatus[0], StatusInfo.LDStatus[1],
                 StatusInfo.TECStatus[0], StatusInfo.TECStatus[1] , StatusInfo.TECStatus[2], StatusInfo.TECStatus[3] ,
-                StatusInfo.TQStatus, StatusInfo.PumpStatus,StatusInfo.FanStatus};
+                StatusInfo.TQStatus, StatusInfo.PumpStatus,StatusInfo.FanStatus,StatusInfo.LCMStatus};
 
                 LDParams = new List<LDParam>() { new LDParam() { }, new LDParam() { } };
                 TECParams = new List<TECParam>() { new TECParam(), new TECParam(), new TECParam(), new TECParam() };
@@ -698,7 +709,7 @@ namespace wpfApp.ViewModels
                     Tile = "液冷测量参数:",
                     Icon = "AlphaYBox",
                     Params = new List<Param>() {
-                       /* LCMParams.Vol,LCMParams.Curr,LCMParams.Power,LCMParams.MotorSpeed, */LCMParams.Temp }
+                       /* LCMParams.Vol,LCMParams.Curr,LCMParams.Power,*/LCMParams.MotorSpeed, LCMParams.Temp }
                 });
                 MeasureParamsShowList.Add(new MeasureParamInfo()
                 {
@@ -966,7 +977,7 @@ namespace wpfApp.ViewModels
                     set { _fanSpeed = value; RaisePropertyChanged(); }
                 }
 
-                private string _motorSpeed="30000";
+                private string _motorSpeed="10000";
 
                 public string MotorSpeed
                 {

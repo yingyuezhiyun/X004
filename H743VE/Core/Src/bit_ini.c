@@ -248,7 +248,7 @@ void DefaultParams()
         set_param.Pulse_para.Interval[i] = 250;
     }
     set_param.LCM.Fan = WORK_OFF;
-    set_param.LCM.MotorSpeed = 30000;
+    set_param.LCM.MotorSpeed = 10000;
     set_param.LCM.PwrLimit = 150;
 }
 
@@ -373,6 +373,7 @@ uint8_t bit_init()
 
     // todo
     DefaultRunningFlag();
+    set_param.LCM.MotorSpeed = 10000;
 
     return result;
 }

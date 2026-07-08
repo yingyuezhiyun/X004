@@ -214,6 +214,7 @@ typedef struct
     uint8_t DCCurrent;   // 直流母线电流 0.1A
     int16_t Temp;        // 电机控制器温度 0.1℃
     uint8_t PwrLimit;    // 功率 1w
+    uint8_t state;       // 状态信息
 } M_LCM_t;
 
 typedef struct

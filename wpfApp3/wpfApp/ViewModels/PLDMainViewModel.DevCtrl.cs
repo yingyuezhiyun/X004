@@ -381,6 +381,19 @@ namespace wpfApp.ViewModels
             }
         }
 
+        void DevSetLCMMotorSpeed()
+        {
+            try
+            {
+                setParam.LCMParams.MotorSpeed = Convert.ToUInt16(SettingParams.LCMParams.MotorSpeed);
+                DevSetParam(PLDParams.PLDParamsToSet.SetLCMMotorSpeed);
+            }
+            catch (Exception ex)
+            {
+                aggregator.SendMessage(ex.Message, "Main");
+            }
+        }
+
         void DevSetLDxHOC(int idx)
         {
             var p = ConvertStringFloat(SettingParams.LDParams[idx].HOC);
@@ -983,6 +996,7 @@ namespace wpfApp.ViewModels
                 case "设置脉冲定频": DevSetPulseFreq(); break;
                 case "设置脉冲串参数": DevSetPulseParam(); break;
                 case "设置液冷参数": DevSetLCM(); break;
+                case "设置水泵转速": DevSetLCMMotorSpeed(); break;
                 case "设置LD1过流保护": DevSetLDxHOC(0); break;
                 case "设置LD2过流保护": DevSetLDxHOC(1); break;       
                 case "设置LD1电压": DevSetLDxVol(0); break;

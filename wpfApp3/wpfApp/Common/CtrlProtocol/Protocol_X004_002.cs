@@ -163,6 +163,8 @@ namespace wpfApp.Common.CtrlProtocol
             ALL_TEC_SW = 0xEB,  /* 设置所有TEC开关  */
             All_LD_PARA = 0xEC, /* 设置所有LD参数 包括电流设定值和开关 */
 
+            SetLCMMotorSpeed= 0xEE,/* 设置液冷模块电机转速 */
+
         }
 
         private enum DEV_GET_CMD_TYPE
@@ -206,6 +208,8 @@ namespace wpfApp.Common.CtrlProtocol
             BootMode = 0xEC,/*BOOT模式*/
             PulseType = 0xE7,/* 频率触发模式 */
             ALL_PARA = 0xED,    /* 查询所有参数 包括设置参数和检测参数 */
+
+            SetLCMMotorSpeed= 0xEE,/* 设置液冷模块电机转速 */
 
         }
         // Helper mapping methods: try to map between PLD enums and device enums by name.
@@ -421,6 +425,9 @@ namespace wpfApp.Common.CtrlProtocol
                         p.MeasureParams.TECParams[3].Temp = BitConverter.ToInt16(data.data, 81) / 10.0f;
                         p.MeasureParams.TECParams[3].Power = BitConverter.ToInt16(data.data, 83) / 10.0f;
                         p.MeasureParams.LCMParams.Temp = BitConverter.ToUInt16(data.data, 85) / 10.0f;
+                        p.SetParams.LCMParams.MotorSpeed = BitConverter.ToUInt16(data.data, 87);
+                        p.MeasureParams.LCMParams.MotorSpeed = BitConverter.ToUInt16(data.data, 89);
+                        p.MeasureParams.LCMParams.state = BitConverter.ToUInt16(data.data, 91);
                         p.time = data.time;
                     }
                     break;
@@ -434,6 +441,9 @@ namespace wpfApp.Common.CtrlProtocol
                
                 case DEV_GET_CMD_TYPE.BootMode:
                     p.MeasureParams.BootMode = (BootMode)data.data[0];
+                    break;
+                case DEV_GET_CMD_TYPE.SetLCMMotorSpeed:
+                    p.MeasureParams.LCMParams.MotorSpeed = BitConverter.ToUInt16(data.data);
                     break;
                 default:
                     break;
@@ -698,6 +708,9 @@ namespace wpfApp.Common.CtrlProtocol
                     break;
                 case PLDParamsToSet.BootMode:
                     databytes.Add((byte)p.SetParams.BootMode);
+                    break;
+                case PLDParamsToSet.SetLCMMotorSpeed:
+                    databytes.AddRange(BitConverter.GetBytes(p.SetParams.LCMParams.MotorSpeed));
                     break;
                 default:
                     break;

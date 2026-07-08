@@ -171,7 +171,7 @@
             </ItemsControl.ItemsPanel>-->
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <StackPanel Margin="25,20,0,0" Orientation="Horizontal">
+                                        <StackPanel Margin="25,18,0,0" Orientation="Horizontal">
                                             <TextBlock
                                                 MinWidth="50"
                                                 Margin="0,0,20,0"
@@ -694,7 +694,35 @@
                                     </StackPanel>
 
 
+                                    <StackPanel
+                                        Margin="5,10,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Orientation="Horizontal">
+                                        <TextBlock
+                                            MinWidth="100"
+                                            VerticalAlignment="Center"
+                                            FontWeight="Bold"
+                                            Text="水泵转速" />
+                                        <TextBlock
+                                            MinWidth="50"
+                                            Margin="10,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Text="{Binding SettingParamsToShow.LCMParams.MotorSpeed}" />
+                                        <TextBox
+                                            Width="70"
+                                            Margin="10,0,0,0"
+                                            materialDesign:TextFieldAssist.SuffixText="rpm"
+                                            Text="{Binding SettingParams.LCMParams.MotorSpeed}" />
+                                        <Button
+                                            Height="25"
+                                            Margin="10,0,0,0"
+                                            Command="{Binding ExecuteCommand}"
+                                            CommandParameter="设置水泵转速"
+                                            Content="设置"
+                                            Cursor="Hand" />
 
+                                    </StackPanel>
 
 
                                 </StackPanel>

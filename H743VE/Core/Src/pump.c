@@ -20,12 +20,13 @@ void pump_parse(uint8_t *data, uint16_t len)
         pump_get_param.Temp = data[6] /* / 2.0 */;
         pump_get_param.PwrLimit = data[7];
 
-        measure_param.LCM.MotorEn = (pump_get_param.state == 1 ? WORK_ON : WORK_OFF);
+        measure_param.LCM.MotorEn = (pump_get_param.state & 0x01) == 1 ? WORK_ON : WORK_OFF;
         measure_param.LCM.MotorSpeed = pump_get_param.MotorSpeed;
         measure_param.LCM.DCCurrent = pump_get_param.DCCurrent;
         measure_param.LCM.DCVoltage = pump_get_param.DCVoltage;
         measure_param.LCM.Temp = pump_get_param.Temp * 5;
         measure_param.LCM.PwrLimit = pump_get_param.PwrLimit;
+        measure_param.LCM.state = pump_get_param.state;
     }
 }
 
@@ -58,7 +59,7 @@ void pump_ctrl()
             {
                 lcm->Fan = WORK_ON;
                 lcm->PwrEn = WORK_ON;
-                pump_set_param.MotorSpeed = 30000;
+                pump_set_param.MotorSpeed = set_param.LCM.MotorSpeed;
                 pump_set_param.state = 1;
                 START_FAN;
                 HAL_GPIO_WritePin(LCVG_ONOFF_GPIO_Port, LCVG_ONOFF_Pin, 1);

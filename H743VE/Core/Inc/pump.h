@@ -14,7 +14,7 @@ typedef struct
 typedef struct
 {
     uint16_t MotorSpeed; // 电机转速 1rpm
-    uint8_t state;       // 1-工作 0-停止
+    uint8_t state;       // 状态信息
     uint16_t DCVoltage;  // 直流母线电压 0.1V
     uint8_t DCCurrent;   // 直流母线电流 0.1V
     int8_t Temp;        // 电机控制器温度 0.5℃ ?

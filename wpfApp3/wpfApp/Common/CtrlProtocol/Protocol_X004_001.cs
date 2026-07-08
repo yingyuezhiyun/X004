@@ -72,6 +72,7 @@ namespace wpfApp.Common.CtrlProtocol
                 public float Power { get; set; }
                 public float MotorSpeed { get; set; }
                 public float Temp { get; set; }
+                public UInt16 state { get; set; }
             }
             public class OtherInfo
             {
@@ -268,6 +269,7 @@ namespace wpfApp.Common.CtrlProtocol
             LD2_SW = 1 << 19,      // LD2 开关 1：开启; 0：关闭       
             LCM_Fan = 1 << 20,      // LCM风扇 
             LCM_MotorEn = 1 << 21,      // LCM电机开关 
+            Pulse_Type = 1 << 22,      // 脉冲类型 1：定频 0：变频
         }
 
 
@@ -492,6 +494,8 @@ namespace wpfApp.Common.CtrlProtocol
 
             All_LD_PARA,/* 所有LD参数 */
             ALL_TEC_SW,/* 所有TEC开关 */
+
+            SetLCMMotorSpeed,/* 设置液冷模块电机转速 */
         }
 
         public enum PLDParamsToQuery
