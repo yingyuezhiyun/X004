@@ -253,7 +253,9 @@ namespace wpfApp.Common.CtrlProtocol
                 return (PLDParamsFromGet.None, null);
             }
             paramsGet = mappedGet;
-            switch ((DEV_GET_CMD_TYPE)data.cmd)
+            try
+            { 
+                switch ((DEV_GET_CMD_TYPE)data.cmd)
             {
                 case DEV_GET_CMD_TYPE.LD1_S_Cur:
                     p.SetParams.LDParams[0].Curr = data.ToUFloat;
@@ -443,10 +445,15 @@ namespace wpfApp.Common.CtrlProtocol
                     p.MeasureParams.BootMode = (BootMode)data.data[0];
                     break;
                 case DEV_GET_CMD_TYPE.SetLCMMotorSpeed:
-                    p.MeasureParams.LCMParams.MotorSpeed = BitConverter.ToUInt16(data.data);
+                    p.SetParams.LCMParams.MotorSpeed = BitConverter.ToUInt16(data.data);
                     break;
                 default:
                     break;
+            }
+            }
+            catch (Exception)
+            {
+
             }
             result = p;
             return (paramsGet, result);

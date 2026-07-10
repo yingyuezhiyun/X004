@@ -441,6 +441,8 @@ namespace wpfApp.Common.CtrlProtocol
             BootMode,/*BOOT模式*/
 
             ALL_PARA,/* 查询所有参数 */
+
+            SetLCMMotorSpeed,/* 设置液冷模块电机转速 */
         }
 
 
