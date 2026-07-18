@@ -2,7 +2,7 @@
 
 #include "stdint.h"
 
-extern void pump_parse(uint8_t *data, uint16_t len);
+extern void pump_parse(uint32_t id, uint8_t *data, uint16_t len);
 
 typedef struct
 {

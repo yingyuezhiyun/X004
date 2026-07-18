@@ -232,10 +232,8 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
   // FDCAN1_RxFrame.Header.DataLength;
 
   HAL_FDCAN_GetRxMessage(hfdcan, FDCAN_RX_FIFO0, &FDCAN1_RxFrame.Header, Fcandata);
-  if (FDCAN1_RxFrame.Header.Identifier == PUMP_SEND_ID)
-  {
-    pump_parse(Fcandata, FDCAN1_RxFrame.Header.DataLength);
-  }
+
+  pump_parse(FDCAN1_RxFrame.Header.Identifier, Fcandata, FDCAN1_RxFrame.Header.DataLength);
 }
 
 void HAL_FDCAN_ErrorCallback(FDCAN_HandleTypeDef *hfdcan)

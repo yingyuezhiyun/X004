@@ -48,6 +48,7 @@ APP2:		0x80E0000		128k
 #define TEC_SET_MIN_TEMP (150)
 
 #define PUMP_SEND_ID (0x490)
+#define PUMP_SEND_ID_EX (0x556)
 #define PUMP_REV_ID (0x495)
 #define FDCANTXRXLEN (8)
 
