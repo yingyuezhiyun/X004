@@ -164,6 +164,7 @@ namespace wpfApp.Common.CtrlProtocol
             All_LD_PARA = 0xEC, /* 设置所有LD参数 包括电流设定值和开关 */
 
             SetLCMMotorSpeed= 0xEE,/* 设置液冷模块电机转速 */
+            SaveParam = 0xEF,/* 参数保存 */
 
         }
 
@@ -210,6 +211,7 @@ namespace wpfApp.Common.CtrlProtocol
             ALL_PARA = 0xED,    /* 查询所有参数 包括设置参数和检测参数 */
 
             SetLCMMotorSpeed= 0xEE,/* 设置液冷模块电机转速 */
+            SaveParam = 0xEF,/* 参数保存 */
 
         }
         // Helper mapping methods: try to map between PLD enums and device enums by name.

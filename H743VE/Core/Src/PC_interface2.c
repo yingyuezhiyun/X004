@@ -163,6 +163,7 @@ enum
     P_S_ALL_LD_PARA = 0xEC,    /* 设置所有LD参数 包括电流设定值和开关 */
     P_G_ALL_PARA = 0xED,       /* 查询所有参数 包括设置参数和检测参数 */
     P_S_LCM_MotorSpeed = 0xEE, /* 设置LCM电机转速 */
+    P_SAVE = 0xEF,             /* 参数保存 */
 };
 
 enum
@@ -208,6 +209,7 @@ enum
     M_PulseType = 0xE7,        /* 查询脉冲类型 0x55：变频 0xAA：定频;  */
     M_ALL_PARA = 0xED,         /* 查询所有参数 包括设置参数和检测参数 */
     M_S_LCM_MotorSpeed = 0xEE, /* 查询LCM电机转速 */
+    M_SAVE = 0xef,             /* 参数保存 反馈 */
 };
 
 void update_status()
@@ -545,6 +547,7 @@ void exec_commands_list2(UART_HandleTypeDef *huart, uint8_t cmd, uint8_t *data, 
    case P_S_ALL_TEC_SW:             set_all_tec_sw(data);                                                       break;
    case P_S_ALL_LD_PARA:            set_all_ld_para(data);                                                      break;
    case P_G_ALL_PARA:               get_all_para(huart, M_ALL_PARA);                                            break;
+   case P_SAVE:                     save_param(huart,M_SAVE);                                                   break;
    default:
        break;
    }
