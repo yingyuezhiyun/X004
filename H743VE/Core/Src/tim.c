@@ -559,8 +559,14 @@ uint32_t LD_TRG_RCC_SPWM[24];
 uint16_t LD_TRG_RCC_SPWM_Len = 0;
 uint32_t Q_TRG_RCC_SPWM[24];
 uint16_t Q_TRG_RCC_SPWM_Len = 0;
+uint32_t LD_TRG_RCC_SPWM_Mirror[24];
+uint16_t LD_TRG_RCC_SPWM_Len_Mirror = 0;
+uint32_t Q_TRG_RCC_SPWM_Mirror[24];
+uint16_t Q_TRG_RCC_SPWM_Len_Mirror = 0;
+
 uint32_t LD_TRG_RCC_NOR[2];
 uint32_t Q_TRG_RCC_NOR[2];
+uint8_t pending_flag = 0;
 #define TIM_PULSE_STEP_US (10)
 #define TIM2_CLK (10000000.0)
 // #define QWidth_us (100)
@@ -619,6 +625,10 @@ void CalcPulse_SPWMParam()
     Q_TRG_RCC_SPWM[idx++] = basetick;
   }
   Q_TRG_RCC_SPWM_Len = idx;
+
+  pending_flag = 1;
+  
+  
 }
 
 void CalcPulse_NORParam()
@@ -655,17 +665,32 @@ void SetPulse_SPWMParam()
 
   // HAL_GPIO_WritePin(LD_TRG_OUT_GPIO_Port, LD_TRG_OUT_Pin, GPIO_PIN_RESET);
   // HAL_GPIO_WritePin(Q_TRG_OUT_GPIO_Port, Q_TRG_OUT_Pin, GPIO_PIN_RESET);
-  HAL_TIM_OC_DMA_Config(&htim2, TIM_CHANNEL_1, LD_TRG_RCC_SPWM, LD_TRG_RCC_SPWM_Len);
+  if (pending_flag)
+  {
+    for (size_t i = 0; i < Q_TRG_RCC_SPWM_Len; i++)
+    {
+      Q_TRG_RCC_SPWM_Mirror[i] = Q_TRG_RCC_SPWM[i];
+    }
+    for (size_t i = 0; i < LD_TRG_RCC_SPWM_Len; i++)
+    {
+      LD_TRG_RCC_SPWM_Mirror[i] = LD_TRG_RCC_SPWM[i];
+    }
+    LD_TRG_RCC_SPWM_Len_Mirror = LD_TRG_RCC_SPWM_Len;
+    Q_TRG_RCC_SPWM_Len_Mirror = Q_TRG_RCC_SPWM_Len;
+  }
+
+  HAL_TIM_OC_DMA_Config(&htim2, TIM_CHANNEL_1, LD_TRG_RCC_SPWM_Mirror, LD_TRG_RCC_SPWM_Len_Mirror);
   if (set_param.T_Q.sw == WORK_ON)
   {
-    HAL_TIM_OC_DMA_Config(&htim2, TIM_CHANNEL_3, Q_TRG_RCC_SPWM, Q_TRG_RCC_SPWM_Len);
-    uint32_t MAX_P = LD_TRG_RCC_SPWM[LD_TRG_RCC_SPWM_Len - 1] > Q_TRG_RCC_SPWM[Q_TRG_RCC_SPWM_Len - 1] ? LD_TRG_RCC_SPWM[LD_TRG_RCC_SPWM_Len - 1] : Q_TRG_RCC_SPWM[Q_TRG_RCC_SPWM_Len - 1];
+    HAL_TIM_OC_DMA_Config(&htim2, TIM_CHANNEL_3, Q_TRG_RCC_SPWM_Mirror, Q_TRG_RCC_SPWM_Len_Mirror);
+    uint32_t MAX_P = LD_TRG_RCC_SPWM_Mirror[LD_TRG_RCC_SPWM_Len_Mirror - 1] > Q_TRG_RCC_SPWM_Mirror[Q_TRG_RCC_SPWM_Len_Mirror - 1] ? 
+    LD_TRG_RCC_SPWM_Mirror[LD_TRG_RCC_SPWM_Len_Mirror - 1] : Q_TRG_RCC_SPWM_Mirror[Q_TRG_RCC_SPWM_Len_Mirror - 1];
     __HAL_TIM_SET_AUTORELOAD(&htim2, MAX_P + Pulse_Tim_Delay_us * TIM_PULSE_STEP_US - 1);
   }
   else
   {
     TIM_CCxChannelCmd(htim2.Instance, TIM_CHANNEL_3, TIM_CCx_DISABLE);
-    __HAL_TIM_SET_AUTORELOAD(&htim2, LD_TRG_RCC_SPWM[LD_TRG_RCC_SPWM_Len - 1] + Pulse_Tim_Delay_us * TIM_PULSE_STEP_US - 1);
+    __HAL_TIM_SET_AUTORELOAD(&htim2, LD_TRG_RCC_SPWM_Mirror[LD_TRG_RCC_SPWM_Len_Mirror - 1] + Pulse_Tim_Delay_us * TIM_PULSE_STEP_US - 1);
   }
   HAL_TIM_Base_Start_IT(&htim2);
 
@@ -677,7 +702,6 @@ void SetPulse_SPWMParam()
   {
     running_flag.pulse_flags.content.out_spwm = FLAG_RUNNING;
   }
-
   // HAL_TIM_OC_Start_DMA
 }
 
