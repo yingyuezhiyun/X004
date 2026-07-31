@@ -373,7 +373,7 @@ uint8_t bit_init()
 
     // todo
     DefaultRunningFlag();
-    set_param.LCM.MotorSpeed = 10000;
+    // set_param.LCM.MotorSpeed = 10000;
 
     return result;
 }
