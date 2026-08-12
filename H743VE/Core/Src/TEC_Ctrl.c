@@ -399,7 +399,7 @@ void TEC_Ctrl(uint8_t tec_ch, tec_setparam_t *stec, tec_measureparam_t *mtec)
     case FLAG_RUNNING:
         if (TEC_Check_OT(stec, mtec) || TEC_Check_UT(stec, mtec))
         {
-            if (status_deley_check(&TEC_status, TEC_INI_TIMEOUT) == FLAG_OVERRANGE)
+            if (status_deley_check(&TEC_status[tec_ch], TEC_INI_TIMEOUT) == FLAG_OVERRANGE)
             {
                 // bit_info.err_info.tec_err = 1;
                 if (TEC_Check_OT(stec, mtec))
@@ -422,7 +422,7 @@ void TEC_Ctrl(uint8_t tec_ch, tec_setparam_t *stec, tec_measureparam_t *mtec)
     case FLAG_DONE:
         if (TEC_Check_OT(stec, mtec))
         {
-            if (status_deley_check(&OT_status, TEC_TIMEOUT) == FLAG_OVERRANGE)
+            if (status_deley_check(&OT_status[tec_ch], TEC_TIMEOUT) == FLAG_OVERRANGE)
             {
                 TEC_status[tec_ch].flag = FLAG_OVERRANGE;
                 stec->ErrStatus.content.OT=1;
@@ -436,7 +436,7 @@ void TEC_Ctrl(uint8_t tec_ch, tec_setparam_t *stec, tec_measureparam_t *mtec)
         }
         if (TEC_Check_UT(stec, mtec))
         {
-            if (status_deley_check(&UT_status, TEC_TIMEOUT) == FLAG_OVERRANGE)
+            if (status_deley_check(&UT_status[tec_ch], TEC_TIMEOUT) == FLAG_OVERRANGE)
             {
                 TEC_status[tec_ch].flag = FLAG_OVERRANGE;
                 stec->ErrStatus.content.UT=1;
