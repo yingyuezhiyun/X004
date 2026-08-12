@@ -449,7 +449,10 @@ namespace wpfApp.Common.CtrlProtocol
                 case DEV_GET_CMD_TYPE.SetLCMMotorSpeed:
                     p.SetParams.LCMParams.MotorSpeed = BitConverter.ToUInt16(data.data);
                     break;
-                default:
+                case DEV_GET_CMD_TYPE.SaveParam:
+                    p.MeasureParams.ParamSaveStatus = data.data[0] == 1 ? true : false;
+                    break;
+                    default:
                     break;
             }
             }
