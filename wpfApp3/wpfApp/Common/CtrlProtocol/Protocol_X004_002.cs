@@ -194,20 +194,20 @@ namespace wpfApp.Common.CtrlProtocol
             ALL_SET = 0xC7,            /* 所有设定参数 */
             ALL_M = 0xCF,       /* 所有检测参数 */
             Upgrade = 0xD0,     /* 在线程序升级 */
-            LD2_SW = 0xE6,      /* LD2开关 */
+            LD2_SW = 0x20,      /* LD2开关 */
             LD2_S_Cur = 0xE0,   /* LD电流设定值通道2 */
-            TEC3_SW = 0xE8,     /* TEC3开关 */
-            TEC4_SW = 0xE9,            /* TEC4开关 */
+            TEC3_SW = 0x21,     /* TEC3开关 */
+            TEC4_SW = 0x22,            /* TEC4开关 */
             TEC3_PARA = 0xEA,   /* 第3路TEC：温度、限压设定值 */
             TEC4_PARA = 0xEB,          /* 第4路TEC：温度、限压设定值 */
             LD2_M_Cur = 0xBD,   /* LD电流检测值通道2 */
             L2_M_V = 0xB9,      /* 负载电压检测值通道2 */
             TEC3_M_TEMP = 0xB2, /* 第3路检测温度检测值 */
             TEC3_M_PW = 0xB3,          /* 第3路TEC输出功率检测值 */
-            TEC4_M_TEMP = 0xE4,        /* 第4路检测温度检测值 */
-            TEC4_M_PW = 0xE5,          /* 第4路TEC输出功率检测值 */
+            TEC4_M_TEMP = 0x23,        /* 第4路检测温度检测值 */
+            TEC4_M_PW = 0x24,          /* 第4路TEC输出功率检测值 */
             BootMode = 0xEC,/*BOOT模式*/
-            PulseType = 0xE7,/* 频率触发模式 */
+            PulseType = 0x25,/* 频率触发模式 */
             ALL_PARA = 0xED,    /* 查询所有参数 包括设置参数和检测参数 */
 
             SetLCMMotorSpeed= 0xEE,/* 设置液冷模块电机转速 */
