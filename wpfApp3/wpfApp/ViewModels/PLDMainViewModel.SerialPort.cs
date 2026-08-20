@@ -540,7 +540,10 @@ namespace wpfApp.ViewModels
 
                         //add
                         MeasureParams.LCMParams.Temp.Value = p1.MeasureParams.LCMParams.Temp.ToString("F1");
-                        
+                        SettingParamsToShow.LCMParams.MotorSpeed = p1.SetParams.LCMParams.MotorSpeed.ToString();
+                        MeasureParams.LCMParams.MotorSpeed.Value = p1.MeasureParams.LCMParams.MotorSpeed.ToString();
+                        MeasureParams.StatusInfo.LCMStatus.Value = "0x" + p1.MeasureParams.LCMParams.state.ToString("X4");
+
                         UpdateStatus(p1.MeasureParams.Status);
                         Update.Version = p1.MeasureParams.Version;
                         bool IsSave = false;

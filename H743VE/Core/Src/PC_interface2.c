@@ -76,6 +76,9 @@ typedef struct
     int16_t TEC4_Temp;
     int16_t TEC4_Power;
     int16_t LCM_Temp;
+    uint16_t LCM_Set_MotorSpeed;
+    uint16_t LCM_M_MotorSpeed;
+    uint16_t LCM_M_state;
 } measure_packet_t;
 #pragma unpack()
 
@@ -398,6 +401,9 @@ static void get_all_measure_param(UART_HandleTypeDef *huart, uint8_t cmd)
         p.Version[i] = Version2[i];
     }
     p.LCM_Temp = data->LCM.Temp;
+    p.LCM_Set_MotorSpeed = set_param.LCM.MotorSpeed;
+    p.LCM_M_MotorSpeed = measure_param.LCM.MotorSpeed;
+    p.LCM_M_state = measure_param.LCM.state;
     // sizeof(p);
     PC_ACK(cmd, p);
 }
@@ -408,9 +414,6 @@ static void get_all_para(UART_HandleTypeDef *huart, uint8_t cmd)
     {
         set_packet_t set;
         measure_packet_t measure;
-        uint16_t LCM_Set_MotorSpeed;
-        uint16_t LCM_M_MotorSpeed;
-        uint16_t LCM_M_state;
     } all_para_packet_t;
     all_para_packet_t p;
     set_param_t *set = &set_param;
@@ -455,9 +458,9 @@ static void get_all_para(UART_HandleTypeDef *huart, uint8_t cmd)
         p.measure.Version[i] = Version2[i];
     }
     p.measure.LCM_Temp = data->LCM.Temp;
-    p.LCM_Set_MotorSpeed = set_param.LCM.MotorSpeed;
-    p.LCM_M_MotorSpeed = measure_param.LCM.MotorSpeed;
-    p.LCM_M_state = measure_param.LCM.state;
+    p.measure.LCM_Set_MotorSpeed = set_param.LCM.MotorSpeed;
+    p.measure.LCM_M_MotorSpeed = measure_param.LCM.MotorSpeed;
+    p.measure.LCM_M_state = measure_param.LCM.state;
     // sizeof(p);
     PC_ACK(cmd, p);
 }

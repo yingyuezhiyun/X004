@@ -387,7 +387,10 @@ namespace wpfApp.Common.CtrlProtocol
                         p.MeasureParams.TECParams[2].Power = BitConverter.ToInt16(data.data, 31) / 10.0f;
                         p.MeasureParams.TECParams[3].Temp = BitConverter.ToInt16(data.data, 33) / 10.0f;
                         p.MeasureParams.TECParams[3].Power = BitConverter.ToInt16(data.data, 35) / 10.0f;
-                        p.MeasureParams.LCMParams.Temp = BitConverter.ToUInt16(data.data, 37) / 10.0f;                       
+                        p.MeasureParams.LCMParams.Temp = BitConverter.ToUInt16(data.data, 37) / 10.0f; 
+                        p.SetParams.LCMParams.MotorSpeed = BitConverter.ToUInt16(data.data, 39);
+                        p.MeasureParams.LCMParams.MotorSpeed = BitConverter.ToUInt16(data.data, 41);
+                        p.MeasureParams.LCMParams.state = BitConverter.ToUInt16(data.data, 43);                      
                         p.time = data.time;
                     }
                     break;
