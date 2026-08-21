@@ -12,6 +12,8 @@
 #include "protocol_comm.h"
 #include "math.h"
 
+#define PC_ACK_BK send_ack(huart, cmd, data, data_len)
+
 // char Version[] = "X004_001";
 // uint64_t BuildTime = 202509112205;
 
@@ -162,11 +164,11 @@ enum
     P_S_PulseType = 0xE8,      /* 设置脉冲类型  0x55：变频 0xAA：定频; */
     P_G_PulseType = 0xE9,      /* 查询脉冲类型 */
     P_Clear_Err = 0xEA,        /* 清空错误 */
-    P_S_ALL_TEC_SW = 0xEB,     /* 设置所有TEC开关  */
-    P_S_ALL_LD_PARA = 0xEC,    /* 设置所有LD参数 包括电流设定值和开关 */
-    P_G_ALL_PARA = 0xED,       /* 查询所有参数 包括设置参数和检测参数 */
-    P_S_LCM_MotorSpeed = 0xEE, /* 设置LCM电机转速 */
-    P_SAVE = 0xEF,             /* 参数保存 */
+    P_S_ALL_TEC_SW = 0x26,     /* 设置所有TEC开关  */
+    P_S_ALL_LD_PARA = 0x27,    /* 设置所有LD参数 包括电流设定值和开关 */
+    P_G_ALL_PARA = 0x28,       /* 查询所有参数 包括设置参数和检测参数 */
+    P_S_LCM_MotorSpeed = 0x29, /* 设置LCM电机转速 */
+    P_SAVE = 0x2A,             /* 参数保存 */
 };
 
 enum
@@ -484,26 +486,26 @@ void exec_commands_list2(UART_HandleTypeDef *huart, uint8_t cmd, uint8_t *data, 
    switch (cmd)
    {
     
-   case P_S_LD1_S_Cur:              SET_PARAM_INT16(set_param.ld[0].Cur);                                       break;
-   case P_S_LD2_S_Cur:              SET_PARAM_INT16(set_param.ld[1].Cur);                                       break;
-   case P_S_PULSE_WIDTH:            set_pulse_width(*(uint16_t *)data);                                         break;
-   case P_S_Q_DELAY:                set_Q_delay(*(uint16_t *)data);                                             break;
+   case P_S_LD1_S_Cur:              SET_PARAM_INT16(set_param.ld[0].Cur); PC_ACK_BK;                            break;
+   case P_S_LD2_S_Cur:              SET_PARAM_INT16(set_param.ld[1].Cur); PC_ACK_BK;                            break;
+   case P_S_PULSE_WIDTH:            set_pulse_width(*(uint16_t *)data); PC_ACK_BK;                              break;
+   case P_S_Q_DELAY:                set_Q_delay(*(uint16_t *)data); PC_ACK_BK;                                  break;
 
-   case P_S_TRG_TYPE:               set_TRG_type(*(uint8_t *)data);                                             break;
-   case P_S_PulseType:              set_pulse_type(*(uint8_t *)data);                                           break;
-   case P_S_LD1_SW:                 SET_SW_STA(set_param.ld[0].sw);                                             break;
-   case P_S_LD2_SW:                 SET_SW_STA(set_param.ld[1].sw);                                             break;
-   case P_S_Q_SW:                   SET_SW_STA(set_param.T_Q.sw);                                               break;
-   case P_S_TEC1_SW:                SET_SW_STA(set_param.tec[0].sw);                                            break;
-   case P_S_TEC2_SW:                SET_SW_STA(set_param.tec[1].sw);                                            break;
-   case P_S_TEC3_SW:                SET_SW_STA(set_param.tec[2].sw);                                            break;
-   case P_S_TEC4_SW:                SET_SW_STA(set_param.tec[3].sw);                                            break;
-   case P_S_TEC1_PARA:              set_tec_param(0, data);                                                     break;
-   case P_S_TEC2_PARA:              set_tec_param(1, data);                                                     break;
-   case P_S_TEC3_PARA:              set_tec_param(2, data);                                                     break;
-   case P_S_TEC4_PARA:              set_tec_param(3, data);                                                     break;
-   case P_S_PULSE_PARA:             set_pulse_param(data);                                                      break;
-   case P_S_LCM_MotorSpeed:         set_LCM_MotorSpeed(huart, data);                                            break;
+   case P_S_TRG_TYPE:               set_TRG_type(*(uint8_t *)data); PC_ACK_BK;                                  break;
+   case P_S_PulseType:              set_pulse_type(*(uint8_t *)data); PC_ACK_BK;                                break;
+   case P_S_LD1_SW:                 SET_SW_STA(set_param.ld[0].sw); PC_ACK_BK;                                  break;
+   case P_S_LD2_SW:                 SET_SW_STA(set_param.ld[1].sw); PC_ACK_BK;                                  break;
+   case P_S_Q_SW:                   SET_SW_STA(set_param.T_Q.sw); PC_ACK_BK;                                    break;
+   case P_S_TEC1_SW:                SET_SW_STA(set_param.tec[0].sw); PC_ACK_BK;                                 break;
+   case P_S_TEC2_SW:                SET_SW_STA(set_param.tec[1].sw); PC_ACK_BK;                                 break;
+   case P_S_TEC3_SW:                SET_SW_STA(set_param.tec[2].sw); PC_ACK_BK;                                 break;
+   case P_S_TEC4_SW:                SET_SW_STA(set_param.tec[3].sw); PC_ACK_BK;                                 break;
+   case P_S_TEC1_PARA:              set_tec_param(0, data); PC_ACK_BK;                                          break;
+   case P_S_TEC2_PARA:              set_tec_param(1, data); PC_ACK_BK;                                          break;
+   case P_S_TEC3_PARA:              set_tec_param(2, data); PC_ACK_BK;                                          break;
+   case P_S_TEC4_PARA:              set_tec_param(3, data); PC_ACK_BK;                                          break;
+   case P_S_PULSE_PARA:             set_pulse_param(data); PC_ACK_BK;                                           break;
+   case P_S_LCM_MotorSpeed:         set_LCM_MotorSpeed(huart, data); PC_ACK_BK;                                 break;
 
    case P_G_PULSE_WIDTH:            PC_ACK(M_PULSE_WIDTH,set_param.Pulse_para.Width);                           break;
    case P_G_Q_DELAY:                PC_ACK(M_Q_DELAY, set_param.T_Q.delay);                                     break;
@@ -547,8 +549,8 @@ void exec_commands_list2(UART_HandleTypeDef *huart, uint8_t cmd, uint8_t *data, 
    case P_S_BOOTMODE:               set_boot_bootmode(*(uint8_t *)data);ack_boot_mode(huart, M_BOOT_MODE);      break;
    case P_G_BOOTMODE:               ack_boot_mode(huart, M_BOOT_MODE);                                          break;
    case P_Clear_Err:                ClearErrs();                                                                break;
-   case P_S_ALL_TEC_SW:             set_all_tec_sw(data);                                                       break;
-   case P_S_ALL_LD_PARA:            set_all_ld_para(data);                                                      break;
+   case P_S_ALL_TEC_SW:             set_all_tec_sw(data); PC_ACK_BK;                                            break;
+   case P_S_ALL_LD_PARA:            set_all_ld_para(data); PC_ACK_BK;                                           break;
    case P_G_ALL_PARA:               get_all_para(huart, M_ALL_PARA);                                            break;
    case P_SAVE:                     save_param(huart,M_SAVE);                                                   break;
    default:

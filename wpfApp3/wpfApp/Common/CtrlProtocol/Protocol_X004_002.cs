@@ -133,7 +133,7 @@ namespace wpfApp.Common.CtrlProtocol
             PulseType = 0xE9, /* 查询脉冲模式 */
             Upgrade = 0x76,/* 查询升级程序状态 */
 
-            ALL_PARA = 0xED, /* 查询所有参数 包括设置参数和检测参数 */
+            ALL_PARA = 0x28, /* 查询所有参数 包括设置参数和检测参数 */
         }
         private enum DEV_SET_CMD_TYPE
         {
@@ -160,11 +160,11 @@ namespace wpfApp.Common.CtrlProtocol
             PulseType = 0xE8,/* 设置设置脉冲类型 */
             ClearErr = 0xEA, /* 清除错误 */
 
-            ALL_TEC_SW = 0xEB,  /* 设置所有TEC开关  */
-            All_LD_PARA = 0xEC, /* 设置所有LD参数 包括电流设定值和开关 */
+            ALL_TEC_SW = 0x26,  /* 设置所有TEC开关  */
+            All_LD_PARA = 0x27, /* 设置所有LD参数 包括电流设定值和开关 */
 
-            SetLCMMotorSpeed= 0xEE,/* 设置液冷模块电机转速 */
-            SaveParam = 0xEF,/* 参数保存 */
+            SetLCMMotorSpeed= 0x29,/* 设置液冷模块电机转速 */
+            SaveParam = 0x2A,/* 参数保存 */
 
         }
 
