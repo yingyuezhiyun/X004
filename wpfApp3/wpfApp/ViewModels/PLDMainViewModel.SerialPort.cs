@@ -80,7 +80,7 @@ namespace wpfApp.ViewModels
             {
                 try
                 {
-                    DeviceSerialPort.Parity = Parity.Even;
+                    DeviceSerialPort.Parity = Parity.Odd;
                     DeviceSerialPort.BaudRate = 921600;
                     //DeviceSerialPort.BaudRate = 115200;
                     DeviceSerialPort.StopBits = StopBits.Two;

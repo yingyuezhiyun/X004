@@ -10,7 +10,7 @@ char Version[] = "X004_001";
 
 uint64_t BuildTime = 202509112205;
 
-char Version2[] = {0, 0, 1, 6};//V0.0.1.6
+char Version2[] = {0, 0, 1, 7};//V0.0.1.7
 
 uint8_t sum_crc(uint8_t *data, uint8_t len)
 {
