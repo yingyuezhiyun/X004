@@ -10,7 +10,7 @@ char Version[] = "X004_001";
 
 uint64_t BuildTime = 202509112205;
 
-char Version2[] = {0, 0, 1, 7};//V0.0.1.7
+char Version2[] = {0, 0, 1, 8};//V0.0.1.8
 
 uint8_t sum_crc(uint8_t *data, uint8_t len)
 {
@@ -152,11 +152,15 @@ void set_pulse_type(uint8_t data)
     {
         return;
     }
-    if (data == PULSE_SPWM || data == PULSE_NOR)
+    if (set_param.TRG_Type == TRG_OUT)
+    {
+        set_param.Pulse_Type = PULSE_SPWM;//外触发下强制使用SPWM
+    }
+    else if (data == PULSE_SPWM || data == PULSE_NOR)
     {
         set_param.Pulse_Type = data;
     }
-       
+    
 }
 
 void set_TRG_type(uint8_t data)

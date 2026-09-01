@@ -332,7 +332,7 @@ static void set_LCM_MotorSpeed(UART_HandleTypeDef *huart, uint8_t *data)
     uint16_t speed = *(uint16_t *)data;
     set_param.LCM.MotorSpeed = speed;
     pump_setting(&pump_set_param);
-    PC_ACK(M_S_LCM_MotorSpeed, speed);
+    // PC_ACK(M_S_LCM_MotorSpeed, speed);
 }
 
 static void get_tec_param(UART_HandleTypeDef *huart, uint8_t cmd, uint8_t ch)
