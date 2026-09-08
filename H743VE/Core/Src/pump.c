@@ -34,8 +34,8 @@ void pump_parse(uint32_t id, uint8_t *data, uint16_t len)
         if (data[7] == 0x1)
         {
             //data[0]; 供液压力
-            pump_get_param.Temp = data[1]; // 供液温度
-            //data[2];环境温度
+            // pump_get_param.Temp = data[1]; // 供液温度
+            pump_get_param.Temp = data[2];//环境温度
             //data[3];水泵状态
             //data[4];目标转速
             //data[5];当前运行时间 小时数高8位
